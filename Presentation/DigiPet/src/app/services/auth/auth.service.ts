@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 
-import { UserLogin } from '../../interfaces/user-login.ts';
+import { UserLogin } from '../../interfaces/user-login';
 
 @Injectable({
   providedIn: 'root'
