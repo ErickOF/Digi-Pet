@@ -6,6 +6,7 @@ import { AppComponent } from './app.component';
 
 import { Urls } from './configuration/urls';
 
+
 @NgModule({
   declarations: [
     AppComponent
@@ -15,7 +16,7 @@ import { Urls } from './configuration/urls';
     AppRoutingModule
   ],
   providers: [
-  	urls
+  	Urls
   ],
   bootstrap: [
   	AppComponent
