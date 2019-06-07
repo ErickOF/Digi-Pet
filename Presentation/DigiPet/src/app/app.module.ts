@@ -8,13 +8,15 @@ import { AppComponent } from './app.component';
 import { Urls } from './configuration/urls';
 import { LoginComponent } from './login/login.component';
 import { OwnerComponent } from './owner/owner.component';
+import { NavbarComponent } from './components/navbar/navbar.component';
 
 
 @NgModule({
   declarations: [
     AppComponent,
     LoginComponent,
-    OwnerComponent
+    OwnerComponent,
+    NavbarComponent
   ],
   imports: [
     BrowserModule,
