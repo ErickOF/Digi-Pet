@@ -8,7 +8,7 @@ import { AppComponent } from './app.component';
 import { Urls } from './configuration/urls';
 import { LoginComponent } from './login/login.component';
 import { OwnerComponent } from './owner/owner.component';
-import { NavbarComponent } from './login/navbar/navbar.component';
+import { LoginNavbarComponent } from './login/login-navbar/login-navbar.component';
 import { AdminComponent } from './admin/admin.component';
 import { PetCareComponent } from './pet-care/pet-care.component';
 import { RegisterComponent } from './register/register.component';
@@ -21,7 +21,7 @@ import { TabPetCareComponent } from './register/tab-pet-care/tab-pet-care.compon
     AppComponent,
     LoginComponent,
     OwnerComponent,
-    NavbarComponent,
+    LoginNavbarComponent,
     AdminComponent,
     PetCareComponent,
     RegisterComponent,
