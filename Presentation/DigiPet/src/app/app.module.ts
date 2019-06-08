@@ -1,7 +1,8 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule} from '@angular/forms';
-import { TabModule } from 'angular-tabs-component';
+
+import { MatTabsModule } from '@angular/material/tabs';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -24,6 +25,7 @@ import { RegisterComponent } from './register/register.component';
 import { RegisterNavbarComponent } from './register/register-navbar/register-navbar.component';
 import { TabOwnerComponent } from './register/tab-owner/tab-owner.component';
 import { TabPetCareComponent } from './register/tab-pet-care/tab-pet-care.component';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 
 @NgModule({
@@ -42,9 +44,10 @@ import { TabPetCareComponent } from './register/tab-pet-care/tab-pet-care.compon
   imports: [
     AppRoutingModule,
     BrowserModule,
+    BrowserAnimationsModule,
     FormsModule,
-    ReactiveFormsModule,
-    TabModule
+    MatTabsModule,
+    ReactiveFormsModule
   ],
   providers: [
     AdminGuard,
