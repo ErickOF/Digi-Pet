@@ -1,10 +1,14 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 
-import { LoginComponent } from './login/login.component'
-import { OwnerComponent } from './owner/owner.component'
+import { LoginComponent } from './login/login.component';
+import { AdminComponent } from './admin/admin.component';
+import { OwnerComponent } from './owner/owner.component';
+import { PetCareComponent } from './pet-care/pet-care.component';
 
-import { OwnerGuard } from './services/auth/owner-guard/owner.guard'
+import { AdminGuard } from './services/auth/admin-guard/admin.guard';
+import { OwnerGuard } from './services/auth/owner-guard/owner.guard';
+import { PetCareGuard } from './services/auth/pet-care-guard/pet-care.guard';
 
 
 const routes: Routes = [
@@ -18,9 +22,19 @@ const routes: Routes = [
     component: LoginComponent,
   },
   {
+    path: 'admin/profile',
+    component: AdminComponent,
+    canActivate: [AdminGuard]
+  },
+  {
     path: 'owner/profile',
     component: OwnerComponent,
     canActivate: [OwnerGuard]
+  },
+  {
+    path: 'petcare/profile',
+    component: PetCareComponent,
+    canActivate: [PetCareGuard]
   },
   {
     path: '**',

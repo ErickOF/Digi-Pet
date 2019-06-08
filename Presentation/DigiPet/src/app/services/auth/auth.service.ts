@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 
 import { UserLogin } from '../../models/user-login';
 
+
 @Injectable({
   providedIn: 'root'
 })
@@ -20,15 +21,11 @@ export class AuthService {
   }
 
   public getRole() {
-    return sessionStorage.getItem('role');
+    return sessionStorage.getItem('ROLE');
   }
 
   public setRole(role) {
-    sessionStorage.setItem('role', role);
-  }
-
-  public setUser(data) {
-    sessionStorage.setItem('UserInfo', data);
+    sessionStorage.setItem('ROLE', role);
   }
 
 }

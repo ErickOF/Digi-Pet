@@ -1,6 +1,7 @@
 import { TestBed, async, inject } from '@angular/core/testing';
 
-import { OwnerGuard } from './owner.guard'
+import { OwnerGuard } from './owner.guard';
+
 
 describe('OwnerGuard', () => {
   beforeEach(() => {
