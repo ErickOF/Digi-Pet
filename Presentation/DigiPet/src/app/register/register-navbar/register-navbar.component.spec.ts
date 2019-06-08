@@ -2,6 +2,7 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { RegisterNavbarComponent } from './register-navbar.component';
 
+
 describe('RegisterNavbarComponent', () => {
   let component: RegisterNavbarComponent;
   let fixture: ComponentFixture<RegisterNavbarComponent>;
