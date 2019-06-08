@@ -11,6 +11,9 @@ import { OwnerComponent } from './owner/owner.component';
 import { NavbarComponent } from './components/navbar/navbar.component';
 import { AdminComponent } from './admin/admin.component';
 import { PetCareComponent } from './pet-care/pet-care.component';
+import { RegisterComponent } from './register/register.component';
+import { TabOwnerComponent } from './register/tab-owner/tab-owner.component';
+import { TabPetCareComponent } from './register/tab-pet-care/tab-pet-care.component';
 
 
 @NgModule({
@@ -20,7 +23,10 @@ import { PetCareComponent } from './pet-care/pet-care.component';
     OwnerComponent,
     NavbarComponent,
     AdminComponent,
-    PetCareComponent
+    PetCareComponent,
+    RegisterComponent,
+    TabOwnerComponent,
+    TabPetCareComponent
   ],
   imports: [
     BrowserModule,
