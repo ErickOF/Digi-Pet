@@ -4,7 +4,7 @@ import { Routes, RouterModule } from '@angular/router';
 import { LoginComponent } from './login/login.component'
 import { OwnerComponent } from './owner/owner.component'
 
-import { AuthGuard } from './services/guard/auth.guard'
+import { OwnerGuard } from './services/auth/owner-guard/owner.guard'
 
 
 const routes: Routes = [
@@ -20,7 +20,7 @@ const routes: Routes = [
   {
     path: 'owner/profile',
     component: OwnerComponent,
-    canActivate: [AuthGuard]
+    canActivate: [OwnerGuard]
   },
   {
     path: '**',
