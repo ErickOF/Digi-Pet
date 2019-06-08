@@ -10,11 +10,11 @@ import { AuthService } from './../../auth/auth.service';
 })
 export class AdminGuard implements CanActivate {
   
-  constructor(private authService: AuthService) {}
+	constructor(private authService: AuthService) {}
 
-  canActivate(next: ActivatedRouteSnapshot, state: RouterStateSnapshot) :
-  			Observable<boolean> | Promise<boolean> | boolean {
-  	return this.authService.isLoggedIn();
-  }
+	canActivate(next: ActivatedRouteSnapshot, state: RouterStateSnapshot) :
+  				Observable<boolean> | Promise<boolean> | boolean {
+  		return this.authService.isLoggedIn() && this.authService.getRole() == 'Admin';
+	}
 
 }

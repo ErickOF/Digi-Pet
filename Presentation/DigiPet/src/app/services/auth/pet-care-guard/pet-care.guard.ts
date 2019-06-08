@@ -12,9 +12,9 @@ export class PetCareGuard implements CanActivate {
   
   constructor(private authService: AuthService) {}
 
-  canActivate(next: ActivatedRouteSnapshot, state: RouterStateSnapshot) :
-  			Observable<boolean> | Promise<boolean> | boolean {
-  	return this.authService.isLoggedIn();
-  }
+	canActivate(next: ActivatedRouteSnapshot, state: RouterStateSnapshot) :
+  				Observable<boolean> | Promise<boolean> | boolean {
+  		return this.authService.isLoggedIn() && this.authService.getRole() == 'PetCare';
+	}
 
 }

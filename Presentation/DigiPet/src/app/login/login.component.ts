@@ -19,6 +19,7 @@ export class LoginComponent implements OnInit {
   			      private formBuilder: FormBuilder) {}
 
   ngOnInit() {
+    this.authService.logout();
   	this.loginForm = this.formBuilder.group(
   	  {
   	  	username: ['', Validators.required],
@@ -43,12 +44,15 @@ export class LoginComponent implements OnInit {
     // Llamar API
     if (username == 'erickof@xtec.com' && password == 'abcd1234') {
   	  this.authService.login(this.loginForm.value);
+      this.authService.setRole('Admin');
   	  this.router.navigateByUrl('admin/profile');
     } else if (username == 'erickobregonf@gmail.com' && password == 'abcd1234') {
       this.authService.login(this.loginForm.value);
+      this.authService.setRole('Owner');
       this.router.navigateByUrl('owner/profile');
     } else if (username == '2016123157' && password == 'abcd1234') {
       this.authService.login(this.loginForm.value);
+      this.authService.setRole('PetCare');
       this.router.navigateByUrl('petcare/profile');
     } else {
       alert('Usuario desconocido');
