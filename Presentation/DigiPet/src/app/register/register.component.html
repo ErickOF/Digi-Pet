@@ -1,17 +1,19 @@
 <app-register-navbar></app-register-navbar>
 
+<h1>
+	<br>
+	Registrate
+	<br>
+</h1>
+
 <div>
-	<mat-tab-group mat-align-tabs="center">
+	<mat-tab-group mat-align-tabs="center" animationDuration="0ms" style="margin: 0% 20% 0% 20%" dynamicHeight=false>
   	<mat-tab label="Cuidador">
-  		<div class="text-center">
-      	<app-tab-owner></app-tab-owner>
-    	</div>
+  			<app-tab-pet-care></app-tab-pet-care>
   	</mat-tab>
 
 	  <mat-tab label="Dueño">
-	  	<div class="text-center">
-  	    <app-tab-pet-care></app-tab-pet-care>
-    	</div>
+      <app-tab-owner></app-tab-owner>
   	</mat-tab>
 	</mat-tab-group>
 </div>

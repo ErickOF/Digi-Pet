@@ -1,3 +1,54 @@
-<p>
-  tab-pet-care works!
-</p>
+<div class="row justify-text-center" style="margin: 0;">
+	<div class="col-md-6 text-center">
+
+		<form [formGroup]="registerOwner" class="register-container" (ngSubmit)="signup()">
+			<div class="row">
+				<div class="col-md-6 text-center">
+					<p [ngClass]="{ 'has-error': isSubmitted && ownerFormControls.name.errors }">
+		      <input class="form-control" placeholder="Nombre" formControlName="name">
+		    </p>
+				</div>
+
+				<div class="col-md-6 text-center">
+					<p [ngClass]="{ 'has-error': isSubmitted && ownerFormControls.lastname.errors }">
+		      	<input class="form-control" placeholder="Apellido" formControlName="lastname">
+		    	</p>
+				</div>
+	  	</div>
+
+	    <div *ngIf="isSubmitted && ownerFormControls.username.errors" class="help-block">
+	      <div *ngIf="ownerFormControls.name.errors.required">El nombre es requerido</div>
+	      <div *ngIf="ownerFormControls.lastname.errors.required">El apellido es requerido</div>
+	    </div>
+
+	    <p>
+	    	<select class="form-control" formControlName="province">
+          <!--<option value="">--ELEGIR PROVINCIA--</option>-->
+          <option value="1">SAN JOSE</option>
+          <option value="2">ALAJUELA</option>
+          <option value="3">CARTAGO</option>
+          <option value="4">HEREDIA</option>
+          <option value="5">GUANACASTE</option>
+          <option value="6">PUNTARENAS</option>
+          <option value="7">LIMÓN</option>
+        </select>
+	    </p>
+
+	    <p [ngClass]="{ 'has-error': isSubmitted && ownerFormControls.password.errors }">
+	      <input class="form-control" type="password" placeholder="Contraseña" formControlName="password">
+	    </p>
+
+	    <div *ngIf="isSubmitted && ownerFormControls.password.errors" class="help-block">
+	      <div *ngIf="ownerFormControls.password.errors.required">La contraseña es requerida</div>
+	    </div>
+	  </form>
+	</div>
+
+	<div class="col-md-6 text-center">
+		<form [formGroup]="registerPet" class="register-container">
+	    <p>
+	      <input type="submit" class="btn btn-primary" value="Iniciar sesión">
+	    </p>
+	  </form>
+	</div>
+</div>
