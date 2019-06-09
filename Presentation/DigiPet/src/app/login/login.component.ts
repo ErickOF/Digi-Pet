@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from  '@angular/forms';
 import { Router } from '@angular/router';
 
-import { UserLogin } from './../models/user-login';
 import { AuthService } from './../services/auth/auth.service';
 import { EncryptionService } from './../services/encryption/encryption.service';
 
