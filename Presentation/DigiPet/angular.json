@@ -27,7 +27,9 @@
               "src/styles.scss",
               "node_modules/bootstrap/dist/css/bootstrap.min.css"
             ],
-            "scripts": [],
+            "scripts": [
+              "src/main.ts"
+            ],
             "es5BrowserSupport": true
           },
           "configurations": {
