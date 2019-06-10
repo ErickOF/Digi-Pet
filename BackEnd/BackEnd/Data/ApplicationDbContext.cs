@@ -26,11 +26,15 @@ namespace WebApi.Models
             modelBuilder.Entity<User>(entity =>
             {
                 entity.HasAlternateKey(e => e.Username);
+                entity.HasMany(u => u.Walkers).WithOne(w => w.User).HasForeignKey(u => u.UserId);
             });
             modelBuilder.Entity<Walker>(entity =>
             {
                 entity.HasAlternateKey(e => e.UserId);
+                
             });
+
+
 
         }
     }

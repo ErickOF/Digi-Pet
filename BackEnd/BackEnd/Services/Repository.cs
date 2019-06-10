@@ -32,7 +32,7 @@ namespace WebApi.Services
                         User = new Entities.User { Username = walkerDto.Id, Password = walkerDto.Password,Role=Role.Walker, FirstName = walkerDto.Name, LastName= walkerDto.LastName,
                         Province=walkerDto.Province, Canton = walkerDto.Canton, Email = walkerDto.Email, Email2 = walkerDto.Email2, Mobile = walkerDto.Mobile,
                         DateCreated = DateTime.UtcNow},
-                        
+                        University = walkerDto.University,
                         DoesOtherProvinces = walkerDto.DoesOtherProvinces,
                         OtherProvinces = walkerDto.OtherProvinces
                         
