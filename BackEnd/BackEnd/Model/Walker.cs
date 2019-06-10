@@ -7,14 +7,13 @@ using WebApi.Entities;
 
 namespace WebApi.Model
 {
-    public class Petowner
+    public class Walker
     {
         [Required]
         public int Id { get; set; }
+
         [Required]
         public int UserId { get; set; }
         public virtual User User { get; set; }
-        public virtual ICollection<Pet> Pets { get; set; }
-
     }
 }

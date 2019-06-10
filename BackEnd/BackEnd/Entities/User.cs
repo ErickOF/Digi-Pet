@@ -1,3 +1,7 @@
+using System.Collections;
+using System.Collections.Generic;
+using WebApi.Model;
+
 namespace WebApi.Entities
 {
     public class User
@@ -9,5 +13,8 @@ namespace WebApi.Entities
         public string Password { get; set; }
         public string Role { get; set; }
         public string Token { get; set; }
+
+        public virtual ICollection<Petowner> Petowners { get; set; }
+        public virtual ICollection<Walker> Walkers { get; set; }
     }
 }
