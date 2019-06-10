@@ -4,34 +4,32 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
 using System.Text;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using WebApi.Entities;
 using WebApi.Helpers;
+using WebApi.Models;
 
 namespace WebApi.Services
 {
     public interface IUserService
     {
         User Authenticate(string username, string password);
-        IEnumerable<User> GetAll();
         User GetById(int id);
+        IEnumerable<User> GetAll();
     }
 
     public class UserService : IUserService
     {
-        // users hardcoded for simplicity, store in a db with hashed passwords in production applications
-        private List<User> _users = new List<User>
-        { 
-            new User { Id = 1, FirstName = "Admin", LastName = "User", Username = "admin", Password = "admin", Role = Role.Admin },
-            new User { Id = 2, FirstName = "Normal", LastName = "User", Username = "user", Password = "user", Role = Role.User } 
-        };
 
         private readonly AppSettings _appSettings;
+        private readonly IList<User> _users;
 
-        public UserService(IOptions<AppSettings> appSettings)
+        public UserService(IOptions<AppSettings> appSettings, ApplicationDbContext dbContext)
         {
             _appSettings = appSettings.Value;
+            _users = dbContext.Users.ToList();
         }
 
         public User Authenticate(string username, string password)
@@ -49,7 +47,7 @@ namespace WebApi.Services
             {
                 Subject = new ClaimsIdentity(new Claim[] 
                 {
-                    new Claim(ClaimTypes.Name, user.Id.ToString()),
+                    new Claim(ClaimTypes.Name, user.Username.ToString()),
                     new Claim(ClaimTypes.Role, user.Role)
                 }),
                 Expires = DateTime.UtcNow.AddDays(7),
@@ -64,15 +62,6 @@ namespace WebApi.Services
             return user;
         }
 
-        public IEnumerable<User> GetAll()
-        {
-            // return users without passwords
-            return _users.Select(x => {
-                x.Password = null;
-                return x;
-            });
-        }
-
         public User GetById(int id) {
             var user = _users.FirstOrDefault(x => x.Id == id);
 
@@ -81,6 +70,11 @@ namespace WebApi.Services
                 user.Password = null;
 
             return user;
+        }
+
+        public IEnumerable<User> GetAll()
+        {
+            return _users.Select(u => new User { Username = u.Username });
         }
     }
 }

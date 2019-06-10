@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using WebApi.Dtos;
 using WebApi.Model;
 using WebApi.Models;
+using WebApi.Services;
 
 namespace WebApi.View
 {
@@ -16,10 +17,12 @@ namespace WebApi.View
     public class WalkersController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
+        private readonly IRepository _repository;
 
-        public WalkersController(ApplicationDbContext context)
+        public WalkersController(ApplicationDbContext context, IRepository repository)
         {
             _context = context;
+            _repository = repository;
         }
 
         // GET: api/Walkers
@@ -75,31 +78,11 @@ namespace WebApi.View
 
         // POST: api/Walkers
         [HttpPost]
-        public async Task<ActionResult<Walker>> PostWalker(WalkerDto walkerDto)
+        public async Task<ActionResult<bool>> PostWalker([FromForm]WalkerDto walkerDto)
         {
-            var walker = new Walker {
-                User= new Entities.User { Username=walkerDto.UserName, Password = walkerDto.Password}
-            }; 
-            _context.Walker.Add(walker);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetWalker", new { id = walker.Id }, walker);
-        }
-
-        // DELETE: api/Walkers/5
-        [HttpDelete("{id}")]
-        public async Task<ActionResult<Walker>> DeleteWalker(int id)
-        {
-            var walker = await _context.Walker.FindAsync(id);
-            if (walker == null)
-            {
-                return NotFound();
-            }
-
-            _context.Walker.Remove(walker);
-            await _context.SaveChangesAsync();
-
-            return walker;
+            var result = await _repository.CreateWalker(walkerDto);
+            if (result) return Ok(result);
+            else return BadRequest(result);
         }
 
         private bool WalkerExists(int id)
