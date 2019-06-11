@@ -9,7 +9,7 @@ namespace WebApi.Entities
     public class User
     {
         public int Id { get; set; }
-        [DataType(DataType.EmailAddress)]
+        [Required,DataType(DataType.EmailAddress)]
         public string Email { get; set; }
         [Required]
         public string FirstName { get; set; }
@@ -19,16 +19,16 @@ namespace WebApi.Entities
         public string Username { get; set; }
         [Required]
         public string Password { get; set; }
-        [Required]
         public string Province { get; set; }
-        [Required]
         public string Canton { get; set; }
+        [DataType(DataType.EmailAddress)]
         public string Email2 { get; set; }
         public string Mobile { get; set; }
 
         [Required]
         public string Role { get; set; }
         public string Token { get; set; }
+        [Required]
         public DateTime DateCreated { get; set; }
 
         public virtual ICollection<Petowner> Petowners { get; set; }

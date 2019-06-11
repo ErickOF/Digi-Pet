@@ -10,6 +10,9 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WebApi.Models;
+using System;
+using Microsoft.AspNetCore.HttpOverrides;
+using WebApi.Entities;
 
 namespace WebApi
 {
@@ -62,8 +65,9 @@ namespace WebApi
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, IRepository repository)
         {
+
             // global cors policy
             app.UseCors(x => x
                 .AllowAnyOrigin()
@@ -73,6 +77,24 @@ namespace WebApi
             app.UseAuthentication();
             
             app.UseMvc();
+
+            try
+            {
+                if (!repository.UsernameExists("admin"))
+                {
+                    repository.CreateUser(new Entities.User
+                    {
+                        Username = "admin",
+                        Password = "pass",
+                        Email = "admin@digipet.com",
+                        FirstName = "admin",
+                        LastName = "admin",
+                        Role = Role.Admin,
+                        DateCreated = DateTime.UtcNow
+                    }).Wait();
+                }
+            }
+            catch { }
         }
     }
 }

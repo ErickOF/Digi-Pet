@@ -47,7 +47,7 @@ namespace WebApi.Services
             {
                 Subject = new ClaimsIdentity(new Claim[] 
                 {
-                    new Claim(ClaimTypes.Name, user.Username.ToString()),
+                    new Claim(ClaimTypes.Name, user.Username),
                     new Claim(ClaimTypes.Role, user.Role)
                 }),
                 Expires = DateTime.UtcNow.AddDays(7),
@@ -74,7 +74,7 @@ namespace WebApi.Services
 
         public IEnumerable<User> GetAll()
         {
-            return _users.Select(u => new User { Username = u.Username });
+            return _users.Select(u => { u.Password = ""; return u; });
         }
     }
 }
