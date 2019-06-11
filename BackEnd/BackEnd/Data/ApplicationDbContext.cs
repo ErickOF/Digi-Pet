@@ -19,7 +19,9 @@ namespace WebApi.Models
         public DbSet<Walk> Walks{ get; set; }
 
         public DbSet<User> Users { get; set; }
+        public DbSet<Pet> Pets { get; set; }
 
+        public DbSet<Petowner> Owners { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

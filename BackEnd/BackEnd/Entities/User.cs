@@ -30,6 +30,8 @@ namespace WebApi.Entities
         public string Token { get; set; }
         [Required]
         public DateTime DateCreated { get; set; }
+        [Required]
+        public string Description { get; set; }
 
         public virtual ICollection<Petowner> Petowners { get; set; }
         public virtual ICollection<Walker> Walkers { get; set; }

@@ -25,7 +25,9 @@ namespace WebApi.Model
         public DateTime DateCreated { get; set; }
         [Required]
         public int Age { get; set; }
+        [Required]
         public string Size { get; set; }//S,M,L,XL
+        [Required]
         public string Description { get; set; }
 
         [Required]

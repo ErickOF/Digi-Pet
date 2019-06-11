@@ -30,6 +30,7 @@ namespace WebApi.View
         }
 
         // GET: api/Walkers
+        [Authorize(Roles = Role.Admin)]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Walker>>> GetWalker()
         {
@@ -60,7 +61,8 @@ namespace WebApi.View
                 Province = walker.User.Province,
                 Canton = walker.User.Canton,
                 DoesOtherProvinces = walker.DoesOtherProvinces,
-                OtherProvinces = walker.OtherProvinces
+                OtherProvinces = walker.OtherProvinces,
+                Description = walker.User.Description
             }; 
 
             if (walker == null)
