@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using WebApi.Models;
@@ -9,9 +10,10 @@ using WebApi.Models;
 namespace WebApi.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20190611205546_m6")]
+    partial class m6
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -166,13 +168,9 @@ namespace WebApi.Migrations
 
                     b.Property<int>("UserId");
 
-                    b.Property<int?>("UserId1");
-
                     b.HasKey("Id");
 
                     b.HasAlternateKey("UserId");
-
-                    b.HasIndex("UserId1");
 
                     b.ToTable("Walker");
                 });
@@ -188,7 +186,7 @@ namespace WebApi.Migrations
             modelBuilder.Entity("WebApi.Model.Petowner", b =>
                 {
                     b.HasOne("WebApi.Entities.User", "User")
-                        .WithMany()
+                        .WithMany("Petowners")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
@@ -217,8 +215,9 @@ namespace WebApi.Migrations
             modelBuilder.Entity("WebApi.Model.Walker", b =>
                 {
                     b.HasOne("WebApi.Entities.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId1");
+                        .WithMany("Walkers")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 #pragma warning restore 612, 618
         }

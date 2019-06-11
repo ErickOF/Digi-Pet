@@ -4,25 +4,16 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace WebApi.Model
+namespace WebApi.Dtos
 {
-    public class Pet
+    public class PetDto
     {
-        [Required]
         public int Id { get; set; }
         [Required, MaxLength(30)]
         public string Name { get; set; }
         [Required, MaxLength(30)]
         public string Race { get; set; }
 
-        public int WalksQuant { get
-            {
-                return Walks.Count;
-            }
-        }
-
-        [Required]
-        public DateTime DateCreated { get; set; }
         [Required]
         public int Age { get; set; }
         [Required]
@@ -30,13 +21,6 @@ namespace WebApi.Model
         [Required]
         public string Description { get; set; }
 
-        [Required]
-        public int PetOwnerId { get; set; }
-        public virtual Petowner Petowner { get; set; }
-
-        public ICollection<Walk> Walks { get; set; }
-
         public string[] Photos { get; set; }
-
     }
 }

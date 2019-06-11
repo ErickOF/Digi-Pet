@@ -30,18 +30,4 @@ namespace WebApi.Dtos
         public ICollection<PetDto> Pets { get; set; }
     }
 
-    public class PetDto
-    {
-        [Required, MaxLength(30)]
-        public string Name { get; set; }
-        [Required, MaxLength(30)]
-        public string Race { get; set; }
-
-        [Required]
-        public int Age { get; set; }
-        [Required]
-        public string Size { get; set; }//S,M,L,XL
-        [Required]
-        public string Description { get; set; }
-    }
 }

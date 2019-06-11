@@ -20,20 +20,21 @@ namespace WebApi.Controllers
     [ApiController]
     public class OwnersController : ControllerBase
     {
-        private readonly ApplicationDbContext _context;
         private readonly IRepository _repository;
 
-        public OwnersController(ApplicationDbContext context, IRepository repository)
+        public OwnersController(IRepository repository)
         {
-            _context = context;
+ 
             _repository = repository;
         }
 
         // GET: api/Owners
+        [Authorize(Roles=Role.Admin)]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Petowner>>> GetOwner()
         {
-            return await _context.Owners.ToListAsync();
+            var owners =await _repository.GetOwners();
+            return Ok(owners);
         }
         [Authorize(Roles = "Admin,Owner")]
         // GET: api/Owners/5
@@ -43,7 +44,12 @@ namespace WebApi.Controllers
             var username = User.Claims.Where(c => c.Type == ClaimTypes.Name).FirstOrDefault().Value;
             var role = User.Claims.Where(c => c.Type == ClaimTypes.Role).FirstOrDefault().Value;
 
-            var owner = await _context.Owners.Include(o => o.User).Include(o=>o.Pets).FirstOrDefaultAsync(u => u.Id == id);
+            var owner = await _repository.GetOwner(id);
+            if (owner == null)
+            {
+                return NotFound();
+            }
+
             if (owner.User.Username != username && role != Role.Admin)
             {
                 return Unauthorized();
@@ -59,12 +65,6 @@ namespace WebApi.Controllers
                 Canton = owner.User.Canton,
                 Description = owner.User.Description
             };
-
-            if (owner == null)
-            {
-                return NotFound();
-            }
-
             return ownerDto;
         }
 
@@ -80,9 +80,5 @@ namespace WebApi.Controllers
             else return BadRequest(new { message = $"error creating user: {result.Item2}" });
         }
 
-        private bool WalkerExists(int id)
-        {
-            return _context.Walker.Any(e => e.Id == id);
-        }
     }
 }

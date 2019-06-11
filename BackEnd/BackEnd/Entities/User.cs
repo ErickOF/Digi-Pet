@@ -33,7 +33,7 @@ namespace WebApi.Entities
         [Required]
         public string Description { get; set; }
 
-        public virtual ICollection<Petowner> Petowners { get; set; }
-        public virtual ICollection<Walker> Walkers { get; set; }
+        //public virtual ICollection<Petowner> Petowners { get; set; }
+        //public virtual ICollection<Walker> Walkers { get; set; }
     }
 }

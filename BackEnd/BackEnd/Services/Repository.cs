@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,6 +17,10 @@ namespace WebApi.Services
         Task<Tuple<Petowner, string>> CreateOwner(OwnerDto walkerDto);
         Task<User> CreateUser(User user);
         bool UsernameExists(string username);
+        Task<Tuple<Pet, string>> CreatePet(PetDto petDto, int ownerId);
+        Task<Petowner> GetUserByUserName(string username);
+        Task<IEnumerable<Petowner>> GetOwners();
+        Task<Petowner> GetOwner(int id);
     }
     public class Repository : IRepository
     {
@@ -76,7 +81,7 @@ namespace WebApi.Services
                     var pets = new List<Pet>();
                     foreach (var pet in ownerDto.Pets)
                     {
-                        pets.Add(new Pet { Name = pet.Name, Race=pet.Race,DateCreated=DateTime.UtcNow,Age=pet.Age, Size=pet.Size, Description=pet.Description});
+                        pets.Add(new Pet { Name = pet.Name, Race=pet.Race,DateCreated=DateTime.UtcNow,Age=pet.Age, Size=pet.Size, Description=pet.Description,Photos=pet.Photos});
                     }
                     var owner = new Petowner
                     {
@@ -120,6 +125,38 @@ namespace WebApi.Services
         public bool UsernameExists(string username)
         {
             return _dbContext.Users.FirstOrDefault(u => u.Username == username) != null;
+        }
+
+        public async Task<Tuple<Pet, string>> CreatePet(PetDto petDto, int ownerId)
+        {
+            var pet = new Pet { Name=petDto.Name, Race=petDto.Race,Age=petDto.Age, Size=petDto.Size,Description=petDto.Description, Photos=petDto.Photos, PetOwnerId=ownerId };
+            try
+            {
+                _dbContext.Add(pet);
+                await _dbContext.SaveChangesAsync();
+                return new Tuple<Pet, string>(pet, "success");
+            }
+            catch (DbUpdateException e)
+            {
+                return new Tuple<Pet, string>(null, $"error: {e.InnerException.Message}");
+            }
+            
+        }
+        public async Task<Petowner> GetUserByUserName(string username)
+        {
+            return await _dbContext.Owners.Include(o => o.User).Include(o => o.Pets).FirstOrDefaultAsync(u => u.User.Username==username);
+        }
+
+        public async Task<IEnumerable<Petowner>> GetOwners()
+        {
+            var owners= await _dbContext.Owners.Include(o=>o.User).ToListAsync();
+
+            return owners.Select(u => { u.User.Password = ""; return u; });
+        }
+
+        public async Task<Petowner> GetOwner(int id)
+        {
+            return await _dbContext.Owners.Include(o => o.Pets).Include(o=>o.User).FirstOrDefaultAsync(u => u.Id==id);
         }
     }
 }

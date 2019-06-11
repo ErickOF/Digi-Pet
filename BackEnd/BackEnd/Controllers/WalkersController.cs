@@ -45,6 +45,11 @@ namespace WebApi.View
             var role = User.Claims.Where(c => c.Type == ClaimTypes.Role).FirstOrDefault().Value;
             
             var walker = await _context.Walker.Include(w=>w.User).FirstOrDefaultAsync(u=>u.Id==id);
+
+            if (walker == null)
+            {
+                return NotFound();
+            }
             if (walker.User.Username != username && role != Role.Admin)
             {
                 return Unauthorized();
@@ -65,10 +70,6 @@ namespace WebApi.View
                 Description = walker.User.Description
             }; 
 
-            if (walker == null)
-            {
-                return NotFound();
-            }
 
             return walkerDto;
         }

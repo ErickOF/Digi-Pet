@@ -85,7 +85,7 @@ namespace WebApi
                     repository.CreateUser(new Entities.User
                     {
                         Username = "admin",
-                        Password = "pass",
+                        Password = "12345678",
                         Email = "admin@digipet.com",
                         FirstName = "admin",
                         LastName = "admin",
