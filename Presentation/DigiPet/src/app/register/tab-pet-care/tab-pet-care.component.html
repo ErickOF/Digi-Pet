@@ -34,15 +34,9 @@
 		<div class="row">
 			<div class="col-md-6 text-center">
 				<p [ngClass]="{ 'has-error': isSubmitted && petCareFormControls.province.errors }">
-					<select type="text" class="form-control" formControlName="province">
+					<select id="province" type="text" class="form-control" formControlName="province">
 						<option value="">--Provincia--</option>
-						<option value="1">SAN JOSE</option>
-						<option value="2">ALAJUELA</option>
-						<option value="3">CARTAGO</option>
-						<option value="4">HEREDIA</option>
-						<option value="5">GUANACASTE</option>
-						<option value="6">PUNTARENAS</option>
-						<option value="7">LIMÓN</option>
+						<option *ngFor="let province of provinces" [value]="province.id"> {{ province.name }} </option>
 					</select>
 				</p>
 			</div>
@@ -66,9 +60,7 @@
 				<p [ngClass]="{ 'has-error': isSubmitted && petCareFormControls.university.errors }">
 					<select type="text" class="form-control" formControlName="university">
 						<option value="">--Universidad--</option>
-						<option value="1">TEC</option>
-						<option value="2">UCR</option>
-						<option value="3">UNA</option>
+						<option *ngFor="let university of universities" [value]="university.id"> {{ university.name }} </option>
 					</select>
 				</p>
 			</div>
@@ -89,6 +81,7 @@
 
 			<div *ngIf="isSubmitted && petCareFormControls.carnet.errors" class="help-block col-md-6">
 				<div class="text-error" *ngIf="petCareFormControls.carnet.errors.required">El carne es requerido</div>
+				<div class="text-error" *ngIf="petCareFormControls.carnet.errors.maxlength">El carne debe tener máximo 10 caracteres</div>
 			</div>
 		</div>
 
@@ -101,7 +94,7 @@
 			</div>
 
 			<div class="col-md-6 text-center">
-				<p>
+				<p [ngClass]="{ 'has-error': isSubmitted && petCareFormControls.email2.errors }">
 					<input class="form-control" placeholder="Correo 2 (Opcional)" formControlName="email2">
 				</p>
 			</div>
@@ -110,6 +103,13 @@
 		<div class="row">
 			<div *ngIf="isSubmitted && (petCareFormControls.email1.errors)" class="help-block col-md-6">
 				<div class="text-error" *ngIf="petCareFormControls.email1.errors.required">El correo es requerido</div>
+				<div class="text-error" *ngIf="petCareFormControls.email1.errors.maxlength">El correo debe tener máximo 30 caracteres</div>
+				<div class="text-error" *ngIf="petCareFormControls.email1.errors.pattern">El correo no es válido</div>
+			</div>
+
+			<div *ngIf="isSubmitted && (petCareFormControls.email2.errors)" class="help-block col-md-6">
+				<div class="text-error" *ngIf="petCareFormControls.email2.errors.maxlength">El correo debe tener máximo 30 caracteres</div>
+				<div class="text-error" *ngIf="petCareFormControls.email2.errors.pattern">El correo no es válido</div>
 			</div>
 		</div>
 
@@ -131,27 +131,83 @@
 		<div class="row">
 			<div *ngIf="isSubmitted && petCareFormControls.telephoneNumber.errors" class="help-block col-md-6">
 				<div class="text-error" *ngIf="petCareFormControls.telephoneNumber.errors.required">El número de teléfono es requerido</div>
+				<div class="text-error" *ngIf="petCareFormControls.telephoneNumber.errors.minlength">El número de teléfono deben ser de mínimo 8 dígitos</div>
+				<div class="text-error" *ngIf="petCareFormControls.telephoneNumber.errors.maxlength">El número de teléfono deben ser de máximo 10 dígitos</div>
+				<div class="text-error" *ngIf="petCareFormControls.telephoneNumber.errors.pattern">El número de teléfono no es válido</div>
 			</div>
 			<div *ngIf="!(isSubmitted && petCareFormControls.telephoneNumber.errors)" class="help-block col-md-6">
 			</div>
 
 			<div *ngIf="isSubmitted && petCareFormControls.password.errors" class="help-block col-md-6">
 				<div class="text-error" *ngIf="petCareFormControls.password.errors.required">La contraseña es requerida</div>
+				<div class="text-error" *ngIf="petCareFormControls.password.errors.maxlength || petCareFormControls.password.errors.minlength || petCareFormControls.password.errors.pattern">La contraseña es debe ser de 8 caracteres alfanumérica</div>
 			</div>
 		</div>
 
 		<!-- Description -->
 		<div class="row">
 			<p class="col-md-12" [ngClass]="{ 'has-error': isSubmitted && petCareFormControls.description.errors }">
-				<textarea type="text" class="form-control col-md-12" rows="4" placeholder="Descripción"></textarea>
+				<textarea type="text" class="form-control col-md-12" rows="4" placeholder="Descripción personal" formControlName="description"></textarea>
 			</p>
 		</div>
 
 		<div class="row">
 			<div *ngIf="isSubmitted && petCareFormControls.description.errors" class="help-block col-md-6">
-				<div class="text-error" *ngIf="petCareFormControls.description.errors.required">La descripción es requerida</div>
+				<div class="text-error" *ngIf="petCareFormControls.description.errors.required">La descripción personal es requerida</div>
+				<div class="text-error" *ngIf="petCareFormControls.description.errors.maxlength">La descripción personal debe ser de máximo 300 caracteres</div>
 			</div>
 		</div>
+
+		<!-- Accept walks in diffent provinces -->
+		<div class="row form-check-inline">
+			<div class="col-md-12">
+				<label>¿Acepta paseos en otras provincias?</label>
+				<div class="form-check col-md-12">
+					<div class="form-check form-check-inline">
+						<input class="form-check-input" type="radio" value="true" formControlName="acceptWalks">
+						<label class="form-check-label">
+							Sí
+						</label>
+					</div>
+					<div class="form-check form-check-inline">
+						<input class="form-check-input" type="radio" value="false" formControlName="acceptWalks" checked>
+						<label class="form-check-label">
+							No
+						</label>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="col-md-12"><label></label></div>
+
+		<!-- Provinces -->
+		<div class="row">
+			<label class="col-md-12">Provincias</label>
+			<div class="col-md-12">
+				<label class="form-check-label col-md-4" formArrayName="provinces" *ngFor="let province of petCareFormControls.provinces.controls; let id = index">
+					<input class="form-check-input" type="checkbox" [formControlName]="id">
+						{{ provinces[id].name }}
+				</label>
+			</div>
+		</div>
+
+		<div class="col-md-12"><label></label></div>
+
+		<!-- Profile image -->
+		<div class="row">
+	    <div class="col-md-12 text-center">
+	      <div class="profile-picture">
+				  <img *ngIf="url" width=300 height=300 src="{{ url }}" />
+				  <label *ngIf="editmode" for="uploader-input" ng2FileDrop [ngClass]="{'drag-over': hasDragOver}" (fileOver)="fileOver($event)" [uploader]="uploader">
+				    <div class="infotext"><span *ngIf="!url" >Drop your picture<br>or click to upload</span></div>
+				  </label>
+				  <input *ngIf="editmode" type="file" ng2FileSelect [uploader]="uploader" id="uploader-input" style="display:none" />
+				</div>
+	    </div>
+	  </div>
+
+	  <div class="col-md-12"><label></label></div>
 
 		<!-- Submit -->
 		<p>

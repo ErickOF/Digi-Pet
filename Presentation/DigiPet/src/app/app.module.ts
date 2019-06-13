@@ -2,6 +2,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule, ReactiveFormsModule} from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
+import { FileUploadModule } from 'ng2-file-upload';
 
 import { MatTabsModule } from '@angular/material/tabs';
 
@@ -46,6 +47,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
     AppRoutingModule,
     BrowserModule,
     BrowserAnimationsModule,
+    FileUploadModule,
     FormsModule,
     HttpClientModule,
     MatTabsModule,
