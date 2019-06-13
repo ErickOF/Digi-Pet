@@ -10,7 +10,7 @@ namespace WebApi.Dtos
     {
         [Required]
         public string SchoolId { get; set; } //número de carné
-        [Required,MinLength(8)]
+        [Required,MinLength(8),DataType(DataType.Password)]
         public string Password { get; set; }
         [Required]
         public string Name { get; set; }

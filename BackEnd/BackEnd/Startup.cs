@@ -65,7 +65,7 @@ namespace WebApi
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, IRepository repository)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, IUserService userService)
         {
 
             // global cors policy
@@ -80,19 +80,21 @@ namespace WebApi
 
             try
             {
-                if (!repository.UsernameExists("admin"))
+                if (!userService.UsernameExists("admin"))
                 {
-                    repository.CreateUser(new Entities.User
+                    var user = userService.CreateUser(new Entities.User
                     {
                         Username = "admin",
-                        Password = "12345678",
                         Email = "admin@digipet.com",
                         FirstName = "admin",
                         LastName = "admin",
+
                         Role = Role.Admin,
                         DateCreated = DateTime.UtcNow,
-                        Description="no"
-                    }).Wait();
+                        Description = "no"
+                    }, "12345678");
+
+                    userService.PersistUser(user).Wait();
                 }
             }
             catch { }

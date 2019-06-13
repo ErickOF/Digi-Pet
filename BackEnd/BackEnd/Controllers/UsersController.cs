@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using WebApi.Services;
 using WebApi.Entities;
 using WebApi.Dtos;
+using System.Threading.Tasks;
 
 namespace WebApi.Controllers
 {
@@ -21,9 +22,9 @@ namespace WebApi.Controllers
 
         [AllowAnonymous]
         [HttpPost("authenticate")]
-        public IActionResult Authenticate([FromForm]AuthenticateDto userParam)
+        public async Task<IActionResult> Authenticate([FromForm]AuthenticateDto userParam)
         {
-            var user = _userService.Authenticate(userParam.UserName, userParam.Password);
+            var user = await _userService.AuthenticateAsync(userParam.UserName, userParam.Password);
 
             if (user == null)
                 return BadRequest(new { message = "Username or password is incorrect" });

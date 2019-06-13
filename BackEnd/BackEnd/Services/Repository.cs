@@ -15,8 +15,6 @@ namespace WebApi.Services
     {
         Task<Tuple<Walker, string>> CreateWalker( WalkerDto walkerDto);
         Task<Tuple<Petowner, string>> CreateOwner(OwnerDto walkerDto);
-        Task<User> CreateUser(User user);
-        bool UsernameExists(string username);
         Task<Tuple<Pet, string>> CreatePet(PetDto petDto, int ownerId);
         Task<Petowner> GetUserByUserName(string username);
         Task<IEnumerable<Petowner>> GetOwners();
@@ -25,10 +23,12 @@ namespace WebApi.Services
     public class Repository : IRepository
     {
         private readonly ApplicationDbContext _dbContext;
+        private readonly IUserService _userService;
 
-        public Repository(ApplicationDbContext dbContext)
+        public Repository(ApplicationDbContext dbContext,IUserService userService)
         {
             _dbContext = dbContext;
+            _userService = userService;
         }
         public async Task<Tuple<Walker,string>> CreateWalker(WalkerDto walkerDto)
         {
@@ -39,10 +39,9 @@ namespace WebApi.Services
 
                     var walker = new Walker
                     {
-                        User = new Entities.User
+                        User = _userService.CreateUser( new Entities.User
                         {
                             Username = walkerDto.SchoolId,
-                            Password = walkerDto.Password,
                             Role = Role.Walker,
                             FirstName = walkerDto.Name,
                             LastName = walkerDto.LastName,
@@ -53,7 +52,7 @@ namespace WebApi.Services
                             Mobile = walkerDto.Mobile,
                             Description = walkerDto.Description,
                             DateCreated = DateTime.UtcNow
-                        },
+                        }, walkerDto.Password),
                         University = walkerDto.University,
                         DoesOtherProvinces = walkerDto.DoesOtherProvinces,
                         OtherProvinces = walkerDto.OtherProvinces
@@ -83,12 +82,12 @@ namespace WebApi.Services
                     {
                         pets.Add(new Pet { Name = pet.Name, Race=pet.Race,DateCreated=DateTime.UtcNow,Age=pet.Age, Size=pet.Size, Description=pet.Description,Photos=pet.Photos});
                     }
+
                     var owner = new Petowner
                     {
-                        User = new Entities.User
+                        User = _userService.CreateUser(new Entities.User
                         {
                             Username = ownerDto.Email,
-                            Password = ownerDto.Password,
                             Role = Role.Petowner,
                             FirstName = ownerDto.Name,
                             LastName = ownerDto.LastName,
@@ -99,7 +98,7 @@ namespace WebApi.Services
                             Mobile = ownerDto.Mobile,
                             DateCreated = DateTime.UtcNow,
                             Description = ownerDto.Description
-                        },
+                        },ownerDto.Password),
                         Pets = pets
 
                     };
@@ -115,16 +114,9 @@ namespace WebApi.Services
                 }
             }
         }
-        public async Task<User> CreateUser(User user)
+        public async Task<Petowner> GetUserByUserName(string username)
         {
-            _dbContext.Add(user);
-            await _dbContext.SaveChangesAsync();
-            return user;
-        }
-
-        public bool UsernameExists(string username)
-        {
-            return _dbContext.Users.FirstOrDefault(u => u.Username == username) != null;
+            return await _dbContext.Owners.Include(o => o.User).Include(o => o.Pets).FirstOrDefaultAsync(u => u.User.Username == username);
         }
 
         public async Task<Tuple<Pet, string>> CreatePet(PetDto petDto, int ownerId)
@@ -142,16 +134,13 @@ namespace WebApi.Services
             }
             
         }
-        public async Task<Petowner> GetUserByUserName(string username)
-        {
-            return await _dbContext.Owners.Include(o => o.User).Include(o => o.Pets).FirstOrDefaultAsync(u => u.User.Username==username);
-        }
+
 
         public async Task<IEnumerable<Petowner>> GetOwners()
         {
             var owners= await _dbContext.Owners.Include(o=>o.User).ToListAsync();
 
-            return owners.Select(u => { u.User.Password = ""; return u; });
+            return owners.Select(u => { u.User.PasswordHash = null; return u; });
         }
 
         public async Task<Petowner> GetOwner(int id)
