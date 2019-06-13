@@ -14,7 +14,7 @@ export class PetCareGuard implements CanActivate {
 
 	canActivate(next: ActivatedRouteSnapshot, state: RouterStateSnapshot) :
   				Observable<boolean> | Promise<boolean> | boolean {
-  		return this.authService.isLoggedIn() && this.authService.getRole() == 'PetCare';
+  		return this.authService.isLoggedIn() && this.authService.getRole() == 'Walker';
 	}
 
 }

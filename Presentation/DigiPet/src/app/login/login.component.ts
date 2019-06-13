@@ -1,7 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from  '@angular/forms';
 import { Router } from '@angular/router';
+import Swal from 'sweetalert2';
 
+import { ApiService } from './../services/api/api.service'
 import { AuthService } from './../services/auth/auth.service';
 import { EncryptionService } from './../services/encryption/encryption.service';
 
@@ -16,7 +18,7 @@ export class LoginComponent implements OnInit {
   public isSubmitted = false;
 
   constructor(private authService: AuthService, private router: Router,
-  			      private formBuilder: FormBuilder,
+  			      private formBuilder: FormBuilder, private api: ApiService,
               private encryptionService: EncryptionService) {}
 
   ngOnInit() {
@@ -38,26 +40,28 @@ export class LoginComponent implements OnInit {
   	if (this.loginForm.invalid) {
   		return;
   	}
-    let loginUser = this.loginForm.value;
-    let username = loginUser.username;
-    let password = loginUser.password;
-    // Amarrado
-    // Llamar API
-    if (username == 'erickof@xtec.com' && password == 'abcd1234') {
-  	  this.authService.login(this.loginForm.value);
-      this.authService.setRole('Admin');
-  	  this.router.navigateByUrl('admin/profile');
-    } else if (username == 'erickobregonf@gmail.com' && password == 'abcd1234') {
-      this.authService.login(this.loginForm.value);
-      this.authService.setRole('Owner');
-      this.router.navigateByUrl('owner/profile');
-    } else if (username == '2016123157' && password == 'abcd1234') {
-      this.authService.login(this.loginForm.value);
-      this.authService.setRole('PetCare');
-      this.router.navigateByUrl('petcare/profile');
-    } else {
-      alert('Usuario desconocido');
-    }
+
+    let response = this.api.authenticateUser(this.loginForm.value);
+    response.subscribe(data => {
+      this.authService.login(data);
+      if (data.role == 'Admin') {
+        this.authService.setRole('Admin');
+        this.router.navigateByUrl('admin/profile');
+      } else if (data.role == 'PetOwner') {
+        this.authService.setRole('PetOwner');
+        this.router.navigateByUrl('owner/profile');
+      } else if (data.role == 'Walker') {
+        this.authService.setRole('Walker');
+        this.router.navigateByUrl('petcare/profile');
+      }
+    }, error => {
+      Swal.fire({
+        title: '¡Error de autenticación!',
+        text: '¡Usuario o contraseña inválidos!',
+        type: 'error',
+        confirmButtonText: 'Cool'
+      });
+    });
   }
 
 }
