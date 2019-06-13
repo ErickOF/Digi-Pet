@@ -90,7 +90,8 @@ namespace WebApi
                         FirstName = "admin",
                         LastName = "admin",
                         Role = Role.Admin,
-                        DateCreated = DateTime.UtcNow
+                        DateCreated = DateTime.UtcNow,
+                        Description="no"
                     }).Wait();
                 }
             }

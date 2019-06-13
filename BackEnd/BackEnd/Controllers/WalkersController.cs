@@ -78,7 +78,7 @@ namespace WebApi.View
         [AllowAnonymous]
         // POST: api/Walkers
         [HttpPost]
-        public async Task<IActionResult> PostWalker([FromForm]WalkerDto walkerDto)
+        public async Task<IActionResult> PostWalker([FromBody]WalkerDto walkerDto)
         {
 
             var result = await _repository.CreateWalker(walkerDto);
