@@ -9,47 +9,44 @@ import { Router } from '@angular/router';
 	styleUrls: ['./tab-pet-care.component.css']
 })
 export class TabPetCareComponent implements OnInit {
-	public registerPetCare1: FormGroup;
-	public registerPetCare2: FormGroup;
+	public registerPetCare: FormGroup;
 	public isSubmitted = false;
 
 	constructor(private router: Router, private formBuilder: FormBuilder) { }
 
 	ngOnInit() {
-		this.registerPetCare1 = this.formBuilder.group(
+		this.registerPetCare = this.formBuilder.group(
 			{
-				name: ['', Validators.required],
-				lastname: ['', Validators.required],
-				canton: ['', Validators.required],
+				name: ['', Validators.compose([
+					Validators.required,
+					Validators.maxLength(30)
+				])],
+				lastname: ['', Validators.compose([
+					Validators.required,
+					Validators.maxLength(30)
+				])],
+				canton: '',
 				province: ['', Validators.required],
 				university: ['', Validators.required],
 				carnet: ['', Validators.required],
 				email1: ['', Validators.required],
-				email2: ['', Validators.unrequired],
+				email2: '',
 				telephoneNumber: ['', Validators.required],
-				password: ['', Validators.required]
-			}
-		);
-		this.registerPetCare2 = this.formBuilder.group(
-			{
+				password: ['', Validators.required],
 				photo: ['', Validators.required],
 				description: ['', Validators.required]
 			}
 		);
 	}
 
-	get petCareFormControls1() {
-		return this.registerPetCare1.controls;
-	}
-
-	get petCareFormControls2() {
-		return this.registerPetCare2.controls;
+	get petCareFormControls() {
+		return this.registerPetCare.controls;
 	}
 
 	public register() {
 		this.isSubmitted = true;
 
-		console.log(this.registerPetCare1.value, this.registerPetCare2.value);
+		console.log(this.registerPetCare.value);
+		console.log(this.registerPetCare)
 	}
-
 }
