@@ -14,7 +14,7 @@ export class OwnerGuard implements CanActivate {
 
 	canActivate(next: ActivatedRouteSnapshot, state: RouterStateSnapshot) :
   				Observable<boolean> | Promise<boolean> | boolean {
-  		return this.authService.isLoggedIn() && this.authService.getRole() == 'Owner';
+  		return this.authService.isLoggedIn() && this.authService.getRole() == 'PetOwner';
 	}
 
 }

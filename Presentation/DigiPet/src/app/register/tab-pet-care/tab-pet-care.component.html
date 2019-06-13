@@ -1,54 +1,161 @@
 <div class="row justify-text-center" style="margin: 0;">
-	<div class="col-md-6 text-center">
 
-		<form [formGroup]="registerOwner" class="register-container">
-			<div class="row">
-				<div class="col-md-6 text-center">
-					<p [ngClass]="{ 'has-error': isSubmitted && ownerFormControls.name.errors }">
-		      <input class="form-control" placeholder="Nombre" formControlName="name">
+	<form [formGroup]="registerPetCare" class="register-container col-md-12">
+		<!-- Full name -->
+		<div class="row">
+			<div class="col-md-6 text-center">
+				<p [ngClass]="{ 'has-error': isSubmitted && petCareFormControls.name.errors }">
+		     	<input type="text" class="form-control" placeholder="Nombre" formControlName="name">
+		   	</p>
+			</div>
+
+			<div class="col-md-6 text-center">
+				<p [ngClass]="{ 'has-error': isSubmitted && petCareFormControls.lastname.errors }">
+		      <input type="text" class="form-control" placeholder="Apellido" formControlName="lastname">
 		    </p>
-				</div>
+			</div>
+	  </div>
 
-				<div class="col-md-6 text-center">
-					<p [ngClass]="{ 'has-error': isSubmitted && ownerFormControls.lastname.errors }">
-		      	<input class="form-control" placeholder="Apellido" formControlName="lastname">
-		    	</p>
-				</div>
-	  	</div>
+		<div class="row">
+			<div *ngIf="isSubmitted && petCareFormControls.name.errors" class="help-block col-md-6">
+				<div class="text-error" *ngIf="petCareFormControls.name.errors.required">El nombre es requerido</div>
+				<div class="text-error" *ngIf="petCareFormControls.name.errors.maxlength">El nombre debe tener entre 1 y 30 caracteres</div>
+			</div>
+			<div *ngIf="!(isSubmitted && petCareFormControls.name.errors)" class="help-block col-md-6">
+			</div>
 
-	    <div *ngIf="isSubmitted && ownerFormControls.username.errors" class="help-block">
-	      <div *ngIf="ownerFormControls.name.errors.required">El nombre es requerido</div>
-	      <div *ngIf="ownerFormControls.lastname.errors.required">El apellido es requerido</div>
-	    </div>
+			<div *ngIf="isSubmitted && petCareFormControls.lastname.errors" class="help-block col-md-6">
+				<div class="text-error" *ngIf="petCareFormControls.lastname.errors.required">El apellido es requerido</div>
+				<div class="text-error" *ngIf="petCareFormControls.lastname.errors.maxlength">El apellido debe tener entre 1 y 30 caracteres</div>
+			</div>
+		</div>
 
-	    <p>
-	    	<select class="form-control" formControlName="province">
-          <!--<option value="">--ELEGIR PROVINCIA--</option>-->
-          <option value="1">SAN JOSE</option>
-          <option value="2">ALAJUELA</option>
-          <option value="3">CARTAGO</option>
-          <option value="4">HEREDIA</option>
-          <option value="5">GUANACASTE</option>
-          <option value="6">PUNTARENAS</option>
-          <option value="7">LIMÓN</option>
-        </select>
-	    </p>
+		<!-- Region: Province, Canton -->
+		<div class="row">
+			<div class="col-md-6 text-center">
+				<p [ngClass]="{ 'has-error': isSubmitted && petCareFormControls.province.errors }">
+					<select type="text" class="form-control" formControlName="province">
+						<option value="">--Provincia--</option>
+						<option value="1">SAN JOSE</option>
+						<option value="2">ALAJUELA</option>
+						<option value="3">CARTAGO</option>
+						<option value="4">HEREDIA</option>
+						<option value="5">GUANACASTE</option>
+						<option value="6">PUNTARENAS</option>
+						<option value="7">LIMÓN</option>
+					</select>
+				</p>
+			</div>
 
-	    <p [ngClass]="{ 'has-error': isSubmitted && ownerFormControls.password.errors }">
-	      <input class="form-control" type="password" placeholder="Contraseña" formControlName="password">
-	    </p>
+			<div class="col-md-6 text-center">
+				<p>
+					<input type="text" class="form-control" placeholder="Cantón (Opcional)" formControlName="canton">
+				</p>
+			</div>
+		</div>
 
-	    <div *ngIf="isSubmitted && ownerFormControls.password.errors" class="help-block">
-	      <div *ngIf="ownerFormControls.password.errors.required">La contraseña es requerida</div>
-	    </div>
-	  </form>
-	</div>
+		<div class="row">
+			<div *ngIf="isSubmitted && (petCareFormControls.province.errors)" class="help-block col-md-6">
+				<div class="text-error" *ngIf="petCareFormControls.province.errors.required">La provincia es requerida</div>
+			</div>
+		</div>
 
-	<div class="col-md-6 text-center">
-		<form [formGroup]="registerPet" class="register-container">
-	    <p>
-	      <input type="submit" class="btn btn-primary" value="Iniciar sesión">
-	    </p>
-	  </form>
-	</div>
+		<!-- University information -->
+		<div class="row">
+			<div class="col-md-6 text-center">
+				<p [ngClass]="{ 'has-error': isSubmitted && petCareFormControls.university.errors }">
+					<select type="text" class="form-control" formControlName="university">
+						<option value="">--Universidad--</option>
+						<option value="1">TEC</option>
+						<option value="2">UCR</option>
+						<option value="3">UNA</option>
+					</select>
+				</p>
+			</div>
+
+			<div class="col-md-6 text-center">
+				<p [ngClass]="{ 'has-error': isSubmitted && petCareFormControls.carnet.errors }">
+					<input type="text" class="form-control" placeholder="Carne" formControlName="carnet">
+				</p>
+			</div>
+		</div>
+
+		<div class="row">
+			<div *ngIf="isSubmitted && petCareFormControls.university.errors" class="help-block col-md-6">
+				<div class="text-error" *ngIf="petCareFormControls.university.errors.required">La universidad es requerida</div>
+			</div>
+			<div *ngIf="!(isSubmitted && petCareFormControls.university.errors)" class="help-block col-md-6">
+			</div>
+
+			<div *ngIf="isSubmitted && petCareFormControls.carnet.errors" class="help-block col-md-6">
+				<div class="text-error" *ngIf="petCareFormControls.carnet.errors.required">El carne es requerido</div>
+			</div>
+		</div>
+
+		<!-- Emails -->
+		<div class="row">
+			<div class="col-md-6 text-center">
+				<p [ngClass]="{ 'has-error': isSubmitted && petCareFormControls.email1.errors }">
+					<input type="text" class="form-control" placeholder="Correo 1" formControlName="email1">
+				</p>
+			</div>
+
+			<div class="col-md-6 text-center">
+				<p>
+					<input class="form-control" placeholder="Correo 2 (Opcional)" formControlName="email2">
+				</p>
+			</div>
+		</div>
+
+		<div class="row">
+			<div *ngIf="isSubmitted && (petCareFormControls.email1.errors)" class="help-block col-md-6">
+				<div class="text-error" *ngIf="petCareFormControls.email1.errors.required">El correo es requerido</div>
+			</div>
+		</div>
+
+		<!-- Telephone number & password -->
+		<div class="row">
+			<div class="col-md-6 text-center">
+				<p [ngClass]="{ 'has-error': isSubmitted && petCareFormControls.telephoneNumber.errors }">
+		     	<input type="text" class="form-control" placeholder="Número de teléfono" formControlName="telephoneNumber">
+		   	</p>
+			</div>
+
+			<div class="col-md-6 text-center">
+				<p [ngClass]="{ 'has-error': isSubmitted && petCareFormControls.password.errors }">
+		      <input type="text" class="form-control" placeholder="Contraseña" formControlName="password">
+		    </p>
+			</div>
+	  </div>
+
+		<div class="row">
+			<div *ngIf="isSubmitted && petCareFormControls.telephoneNumber.errors" class="help-block col-md-6">
+				<div class="text-error" *ngIf="petCareFormControls.telephoneNumber.errors.required">El número de teléfono es requerido</div>
+			</div>
+			<div *ngIf="!(isSubmitted && petCareFormControls.telephoneNumber.errors)" class="help-block col-md-6">
+			</div>
+
+			<div *ngIf="isSubmitted && petCareFormControls.password.errors" class="help-block col-md-6">
+				<div class="text-error" *ngIf="petCareFormControls.password.errors.required">La contraseña es requerida</div>
+			</div>
+		</div>
+
+		<!-- Description -->
+		<div class="row">
+			<p class="col-md-12" [ngClass]="{ 'has-error': isSubmitted && petCareFormControls.description.errors }">
+				<textarea type="text" class="form-control col-md-12" rows="4" placeholder="Descripción"></textarea>
+			</p>
+		</div>
+
+		<div class="row">
+			<div *ngIf="isSubmitted && petCareFormControls.description.errors" class="help-block col-md-6">
+				<div class="text-error" *ngIf="petCareFormControls.description.errors.required">La descripción es requerida</div>
+			</div>
+		</div>
+
+		<!-- Submit -->
+		<p>
+			<input type="submit" class="btn btn-primary" value="Registrarse" (click)="register()">
+		</p>
+	</form>
 </div>
