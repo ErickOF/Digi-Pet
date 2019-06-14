@@ -7,6 +7,7 @@ import Swal from 'sweetalert2';
 
 import { ApiService } from './../../services/api/api.service';
 import { AuthService } from './../../services/auth/auth.service';
+import { DataTransferService } from './../../services/data-transfer/data-transfer.service';
 
 
 class ImageSnippet {
@@ -14,13 +15,13 @@ class ImageSnippet {
 }
 
 @Component({
-  selector: 'app-tab-owner',
-  templateUrl: './tab-owner.component.html',
-  styleUrls: ['./tab-owner.component.css']
+	selector: 'app-tab-owner',
+	templateUrl: './tab-owner.component.html',
+	styleUrls: ['./tab-owner.component.css']
 })
 export class TabOwnerComponent implements OnInit {
-  public loading = false;
-  public ngxLoadingAnimationTypes = ngxLoadingAnimationTypes;
+	public loading = false;
+	public ngxLoadingAnimationTypes = ngxLoadingAnimationTypes;
 
 	public uploader: FileUploader;
 	private hasDragOver = false;
@@ -61,7 +62,8 @@ export class TabOwnerComponent implements OnInit {
 	}
 
 	constructor(private router: Router, private formBuilder: FormBuilder,
-				private api: ApiService, private authService: AuthService) {
+				private api: ApiService, private authService: AuthService,
+				private dataTransferService: DataTransferService) {
 		this.uploader = new FileUploader({
 			//url: 'http://localhost:9090/upload',
 			disableMultipart: false,
@@ -188,34 +190,34 @@ export class TabOwnerComponent implements OnInit {
 		};
 
 		let response = this.api.registerOwner(owner);
-    response.subscribe(newOwner => {
-    	let responseAuth = this.api.authenticateUser({
-    		username: ownerInfo.email1,
-    		password: ownerInfo.password
-    	});
-    	responseAuth.subscribe(data => {
-    		this.loading = false;
-    		this.authService.login(data);
-    		this.authService.setRole('PetOwner');
-      	this.router.navigateByUrl('owner/profile');
-    	}, error => {
-    		this.loading = false;
-    		Swal.fire({
-	        title: '¡Error de conexión!',
-	        text: '¡Por favor intente más tarde!',
-	        type: 'error',
-	        confirmButtonText: 'Cool'
-	      });
-    	});
-    }, error => {
-    	this.loading = false;
-    	Swal.fire({
-        title: '¡Error!',
-        text: '¡El usuario no pudo registrarse. Por favor intente más tarde!',
-        type: 'error',
-        confirmButtonText: 'Cool'
-      });
-    });
+		response.subscribe(newOwner => {
+			let responseAuth = this.api.authenticateUser({
+				username: ownerInfo.email1,
+				password: ownerInfo.password
+			});
+			responseAuth.subscribe(data => {
+				this.loading = false;
+				this.authService.login(data);
+				this.dataTransferService.setRole('PetOwner');
+				this.router.navigateByUrl('owner/profile');
+			}, error => {
+				this.loading = false;
+				Swal.fire({
+					title: '¡Error de conexión!',
+					text: '¡Por favor intente más tarde!',
+					type: 'error',
+					confirmButtonText: 'Cool'
+				});
+			});
+		}, error => {
+			this.loading = false;
+			Swal.fire({
+				title: '¡Error!',
+				text: '¡El usuario no pudo registrarse. Por favor intente más tarde!',
+				type: 'error',
+				confirmButtonText: 'Cool'
+			});
+		});
 	}
 
 }

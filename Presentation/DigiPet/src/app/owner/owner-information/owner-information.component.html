@@ -1,20 +1,63 @@
 <div class="main-content">
+	<h2 class="text-center" style="margin-bottom: 5%; margin-top: 5%;">
+		Mi Perfil
+	</h2>
 	<div class="row profile-card">
-		<div class="col-md-4"></div>
-		<div class="col-md-4">
+		<div class="col-md-12"></div>
+		<div class="col-md-12">
 			<div class="card card-user admin-add-technical">
 				<div class="card-body">
 					<div class="author">
-						<img class="avatar border-gray" src="{{image}}" alt="...">
-						<h5 class="title"><b>ID:</b> {{id}}</h5>
-						<p class="" ><b>Nombre:</b> {{name}}</p>
-					</div>
+						<div class="col-md-12 text-center" style="margin-top: 2%; margin-bottom: 5%;">
+							<img class="avatar border-gray" src="{{ image }}" alt="...">
+						</div>
+						
+						<div class="row">
+							<div class="col-md-6">
+								<p class="" ><b>Nombre:</b> {{ owner.name }}</p>
+							</div>
+							
+							<div class="col-md-6">
+								<p class="" ><b>Apellido:</b> {{ owner.lastName }}</p>
+							</div>
+						</div>
+						
+						<div class="row">
+							<div class="col-md-6">
+								<p class="" ><b>Correo 1:</b> {{ owner.email }}</p>
+							</div>
+							
+							<div class="col-md-6">
+								<p class="" ><b>Correo 2:</b> {{ owner.email2 }}</p>
+							</div>
+						</div>
 
-					<p class="text-center">
-						<b>Role:</b> {{position}}
-						<br>
-						<br> <b>Descripción:</b> {{description}}
-					</p>
+						<div class="row">
+							<div class="col-md-6">
+								<p class="" ><b>Provincia:</b> {{ owner.province }}</p>
+							</div>
+							
+							<div class="col-md-6">
+								<p class="" ><b>Canton:</b> {{ owner.canton }}</p>
+							</div>
+						</div>
+
+						<div class="row">
+							<div class="col-md-6">
+								<p class="" ><b>Número de teléfono:</b> {{ owner.mobile }}</p>
+							</div>
+							
+							<div class="col-md-6">
+								<p class="" ><b>Fecha de inscripción:</b> {{ owner.dateCreated }}</p>
+							</div>
+						</div>
+
+						<div class="row">
+							<div class="col-md-12">
+								<p class="" ><b>Descripción:</b> {{ owner.description }}</p>
+							</div>
+						</div>
+					</div>
 				</div>
 			</div>
 		</div>

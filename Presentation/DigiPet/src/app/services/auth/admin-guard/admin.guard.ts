@@ -3,18 +3,20 @@ import { CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot } from '@angul
 import { Observable } from 'rxjs';
 
 import { AuthService } from './../../auth/auth.service';
+import { DataTransferService } from './../../data-transfer/data-transfer.service';
 
 
 @Injectable({
-  providedIn: 'root'
+	providedIn: 'root'
 })
 export class AdminGuard implements CanActivate {
-  
-	constructor(private authService: AuthService) {}
+
+	constructor(private authService: AuthService,
+				private dataTransferService: DataTransferService) {}
 
 	canActivate(next: ActivatedRouteSnapshot, state: RouterStateSnapshot) :
-  				Observable<boolean> | Promise<boolean> | boolean {
-  		return this.authService.isLoggedIn() && this.authService.getRole() == 'Admin';
+				Observable<boolean> | Promise<boolean> | boolean {
+		return this.authService.isLoggedIn() && this.dataTransferService.getRole() == 'Admin';
 	}
 
 }
