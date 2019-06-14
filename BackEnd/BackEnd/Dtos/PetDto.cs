@@ -22,5 +22,8 @@ namespace WebApi.Dtos
         public string Description { get; set; }
 
         public string[] Photos { get; set; }
+
+        public int Trips { get; set; }
+        public DateTime DateCreated { get; internal set; }
     }
 }
