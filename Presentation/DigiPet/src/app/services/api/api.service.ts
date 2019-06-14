@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams } from "@angular/common/http";
 
-import { Urls } from './../../configuration/urls'
+import { Urls } from './../../configuration/urls';
 
 
 @Injectable({
@@ -9,7 +9,13 @@ import { Urls } from './../../configuration/urls'
 })
 export class ApiService {
 	
-	private httpOptions = {
+	private httpOptionsJSON = {
+		headers: new HttpHeaders({
+			'Content-Type': 'application/json'
+		})
+	};
+
+	private httpOptionsUrlEncoded = {
 		headers: new HttpHeaders({
 			'Content-Type': 'application/x-www-form-urlencoded'
 		})
@@ -17,16 +23,21 @@ export class ApiService {
 
 	constructor(private http: HttpClient) { }
 
-	public registerPetCare(PetCare) {
+	public registerPetCare(petCare) {
+		return this.http.post(Urls.baseUrl + Urls.createPetCare, petCare,
+												this.httpOptionsJSON);
 	}
 
 	public registerOwner(owner) {
+		return this.http.post(Urls.baseUrl + Urls.createOwner, owner,
+												this.httpOptionsJSON);
 	}
 
 	public authenticateUser(userLogin): any {
 		const body = new HttpParams()
-										.set('UserName', userLogin.username)
-										.set('Password', userLogin.password);
-		return this.http.post(Urls.baseUrl + Urls.authenticateUser, body, this.httpOptions)
+						.set('UserName', userLogin.username)
+						.set('Password', userLogin.password);
+		return this.http.post(Urls.baseUrl + Urls.authenticateUser, body,
+						  						this.httpOptionsUrlEncoded);
 	}
 }

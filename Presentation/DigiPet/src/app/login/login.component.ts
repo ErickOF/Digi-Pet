@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from  '@angular/forms';
+import { NgxLoadingComponent, ngxLoadingAnimationTypes } from 'ngx-loading';
 import { Router } from '@angular/router';
 import Swal from 'sweetalert2';
 
-import { ApiService } from './../services/api/api.service'
+import { ApiService } from './../services/api/api.service';
 import { AuthService } from './../services/auth/auth.service';
 import { EncryptionService } from './../services/encryption/encryption.service';
 
@@ -14,8 +15,10 @@ import { EncryptionService } from './../services/encryption/encryption.service';
   styleUrls: ['./login.component.css']
 })
 export class LoginComponent implements OnInit {
-  public loginForm: FormGroup;
   public isSubmitted = false;
+  public loading = false;
+  public loginForm: FormGroup;
+  public ngxLoadingAnimationTypes = ngxLoadingAnimationTypes;
 
   constructor(private authService: AuthService, private router: Router,
   			      private formBuilder: FormBuilder, private api: ApiService,
@@ -41,6 +44,7 @@ export class LoginComponent implements OnInit {
   		return;
   	}
 
+    this.loading = true;
     let response = this.api.authenticateUser(this.loginForm.value);
     response.subscribe(data => {
       this.authService.login(data);
@@ -54,7 +58,9 @@ export class LoginComponent implements OnInit {
         this.authService.setRole('Walker');
         this.router.navigateByUrl('petcare/profile');
       }
+      this.loading = false;
     }, error => {
+      this.loading = false;
       Swal.fire({
         title: '¡Error de autenticación!',
         text: '¡Usuario o contraseña inválidos!',

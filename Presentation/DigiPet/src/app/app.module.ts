@@ -1,8 +1,9 @@
 import { BrowserModule } from '@angular/platform-browser';
+import { FileUploadModule } from 'ng2-file-upload';
 import { FormsModule, ReactiveFormsModule} from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
-import { FileUploadModule } from 'ng2-file-upload';
+import { NgxLoadingModule, ngxLoadingAnimationTypes } from 'ngx-loading';
 
 import { MatTabsModule } from '@angular/material/tabs';
 
@@ -28,6 +29,10 @@ import { RegisterNavbarComponent } from './register/register-navbar/register-nav
 import { TabOwnerComponent } from './register/tab-owner/tab-owner.component';
 import { TabPetCareComponent } from './register/tab-pet-care/tab-pet-care.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { OwnerNavbarComponent } from './owner/owner-navbar/owner-navbar.component';
+import { OwnerInformationComponent } from './owner/owner-information/owner-information.component';
+import { OwnerPetsComponent } from './owner/owner-pets/owner-pets.component';
+import { OwnerServicesComponent } from './owner/owner-services/owner-services.component';
 
 
 @NgModule({
@@ -41,7 +46,11 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
     RegisterComponent,
     RegisterNavbarComponent,
     TabOwnerComponent,
-    TabPetCareComponent
+    TabPetCareComponent,
+    OwnerNavbarComponent,
+    OwnerInformationComponent,
+    OwnerPetsComponent,
+    OwnerServicesComponent
   ],
   imports: [
     AppRoutingModule,
@@ -51,6 +60,14 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
     FormsModule,
     HttpClientModule,
     MatTabsModule,
+    NgxLoadingModule.forRoot({
+      animationType: ngxLoadingAnimationTypes.wanderingCubes,
+      backdropBackgroundColour: 'rgba(0,0,0,0.1)', 
+      backdropBorderRadius: '4px',
+      primaryColour: '#ffffff', 
+      secondaryColour: '#ffffff', 
+      tertiaryColour: '#ffffff'
+    }),
     ReactiveFormsModule
   ],
   providers: [

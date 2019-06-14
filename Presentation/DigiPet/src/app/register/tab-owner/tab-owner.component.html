@@ -1,3 +1,259 @@
-<p>
-  tab-owner works!
-</p>
+<div class="row justify-text-center" style="margin: 0;">
+	<ngx-loading [show]="loading" [config]="{animationType: ngxLoadingAnimationTypes.circleSwish, primaryColour: primaryColour, backdropBorderRadius: '3px'}" [template]="loadingTemplate"></ngx-loading>
+	<div class="col-md-12">
+		<div class="text-center">
+			<h3><br>Mi información</h3>
+		</div>
+
+		<form [formGroup]="registerOwner" class="register-container col-md-12">
+
+			<!-- Full name -->
+			<div class="row">
+				<div class="col-md-6 text-center">
+					<p [ngClass]="{ 'has-error': isSubmitted && ownerFormControls.name.errors }">
+						<input type="text" class="form-control" placeholder="Nombre" formControlName="name">
+					</p>
+				</div>
+
+				<div class="col-md-6 text-center">
+					<p [ngClass]="{ 'has-error': isSubmitted && ownerFormControls.lastname.errors }">
+						<input type="text" class="form-control" placeholder="Apellido" formControlName="lastname">
+					</p>
+				</div>
+			</div>
+
+			<div class="row">
+				<div *ngIf="isSubmitted && ownerFormControls.name.errors" class="help-block col-md-6">
+					<div class="text-error" *ngIf="ownerFormControls.name.errors.required">El nombre es requerido</div>
+					<div class="text-error" *ngIf="ownerFormControls.name.errors.maxlength">El nombre debe tener entre 1 y 30 caracteres</div>
+				</div>
+				<div *ngIf="!(isSubmitted && ownerFormControls.name.errors)" class="help-block col-md-6">
+				</div>
+
+				<div *ngIf="isSubmitted && ownerFormControls.lastname.errors" class="help-block col-md-6">
+					<div class="text-error" *ngIf="ownerFormControls.lastname.errors.required">El apellido es requerido</div>
+					<div class="text-error" *ngIf="ownerFormControls.lastname.errors.maxlength">El apellido debe tener entre 1 y 30 caracteres</div>
+				</div>
+			</div>
+
+			<!-- Region: Province, Canton -->
+			<div class="row">
+				<div class="col-md-6 text-center">
+					<p [ngClass]="{ 'has-error': isSubmitted && ownerFormControls.province.errors }">
+						<select id="province" type="text" class="form-control" formControlName="province">
+							<option value="">--Provincia--</option>
+							<option *ngFor="let province of provinces" [value]="province.id"> {{ province.name }} </option>
+						</select>
+					</p>
+				</div>
+
+				<div class="col-md-6 text-center">
+					<p [ngClass]="{ 'has-error': isSubmitted && ownerFormControls.canton.errors }">
+						<input type="text" class="form-control" placeholder="Cantón" formControlName="canton">
+					</p>
+				</div>
+			</div>
+
+			<div class="row">
+				<div *ngIf="isSubmitted && (ownerFormControls.province.errors)" class="help-block col-md-6">
+					<div class="text-error" *ngIf="ownerFormControls.province.errors.required">La provincia es requerida</div>
+				</div>
+				<div *ngIf="!(isSubmitted && ownerFormControls.province.errors)" class="help-block col-md-6">
+				</div>
+
+				<div *ngIf="isSubmitted && (ownerFormControls.canton.errors)" class="help-block col-md-6">
+					<div class="text-error" *ngIf="ownerFormControls.canton.errors.required">El cantón es requerido</div>
+				</div>
+			</div>
+
+			<!-- Emails -->
+			<div class="row">
+				<div class="col-md-6 text-center">
+					<p [ngClass]="{ 'has-error': isSubmitted && ownerFormControls.email1.errors }">
+						<input type="text" class="form-control" placeholder="Correo 1" formControlName="email1">
+					</p>
+				</div>
+
+				<div class="col-md-6 text-center">
+					<p [ngClass]="{ 'has-error': isSubmitted && ownerFormControls.email2.errors }">
+						<input class="form-control" placeholder="Correo 2 (Opcional)" formControlName="email2">
+					</p>
+				</div>
+			</div>
+
+			<div class="row">
+				<div *ngIf="isSubmitted && (ownerFormControls.email1.errors)" class="help-block col-md-6">
+					<div class="text-error" *ngIf="ownerFormControls.email1.errors.required">El correo es requerido</div>
+					<div class="text-error" *ngIf="ownerFormControls.email1.errors.maxlength">El correo debe tener máximo 30 caracteres</div>
+					<div class="text-error" *ngIf="ownerFormControls.email1.errors.pattern">El correo no es válido</div>
+				</div>
+
+				<div *ngIf="isSubmitted && (ownerFormControls.email2.errors)" class="help-block col-md-6">
+					<div class="text-error" *ngIf="ownerFormControls.email2.errors.maxlength">El correo debe tener máximo 30 caracteres</div>
+					<div class="text-error" *ngIf="ownerFormControls.email2.errors.pattern">El correo no es válido</div>
+				</div>
+			</div>
+
+			<!-- Telephone number & password -->
+			<div class="row">
+				<div class="col-md-6 text-center">
+					<p>
+						<input type="text" class="form-control" placeholder="Número de teléfono" formControlName="telephoneNumber">
+					</p>
+				</div>
+
+				<div class="col-md-6 text-center">
+					<p [ngClass]="{ 'has-error': isSubmitted && ownerFormControls.password.errors }">
+						<input type="password" class="form-control" placeholder="Contraseña" formControlName="password">
+					</p>
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="help-block col-md-6"><label></label></div>
+
+				<div *ngIf="isSubmitted && ownerFormControls.password.errors" class="help-block col-md-6">
+					<div class="text-error" *ngIf="ownerFormControls.password.errors.required">La contraseña es requerida</div>
+					<div class="text-error" *ngIf="ownerFormControls.password.errors.maxlength || ownerFormControls.password.errors.minlength || ownerFormControls.password.errors.pattern">La contraseña es debe ser de 8 caracteres alfanumérica</div>
+				</div>
+			</div>
+
+			<!-- Description -->
+			<div class="row">
+				<p class="col-md-12" [ngClass]="{ 'has-error': isSubmitted && ownerFormControls.description.errors }">
+					<textarea type="text" class="form-control col-md-12" rows="4" placeholder="Descripción personal" formControlName="description"></textarea>
+				</p>
+			</div>
+
+			<div class="row">
+				<div *ngIf="isSubmitted && ownerFormControls.description.errors" class="help-block col-md-6">
+					<div class="text-error" *ngIf="ownerFormControls.description.errors.required">La descripción personal es requerida</div>
+					<div class="text-error" *ngIf="ownerFormControls.description.errors.maxlength">La descripción personal debe ser de máximo 300 caracteres</div>
+				</div>
+			</div>
+
+			<!-- Profile image -->
+			<div class="row">
+				<div class="col-md-12 text-center">
+					<div class="profile-picture">
+						<img *ngIf="url" width=300 height=300 src="{{ url }}" />
+							<label *ngIf="editmode" for="uploader-input" ng2FileDrop [ngClass]="{'drag-over': hasDragOver}" (fileOver)="fileOver($event)" [uploader]="uploader">
+								<div class="infotext"><span *ngIf="!url">Arrastre su foto<br>o de click para subir</span></div>
+							</label>
+						<input *ngIf="editmode" type="file" ng2FileSelect [uploader]="uploader" id="uploader-input" style="display:none" />
+					</div>
+				</div>
+			</div>
+		</form>
+	</div>
+
+	<div class="col-md-12">
+		<div class="text-center">
+			<h3><br>Mis mascotas</h3>
+		</div>
+		<form [formGroup]="registerPets">
+		  	<div formArrayName="details" class="form-group" *ngFor="let field of registerPets.get('details').controls; let ind = index;">
+			    <div [formGroupName]="ind">
+			      	<div class="row">
+						<div class="col-md-4 text-center">
+							<p [ngClass]="{ 'has-error': isSubmitted && getPetFormControls(ind).name.errors }">
+								<input type="text" class="form-control" placeholder="Nombre" formControlName="name">
+							</p>
+						</div>
+
+						<div class="col-md-4 text-center">
+							<p [ngClass]="{ 'has-error': isSubmitted && getPetFormControls(ind).breed.errors }">
+								<input type="text" class="form-control" placeholder="Raza" formControlName="breed">
+							</p>
+						</div>
+
+						<div class="col-md-4 text-center">
+							<p [ngClass]="{ 'has-error': isSubmitted && getPetFormControls(ind).age.errors }">
+								<input type="text" class="form-control" placeholder="Edad" formControlName="age">
+							</p>
+						</div>
+					</div>
+
+					<div class="row">
+						<div *ngIf="isSubmitted && getPetFormControls(ind).name.errors" class="help-block col-md-4">
+							<div class="text-error" *ngIf="getPetFormControls(ind).name.errors.required">El nombre es requerido</div>
+							<div class="text-error" *ngIf="getPetFormControls(ind).name.errors.maxlength">El nombre debe tener entre 1 y 30 caracteres</div>
+						</div>
+						<div *ngIf="!(isSubmitted && getPetFormControls(ind).name.errors)" class="help-block col-md-4">
+						</div>
+
+						<div *ngIf="isSubmitted && getPetFormControls(ind).breed.errors" class="help-block col-md-4">
+							<div class="text-error" *ngIf="getPetFormControls(ind).breed.errors.required">La raza es requerida</div>
+							<div class="text-error" *ngIf="getPetFormControls(ind).breed.errors.maxlength">La raza debe tener entre 1 y 30 caracteres</div>
+						</div>
+
+						<div *ngIf="isSubmitted && getPetFormControls(ind).age.errors" class="help-block col-md-4">
+							<div class="text-error" *ngIf="getPetFormControls(ind).age.errors.required">La edad es requerida</div>
+							<div class="text-error" *ngIf="getPetFormControls(ind).age.errors.pattern">La edad debe ser solo numérica</div>
+						</div>
+						<div *ngIf="!(isSubmitted && getPetFormControls(ind).age.errors)" class="help-block col-md-6">
+						</div>
+					</div>
+
+					<div class="row form-check-inline">
+						<div class="col-md-12">
+							<label>Tamaño</label>
+							<div class="form-check col-md-12">
+								<div class="form-check form-check-inline">
+									<input class="form-check-input" type="radio" value="S" formControlName="size" checked>
+									<label class="form-check-label">
+										S
+									</label>
+								</div>
+								<div class="form-check form-check-inline">
+									<input class="form-check-input" type="radio" value="M" formControlName="size">
+									<label class="form-check-label">
+										M
+									</label>
+								</div>
+								<div class="form-check form-check-inline">
+									<input class="form-check-input" type="radio" value="L" formControlName="size">
+									<label class="form-check-label">
+										L
+									</label>
+								</div>
+								<div class="form-check form-check-inline">
+									<input class="form-check-input" type="radio" value="XL" formControlName="size">
+									<label class="form-check-label">
+										XL
+									</label>
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<div><label></label></div>
+
+					<div class="row">
+						<p class="col-md-12">
+							<textarea type="text" class="form-control col-md-12" rows="4" placeholder="Descripción (Opcional)" formControlName="description"></textarea>
+						</p>
+					</div>
+			    	
+			    	<hr style="border-color: '#000000'">
+		    	</div>
+		 	</div>
+		</form>
+	</div>
+
+	<div class="col-md-12">
+		<div class="text-center">
+			<p>
+				<input type="submit" class="btn btn-primary" value="Agregar Otra Mascota" (click)="addPet()">
+			</p>
+		</div>
+
+		<hr style="border-color: black;">
+		<!-- Submit -->
+		<div class="text-center">
+			<p>
+				<input type="submit" class="btn btn-primary" value="Registrarse" (click)="register()">
+			</p>
+		</div>
+	</div>
+</div>
