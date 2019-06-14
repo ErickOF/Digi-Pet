@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams } from "@angular/common/http";
 
-import { Urls } from './../../configuration/urls'
+import { Urls } from './../../configuration/urls';
 
 
 @Injectable({
@@ -25,10 +25,12 @@ export class ApiService {
 
 	public registerPetCare(petCare) {
 		return this.http.post(Urls.baseUrl + Urls.createPetCare, petCare,
-													this.httpOptionsJSON);
+												this.httpOptionsJSON);
 	}
 
 	public registerOwner(owner) {
+		return this.http.post(Urls.baseUrl + Urls.createOwner, owner,
+												this.httpOptionsJSON);
 	}
 
 	public authenticateUser(userLogin): any {
@@ -36,6 +38,6 @@ export class ApiService {
 						.set('UserName', userLogin.username)
 						.set('Password', userLogin.password);
 		return this.http.post(Urls.baseUrl + Urls.authenticateUser, body,
-						  						this.httpOptionsUrlEncoded)
+						  						this.httpOptionsUrlEncoded);
 	}
 }
