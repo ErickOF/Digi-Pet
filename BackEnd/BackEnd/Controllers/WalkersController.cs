@@ -38,22 +38,19 @@ namespace WebApi.View
         }
         [Authorize(Roles ="Admin,Walker")]
         // GET: api/Walkers/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<WalkerDto>> GetWalker(int id)
+        [HttpGet("getProfile")]
+        public async Task<ActionResult<WalkerDto>> GetWalkerProfile()
         {
             var username = User.Claims.Where(c=>c.Type==ClaimTypes.Name).FirstOrDefault().Value;
             var role = User.Claims.Where(c => c.Type == ClaimTypes.Role).FirstOrDefault().Value;
-            
-            var walker = await _context.Walker.Include(w=>w.User).FirstOrDefaultAsync(u=>u.Id==id);
+
+            var walker = await _repository.GetWalkerByUserName(username);
 
             if (walker == null)
             {
-                return NotFound();
+                return NotFound(new { message="not found" });
             }
-            if (walker.User.Username != username && role != Role.Admin)
-            {
-                return Unauthorized();
-            }
+            
             var walkerDto = new WalkerDto
             {
                 SchoolId = walker.User.Username,
@@ -67,7 +64,8 @@ namespace WebApi.View
                 Canton = walker.User.Canton,
                 DoesOtherProvinces = walker.DoesOtherProvinces,
                 OtherProvinces = walker.OtherProvinces,
-                Description = walker.User.Description
+                Description = walker.User.Description,
+                DateCreated = walker.User.DateCreated
             }; 
 
 

@@ -28,6 +28,7 @@ namespace WebApi.Dtos
         public string Mobile { get; set; }
         [Required]
         public ICollection<PetDto> Pets { get; set; }
+        public DateTime DateCreated { get; internal set; }
     }
 
 }
