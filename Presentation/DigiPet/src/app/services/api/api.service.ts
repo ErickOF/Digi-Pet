@@ -23,6 +23,14 @@ export class ApiService {
 
 	constructor(private http: HttpClient) { }
 
+	public authenticateUser(userLogin): any {
+		const body = new HttpParams()
+						.set('UserName', userLogin.username)
+						.set('Password', userLogin.password);
+		return this.http.post(Urls.baseUrl + Urls.authenticateUser, body,
+						  						this.httpOptionsUrlEncoded);
+	}
+
 	public registerPetCare(petCare) {
 		return this.http.post(Urls.baseUrl + Urls.createPetCare, petCare,
 												this.httpOptionsJSON);
@@ -31,13 +39,5 @@ export class ApiService {
 	public registerOwner(owner) {
 		return this.http.post(Urls.baseUrl + Urls.createOwner, owner,
 												this.httpOptionsJSON);
-	}
-
-	public authenticateUser(userLogin): any {
-		const body = new HttpParams()
-						.set('UserName', userLogin.username)
-						.set('Password', userLogin.password);
-		return this.http.post(Urls.baseUrl + Urls.authenticateUser, body,
-						  						this.httpOptionsUrlEncoded);
 	}
 }

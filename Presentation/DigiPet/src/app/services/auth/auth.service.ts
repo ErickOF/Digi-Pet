@@ -1,29 +1,25 @@
 import { Injectable } from '@angular/core';
 
+import { DataTransferService } from './../data-transfer/data-transfer.service';
+
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
 
-  public login(userInfo) {
-    localStorage.setItem('ACCESS_TOKEN', "access_token");
+  constructor(private dataTransferService: DataTransferService) {}
+
+  public login(token) {
+    this.dataTransferService.setAccessToken(token);
   }
 
   public logout() {
-    localStorage.removeItem('ACCESS_TOKEN');
+    this.dataTransferService.deleteAccessToken();
   }
 
   public isLoggedIn() {
-    return localStorage.getItem('ACCESS_TOKEN') !== null;
-  }
-
-  public getRole() {
-    return sessionStorage.getItem('ROLE');
-  }
-
-  public setRole(role) {
-    sessionStorage.setItem('ROLE', role);
+    return this.dataTransferService.getAccessToken() !== null;
   }
 
 }

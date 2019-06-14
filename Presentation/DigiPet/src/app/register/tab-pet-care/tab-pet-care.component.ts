@@ -7,10 +7,11 @@ import Swal from 'sweetalert2';
 
 import { ApiService } from './../../services/api/api.service';
 import { AuthService } from './../../services/auth/auth.service';
+import { DataTransferService } from './../../services/data-transfer/data-transfer.service';
 
 
 class ImageSnippet {
-  constructor(public src: string, public file: File) {}
+	constructor(public src: string, public file: File) {}
 }
 
 @Component({
@@ -57,7 +58,8 @@ export class TabPetCareComponent implements OnInit {
 	}
 
 	constructor(private router: Router, private formBuilder: FormBuilder,
-				private api: ApiService, private authService: AuthService) {
+				private api: ApiService, private authService: AuthService,
+				private dataTransferService: DataTransferService) {
 		this.uploader = new FileUploader({
 			//url: 'http://localhost:9090/upload',
 			disableMultipart: false,
@@ -174,11 +176,11 @@ export class TabPetCareComponent implements OnInit {
 				username: petCare.SchoolId,
 				password: petCare.Password
 			});
-	    	
+
 			responseAuth.subscribe(data => {
 				this.loading = false;
 				this.authService.login(data);
-				this.authService.setRole('Walker');
+				this.dataTransferService.setRole('Walker');
 				this.router.navigateByUrl('petcare/profile');
 			}, error => {
 				this.loading = false;
