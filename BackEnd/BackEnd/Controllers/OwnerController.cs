@@ -36,7 +36,7 @@ namespace WebApi.Controllers
             var owners =await _repository.GetOwners();
             return Ok(owners);
         }
-        [Authorize(Roles = "Admin,Owner")]
+        [Authorize(Roles = "Admin,PetOwner")]
         // GET: api/Owners/5
         [HttpGet("{id}")]
         public async Task<ActionResult<OwnerDto>> GetOwner(int id)
@@ -63,7 +63,9 @@ namespace WebApi.Controllers
                 Mobile = owner.User.Mobile,
                 Province = owner.User.Province,
                 Canton = owner.User.Canton,
-                Description = owner.User.Description
+                Description = owner.User.Description,
+                Pets = owner.Pets.Select(p => new PetDto {Id=p.Id,Name=p.Name,Race=p.Race,Age=p.Age,Size=p.Size,Description=p.Description,Photos=p.Photos }).ToList()
+                
             };
             return ownerDto;
         }

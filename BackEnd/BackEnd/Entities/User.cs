@@ -17,8 +17,10 @@ namespace WebApi.Entities
         public string LastName { get; set; }
         [Required]
         public string Username { get; set; }
-        [Required]
-        public string Password { get; set; }
+        [Required,MinLength(64),MaxLength(64)]
+        public byte[] PasswordHash { get; set; }
+        [Required,MinLength(128),MaxLength(128)]
+        public byte[] PasswordSalt { get; set; }
         public string Province { get; set; }
         public string Canton { get; set; }
         [DataType(DataType.EmailAddress)]
@@ -27,7 +29,6 @@ namespace WebApi.Entities
 
         [Required]
         public string Role { get; set; }
-        public string Token { get; set; }
         [Required]
         public DateTime DateCreated { get; set; }
         [Required]
