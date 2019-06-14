@@ -2,6 +2,10 @@ import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { FileUploader } from 'ng2-file-upload';
 import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from  '@angular/forms';
 import { Router } from '@angular/router';
+import Swal from 'sweetalert2';
+
+import { ApiService } from './../../services/api/api.service';
+import { AuthService } from './../../services/auth/auth.service';
 
 
 class ImageSnippet {
@@ -48,7 +52,8 @@ export class TabPetCareComponent implements OnInit {
 		this.hasDragOver = e;
 	}
 
-	constructor(private router: Router, private formBuilder: FormBuilder) {
+	constructor(private router: Router, private formBuilder: FormBuilder,
+							private api: ApiService, private authService: AuthService) {
 		this.uploader = new FileUploader({
 			//url: 'http://localhost:9090/upload',
 			disableMultipart: false,
@@ -74,7 +79,7 @@ export class TabPetCareComponent implements OnInit {
 					Validators.maxLength(30)
 				])],
 				province: ['', Validators.required],
-				canton: '',
+				canton: ['', Validators.required],
 				university: ['', Validators.required],
 				carnet: ['', Validators.compose([
 					Validators.required,
@@ -106,7 +111,7 @@ export class TabPetCareComponent implements OnInit {
 					Validators.required,
 					Validators.maxLength(300)
 				])],
-				acceptWalks: 'false',
+				doesOtherProvinces: 'false',
 				provinces: new FormArray([])
 			}
 		);
@@ -125,11 +130,62 @@ export class TabPetCareComponent implements OnInit {
 		});
 	}
 
+	private getOtherProvinces(boolProvinces): any {
+		let otherProvinces: any = [];
+		for (let i = 0; i < boolProvinces.length; i++) {
+			if (boolProvinces[i]) {
+				otherProvinces.push(this.provinces[i].name);
+			}
+		}
+		return otherProvinces;
+	}
+
 	public register() {
 		this.isSubmitted = true;
 
-		console.log(this.registerPetCare.value);
-		console.log(this.registerPetCare)
+		let petCareInfo = this.registerPetCare.value;
+		let petCare = {
+			"SchoolId": petCareInfo.carnet,
+			"Password": petCareInfo.password,
+			"Name": petCareInfo.name,
+			"LastName": petCareInfo.lastname,
+			"Email": petCareInfo.email1,
+			"Email2": petCareInfo.email2,
+			"Mobile": petCareInfo.telephoneNumber,
+			"University": petCareInfo.university,
+			"Province": petCareInfo.province,
+			"Canton": petCareInfo.canton,
+			"DoesOtherProvinces": petCareInfo.doesOtherProvinces,
+			"OtherProvinces": this.getOtherProvinces(petCareInfo.provinces),
+			"Description": petCareInfo.description
+		};
+
+		let response = this.api.registerPetCare(petCare);
+    response.subscribe(newPetCare => {
+    	let responseAuth = this.api.authenticateUser({
+    		username: petCare.SchoolId,
+    		password: petCare.Password
+    	});
+    	responseAuth.subscribe(data => {
+    		this.authService.login(data);
+    		this.authService.setRole('Walker');
+      	this.router.navigateByUrl('petcare/profile');
+    	}, error => {
+    		Swal.fire({
+	        title: '¡Error de conexión!',
+	        text: '¡Por favor intente más tarde!',
+	        type: 'error',
+	        confirmButtonText: 'Cool'
+	      });
+    	});
+    }, error => {
+    	Swal.fire({
+        title: '¡Error!',
+        text: '¡El usuario no pudo registrarse. Por favor intente más tarde!',
+        type: 'error',
+        confirmButtonText: 'Cool'
+      });
+    });
 	}
-	
+
 }
