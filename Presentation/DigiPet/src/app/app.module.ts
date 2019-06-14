@@ -29,6 +29,10 @@ import { RegisterNavbarComponent } from './register/register-navbar/register-nav
 import { TabOwnerComponent } from './register/tab-owner/tab-owner.component';
 import { TabPetCareComponent } from './register/tab-pet-care/tab-pet-care.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { OwnerNavbarComponent } from './owner/owner-navbar/owner-navbar.component';
+import { OwnerInformationComponent } from './owner/owner-information/owner-information.component';
+import { OwnerPetsComponent } from './owner/owner-pets/owner-pets.component';
+import { OwnerServicesComponent } from './owner/owner-services/owner-services.component';
 
 
 @NgModule({
@@ -42,7 +46,11 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
     RegisterComponent,
     RegisterNavbarComponent,
     TabOwnerComponent,
-    TabPetCareComponent
+    TabPetCareComponent,
+    OwnerNavbarComponent,
+    OwnerInformationComponent,
+    OwnerPetsComponent,
+    OwnerServicesComponent
   ],
   imports: [
     AppRoutingModule,

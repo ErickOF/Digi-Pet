@@ -9,6 +9,6 @@ export class Urls {
 	public static createPetCare: string = 'api/Walkers';
 	public static getAllOwners: string = 'api/Owners';
 	public static getPet: string = 'api/Pets/';
-	public static getOwner: string = 'api/Owners/';
+	public static getOwner: string = 'api/Owners/getprofile';
 	public static getProfilePetCare: string = 'api/walkers/';
 }
