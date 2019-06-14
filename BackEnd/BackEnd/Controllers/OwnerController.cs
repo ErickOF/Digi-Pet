@@ -49,11 +49,6 @@ namespace WebApi.Controllers
             {
                 return NotFound();
             }
-
-            if (owner.User.Username != username && role != Role.Admin)
-            {
-                return Unauthorized();
-            }
             var ownerDto = new OwnerDto
             {
                 Name = owner.User.FirstName,

@@ -17,12 +17,14 @@ namespace WebApi.Services
 {
     public interface IUserService
     {
-        Task<AuthedUser> AuthenticateAsync(string username, string password);
+        Task<Tuple<AuthedUser, string>> AuthenticateAsync(string username, string password);
         User GetById(int id);
         IEnumerable<User> GetAll();
         void CreatePasswordHash(string password, out byte[] passwordHash, out byte[] passwordSalt);
 
         User CreateUser(User user, string password);
+        Task<bool> BlockWalker(int id);
+        Task<bool> UnBlockWalker(int id);
         bool UsernameExists(string v);
         Task<bool> PersistUser(User user);
     }
@@ -39,16 +41,24 @@ namespace WebApi.Services
             _dbContext = dbContext;
         }
 
-        public async Task<AuthedUser> AuthenticateAsync(string username, string password)
+        public async Task<Tuple<AuthedUser,string>> AuthenticateAsync(string username, string password)
         {
             var user = await _dbContext.Users.FirstOrDefaultAsync(x => x.Username == username );
 
             // return null if user not found
             if (user == null)
-                return null;
+                return new Tuple<AuthedUser,string>(null, "Username or password is incorrect");
+            if (user.Role == Role.Walker)
+            {
+                var walker = await _dbContext.Walker.FirstOrDefaultAsync(w => w.UserId == user.Id);
+                if(walker.Blocked)
+                {
+                    return new Tuple<AuthedUser, string>(null, "user blocked");
+                }
+            }
 
             if (!VerifyPasswordHash(password, user.PasswordHash, user.PasswordSalt))
-                return null;
+                return new Tuple<AuthedUser, string>(null, "Username or password is incorrect");
 
             var authedUser = new AuthedUser { UserName=user.Username, FirstName=user.FirstName,LastName=user.LastName,Email=user.Email, Role=user.Role };
             // authentication successful so generate jwt token
@@ -67,7 +77,7 @@ namespace WebApi.Services
             var token = tokenHandler.CreateToken(tokenDescriptor);
 
             authedUser.Token = tokenHandler.WriteToken(token);
-            return authedUser;
+            return new Tuple<AuthedUser, string> (authedUser,"success");
 
         }
 
@@ -145,5 +155,29 @@ namespace WebApi.Services
            
         }
 
+        public async Task<bool> BlockWalker(int id)
+        {
+            var walker = await _dbContext.Walker.FindAsync(id);
+            if (walker == null)
+            {
+                return false;
+            }
+            walker.Blocked = true;
+            var result = await _dbContext.SaveChangesAsync();
+            
+            return true;
+        }
+
+        public async Task<bool> UnBlockWalker(int id)
+        {
+            var walker = await _dbContext.Walker.FindAsync(id);
+            if (walker == null)
+            {
+                return false;
+            }
+            walker.Blocked = false;
+            var result = await _dbContext.SaveChangesAsync();
+            return true;
+        }
     }
 }

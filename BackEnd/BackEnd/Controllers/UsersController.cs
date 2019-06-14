@@ -24,12 +24,12 @@ namespace WebApi.Controllers
         [HttpPost("authenticate")]
         public async Task<IActionResult> Authenticate([FromForm]AuthenticateDto userParam)
         {
-            var user = await _userService.AuthenticateAsync(userParam.UserName, userParam.Password);
+            var result = await _userService.AuthenticateAsync(userParam.UserName, userParam.Password);
 
-            if (user == null)
-                return BadRequest(new { message = "Username or password is incorrect" });
+            if (result.Item1 == null)
+                return BadRequest(new { message = result.Item2 });
 
-            return Ok(user);
+            return Ok(result.Item1);
         }
 
         [AllowAnonymous]

@@ -46,6 +46,10 @@ namespace WebApi.View
 
             var walker = await _repository.GetWalkerByUserName(username);
 
+            if (walker == null)
+            {
+                return NotFound(new { message="not found" });
+            }
             
             var walkerDto = new WalkerDto
             {
