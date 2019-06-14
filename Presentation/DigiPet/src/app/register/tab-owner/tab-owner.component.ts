@@ -24,6 +24,8 @@ export class TabOwnerComponent implements OnInit {
 
 	public imageSrc: string;
 	public isSubmitted = false;
+	public pets = [];
+
 	public provinces = [
 		{ id: 0, name: 'San Jose' },
 		{ id: 1, name: 'Alajuela' },
@@ -35,6 +37,7 @@ export class TabOwnerComponent implements OnInit {
 	]
 
 	public registerOwner: FormGroup;
+	public registerPets: FormGroup;
 	public universities = [
 		{ id: 0, name: 'TEC'},
 		{ id: 1, name: 'UCR'},
@@ -103,38 +106,96 @@ export class TabOwnerComponent implements OnInit {
 				Validators.maxLength(300)
 			])]
 		});
+
+		this.pets.push(this.createPet());
+
+		this.registerPets = this.formBuilder.group({
+			details: this.formBuilder.array(this.pets)
+		});
 	}
 
 	get ownerFormControls() {
 		return this.registerOwner.controls;
 	}
 
+	public addPet() {
+		const details = this.registerPets.get('details') as FormArray;
+		details.push(this.createPet());
+	}
+
+	private createPet(): FormGroup {
+		return this.formBuilder.group({
+			name: ['', Validators.compose([
+				Validators.required,
+				Validators.maxLength(30)
+			])],
+			breed: ['', Validators.compose([
+				Validators.required,
+				Validators.maxLength(30)
+			])],
+			age: ['', Validators.compose([
+				Validators.required,
+				Validators.pattern('^[0-9]*$')
+			])],
+			size: 'S',
+			photos: '',
+			description: ['', Validators.maxLength(300)]
+		});
+	}
+
+	public getPetFormControls(index: number) {
+		return ((this.registerPets.get('details') as FormArray).controls[index] as FormGroup).controls;
+	}
+
+	private getPets(): any {
+		let pets = [];
+		let petsInfo = this.registerPets.value.details;
+		for (let i = 0; i < petsInfo.length; i++) {
+			let petInfo = petsInfo[i];
+			pets.push({
+				"Name": petInfo.name,
+				"Race": petInfo.breed,
+				"Age": petInfo.age,
+				"Size": petInfo.size,
+				"Description": petInfo.description
+			});
+		}
+		return pets;
+	}
+
 	public register() {
 		this.isSubmitted = true;
+		if (!this.registerOwner.valid || !this.registerPets.valid) {
+			return;
+		}
 
-		let petCareInfo = this.registerOwner.value;
-		let petCare = {
-			"Password": petCareInfo.password,
-			"Name": petCareInfo.name,
-			"LastName": petCareInfo.lastname,
-			"Email": petCareInfo.email1,
-			"Email2": petCareInfo.email2,
-			"Mobile": petCareInfo.telephoneNumber,
-			"Province": petCareInfo.province,
-			"Canton": petCareInfo.canton,
-			"Description": petCareInfo.description
+		let ownerInfo = this.registerOwner.value;
+		let owner = {
+			"Password": ownerInfo.password,
+			"Name": ownerInfo.name,
+			"LastName": ownerInfo.lastname,
+			"Email": ownerInfo.email1,
+			//"Email2": ownerInfo.email2,
+			"Mobile": ownerInfo.telephoneNumber,
+			"Province": ownerInfo.province,
+			"Canton": ownerInfo.canton,
+			"Description": ownerInfo.description,
+			"Pets": this.getPets()
 		};
-		/*
-		let response = this.api.registerOwner(petCare);
-    response.subscribe(newPetCare => {
+
+		console.log(owner);
+
+		let response = this.api.registerOwner(owner);
+    response.subscribe(newOwner => {
     	let responseAuth = this.api.authenticateUser({
-    		username: petCare.SchoolId,
-    		password: petCare.Password
+    		username: ownerInfo.email1,
+    		password: ownerInfo.password
     	});
     	responseAuth.subscribe(data => {
+    		console.log(data);
     		this.authService.login(data);
-    		this.authService.setRole('Walker');
-      	this.router.navigateByUrl('petcare/profile');
+    		this.authService.setRole('PetOwner');
+      	this.router.navigateByUrl('owner/profile');
     	}, error => {
     		Swal.fire({
 	        title: '¡Error de conexión!',
@@ -144,6 +205,7 @@ export class TabOwnerComponent implements OnInit {
 	      });
     	});
     }, error => {
+    	console.log(error);
     	Swal.fire({
         title: '¡Error!',
         text: '¡El usuario no pudo registrarse. Por favor intente más tarde!',
@@ -151,7 +213,6 @@ export class TabOwnerComponent implements OnInit {
         confirmButtonText: 'Cool'
       });
     });
-    */
 	}
 
 }
