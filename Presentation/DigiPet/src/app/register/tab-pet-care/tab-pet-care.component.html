@@ -1,4 +1,5 @@
 <div class="row justify-text-center" style="margin: 0;">
+	<ngx-loading [show]="loading" [config]="{animationType: ngxLoadingAnimationTypes.circleSwish, primaryColour: primaryColour, backdropBorderRadius: '3px'}" [template]="loadingTemplate"></ngx-loading>
 
 	<form [formGroup]="registerPetCare" class="register-container col-md-12">
 		<!-- Full name -->

@@ -1,6 +1,7 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { FileUploader } from 'ng2-file-upload';
 import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from  '@angular/forms';
+import { NgxLoadingComponent, ngxLoadingAnimationTypes } from 'ngx-loading';
 import { Router } from '@angular/router';
 import Swal from 'sweetalert2';
 
@@ -18,6 +19,9 @@ class ImageSnippet {
 	styleUrls: ['./tab-pet-care.component.css']
 })
 export class TabPetCareComponent implements OnInit {
+	public loading = false;
+	public ngxLoadingAnimationTypes = ngxLoadingAnimationTypes;
+
 	public uploader: FileUploader;
 	private hasDragOver = false;
 
@@ -53,7 +57,7 @@ export class TabPetCareComponent implements OnInit {
 	}
 
 	constructor(private router: Router, private formBuilder: FormBuilder,
-							private api: ApiService, private authService: AuthService) {
+				private api: ApiService, private authService: AuthService) {
 		this.uploader = new FileUploader({
 			//url: 'http://localhost:9090/upload',
 			disableMultipart: false,
@@ -68,53 +72,51 @@ export class TabPetCareComponent implements OnInit {
 	}
 
 	ngOnInit() {
-		this.registerPetCare = this.formBuilder.group(
-			{
-				name: ['', Validators.compose([
-					Validators.required,
-					Validators.maxLength(30)
-				])],
-				lastname: ['', Validators.compose([
-					Validators.required,
-					Validators.maxLength(30)
-				])],
-				province: ['', Validators.required],
-				canton: ['', Validators.required],
-				university: ['', Validators.required],
-				carnet: ['', Validators.compose([
-					Validators.required,
-					Validators.maxLength(10)
-				])],
-				email1: ['', Validators.compose([
-					Validators.required,
-					Validators.maxLength(30),
-					Validators.pattern('^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+.[a-zA-Z0-9-.]+$')
-				])],
-				email2: ['', Validators.compose([
-					Validators.maxLength(30),
-					Validators.pattern('^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+.[a-zA-Z0-9-.]+$')
-				])],
-				telephoneNumber: ['', Validators.compose([
-					Validators.required,
-					Validators.maxLength(10),
-					Validators.minLength(8),
-					Validators.pattern('^[0-9]*$')
-				])],
-				password: ['', Validators.compose([
-					Validators.required,
-					Validators.maxLength(8),
-					Validators.minLength(8),
-					Validators.pattern('^(?=.*[a-zA-Z])(?=.*[0-9]).+$')
-				])],
-				photo: '',
-				description: ['', Validators.compose([
-					Validators.required,
-					Validators.maxLength(300)
-				])],
-				doesOtherProvinces: 'false',
-				provinces: new FormArray([])
-			}
-		);
+		this.registerPetCare = this.formBuilder.group({
+			name: ['', Validators.compose([
+				Validators.required,
+				Validators.maxLength(30)
+			])],
+			lastname: ['', Validators.compose([
+				Validators.required,
+				Validators.maxLength(30)
+			])],
+			province: ['', Validators.required],
+			canton: ['', Validators.required],
+			university: ['', Validators.required],
+			carnet: ['', Validators.compose([
+				Validators.required,
+				Validators.maxLength(10)
+			])],
+			email1: ['', Validators.compose([
+				Validators.required,
+				Validators.maxLength(30),
+				Validators.pattern('^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+.[a-zA-Z0-9-.]+$')
+			])],
+			email2: ['', Validators.compose([
+				Validators.maxLength(30),
+				Validators.pattern('^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+.[a-zA-Z0-9-.]+$')
+			])],
+			telephoneNumber: ['', Validators.compose([
+				Validators.required,
+				Validators.maxLength(10),
+				Validators.minLength(8),
+				Validators.pattern('^[0-9]*$')
+			])],
+			password: ['', Validators.compose([
+				Validators.required,
+				Validators.maxLength(8),
+				Validators.minLength(8),
+				Validators.pattern('^(?=.*[a-zA-Z])(?=.*[0-9]).+$')
+			])],
+			photo: '',
+			description: ['', Validators.compose([
+				Validators.required,
+				Validators.maxLength(300)
+			])],
+			doesOtherProvinces: 'false',
+			provinces: new FormArray([])
+		});
 
 		this.addCheckboxes();
 	}
@@ -143,6 +145,12 @@ export class TabPetCareComponent implements OnInit {
 	public register() {
 		this.isSubmitted = true;
 
+		if (!this.registerPetCare.valid) {
+			return;
+		}
+
+		this.loading = true;
+
 		let petCareInfo = this.registerPetCare.value;
 		let petCare = {
 			"SchoolId": petCareInfo.carnet,
@@ -161,31 +169,35 @@ export class TabPetCareComponent implements OnInit {
 		};
 
 		let response = this.api.registerPetCare(petCare);
-    response.subscribe(newPetCare => {
-    	let responseAuth = this.api.authenticateUser({
-    		username: petCare.SchoolId,
-    		password: petCare.Password
-    	});
-    	responseAuth.subscribe(data => {
-    		this.authService.login(data);
-    		this.authService.setRole('Walker');
-      	this.router.navigateByUrl('petcare/profile');
-    	}, error => {
-    		Swal.fire({
-	        title: '¡Error de conexión!',
-	        text: '¡Por favor intente más tarde!',
-	        type: 'error',
-	        confirmButtonText: 'Cool'
-	      });
-    	});
-    }, error => {
-    	Swal.fire({
-        title: '¡Error!',
-        text: '¡El usuario no pudo registrarse. Por favor intente más tarde!',
-        type: 'error',
-        confirmButtonText: 'Cool'
-      });
-    });
+		response.subscribe(newPetCare => {
+			let responseAuth = this.api.authenticateUser({
+				username: petCare.SchoolId,
+				password: petCare.Password
+			});
+	    	
+			responseAuth.subscribe(data => {
+				this.loading = false;
+				this.authService.login(data);
+				this.authService.setRole('Walker');
+				this.router.navigateByUrl('petcare/profile');
+			}, error => {
+				this.loading = false;
+				Swal.fire({
+					title: '¡Error de conexión!',
+					text: '¡Por favor intente más tarde!',
+					type: 'error',
+					confirmButtonText: 'Cool'
+				});
+			});
+		}, error => {
+			this.loading = false;
+			Swal.fire({
+				title: '¡Error!',
+				text: '¡El usuario no pudo registrarse. Por favor intente más tarde!',
+				type: 'error',
+				confirmButtonText: 'Cool'
+			});
+		});
 	}
 
 }

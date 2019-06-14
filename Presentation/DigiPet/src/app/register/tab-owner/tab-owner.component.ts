@@ -1,6 +1,7 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { FileUploader } from 'ng2-file-upload';
-import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from  '@angular/forms';
+import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { NgxLoadingComponent, ngxLoadingAnimationTypes } from 'ngx-loading';
 import { Router } from '@angular/router';
 import Swal from 'sweetalert2';
 
@@ -18,6 +19,8 @@ class ImageSnippet {
   styleUrls: ['./tab-owner.component.css']
 })
 export class TabOwnerComponent implements OnInit {
+  public loading = false;
+  public ngxLoadingAnimationTypes = ngxLoadingAnimationTypes;
 
 	public uploader: FileUploader;
 	private hasDragOver = false;
@@ -169,21 +172,20 @@ export class TabOwnerComponent implements OnInit {
 			return;
 		}
 
+		this.loading = true;
 		let ownerInfo = this.registerOwner.value;
 		let owner = {
 			"Password": ownerInfo.password,
 			"Name": ownerInfo.name,
 			"LastName": ownerInfo.lastname,
 			"Email": ownerInfo.email1,
-			//"Email2": ownerInfo.email2,
+			"Email2": ownerInfo.email2,
 			"Mobile": ownerInfo.telephoneNumber,
 			"Province": ownerInfo.province,
 			"Canton": ownerInfo.canton,
 			"Description": ownerInfo.description,
 			"Pets": this.getPets()
 		};
-
-		console.log(owner);
 
 		let response = this.api.registerOwner(owner);
     response.subscribe(newOwner => {
@@ -192,11 +194,12 @@ export class TabOwnerComponent implements OnInit {
     		password: ownerInfo.password
     	});
     	responseAuth.subscribe(data => {
-    		console.log(data);
+    		this.loading = false;
     		this.authService.login(data);
     		this.authService.setRole('PetOwner');
       	this.router.navigateByUrl('owner/profile');
     	}, error => {
+    		this.loading = false;
     		Swal.fire({
 	        title: '¡Error de conexión!',
 	        text: '¡Por favor intente más tarde!',
@@ -205,7 +208,7 @@ export class TabOwnerComponent implements OnInit {
 	      });
     	});
     }, error => {
-    	console.log(error);
+    	this.loading = false;
     	Swal.fire({
         title: '¡Error!',
         text: '¡El usuario no pudo registrarse. Por favor intente más tarde!',
