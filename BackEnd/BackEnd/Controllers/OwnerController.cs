@@ -38,13 +38,13 @@ namespace WebApi.Controllers
         }
         [Authorize(Roles = "Admin,PetOwner")]
         // GET: api/Owners/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<OwnerDto>> GetOwner(int id)
+        [HttpGet("getprofile")]
+        public async Task<ActionResult<OwnerDto>> GetOwnerProfile()
         {
             var username = User.Claims.Where(c => c.Type == ClaimTypes.Name).FirstOrDefault().Value;
             var role = User.Claims.Where(c => c.Type == ClaimTypes.Role).FirstOrDefault().Value;
 
-            var owner = await _repository.GetOwner(id);
+            var owner = await _repository.GetOwnerByUserName(username);
             if (owner == null)
             {
                 return NotFound();
@@ -64,6 +64,7 @@ namespace WebApi.Controllers
                 Province = owner.User.Province,
                 Canton = owner.User.Canton,
                 Description = owner.User.Description,
+                DateCreated = owner.User.DateCreated,
                 Pets = owner.Pets.Select(p => new PetDto {Id=p.Id,Name=p.Name,Race=p.Race,Age=p.Age,Size=p.Size,Description=p.Description,Photos=p.Photos }).ToList()
                 
             };

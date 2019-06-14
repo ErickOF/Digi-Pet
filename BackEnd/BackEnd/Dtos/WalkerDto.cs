@@ -34,5 +34,6 @@ namespace WebApi.Dtos
         public string Mobile { get; set; }
         [Required]
         public string Description { get; set; }
+        public DateTime DateCreated { get; internal set; }
     }
 }

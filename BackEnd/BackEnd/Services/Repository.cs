@@ -19,6 +19,8 @@ namespace WebApi.Services
         Task<Petowner> GetUserByUserName(string username);
         Task<IEnumerable<Petowner>> GetOwners();
         Task<Petowner> GetOwner(int id);
+        Task<Petowner> GetOwnerByUserName(string username);
+        Task<Walker> GetWalkerByUserName(string username);
     }
     public class Repository : IRepository
     {
@@ -146,6 +148,17 @@ namespace WebApi.Services
         public async Task<Petowner> GetOwner(int id)
         {
             return await _dbContext.Owners.Include(o => o.Pets).Include(o=>o.User).FirstOrDefaultAsync(u => u.Id==id);
+        }
+
+
+        public async Task<Petowner> GetOwnerByUserName(string username)
+        {
+            return await _dbContext.Owners.Include(o => o.Pets).Include(o => o.User).FirstOrDefaultAsync(u => u.User.Username==username);
+        }
+
+        public async Task<Walker> GetWalkerByUserName(string username)
+        {
+            return await _dbContext.Walker.Include(o => o.User).FirstOrDefaultAsync(u => u.User.Username == username);
         }
     }
 }
