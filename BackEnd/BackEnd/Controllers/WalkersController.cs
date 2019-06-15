@@ -13,7 +13,7 @@ using WebApi.Model;
 using WebApi.Models;
 using WebApi.Services;
 
-namespace WebApi.View
+namespace WebApi.Controllers
 {
     [Authorize]
     [Route("api/[controller]")]
