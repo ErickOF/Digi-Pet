@@ -19,6 +19,7 @@ using System.IO;
 using Microsoft.AspNetCore.Mvc.ApplicationParts;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.AspNetCore.Mvc.ViewComponents;
+using System.Net.Http.Headers;
 
 namespace XUnitTestProject1
 {
@@ -27,6 +28,7 @@ namespace XUnitTestProject1
     {
 
         private readonly HttpClient _client;
+        private const string AdminToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1bmlxdWVfbmFtZSI6ImFkbWluIiwicm9sZSI6IkFkbWluIiwibmJmIjoxNTYwNDQxOTc3LCJleHAiOjE1NjEwNDY3NzcsImlhdCI6MTU2MDQ0MTk3N30.90FQh9uNVfYGhWWHnyeuBIZ45-7AYvEYhRPCQOSc1_M";
 
 
         public Test()
@@ -108,7 +110,26 @@ namespace XUnitTestProject1
             var content = new StringContent(serializedObj, Encoding.UTF8, "application/json");
             var response = await _client.PostAsync(url, content);
             response.EnsureSuccessStatusCode();
+            var stringResponse = await response.Content.ReadAsStringAsync();
+            var parsedResponse = JsonConvert.DeserializeObject<CreatedWalkerResponse>(stringResponse);
 
+            Assert.Equal(obj.SchoolId, parsedResponse.userName);
+            Assert.NotNull(parsedResponse.id);
+
+            //ruta para eliminar usuario
+            var urlDelteUser = $"/users/delete/{obj.SchoolId}";
+            //usar el token de admin
+            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", AdminToken);
+
+            var res = await _client.DeleteAsync(urlDelteUser);
+            res.EnsureSuccessStatusCode();
+            var stringResponse2 = await res.Content.ReadAsStringAsync();
+            var parsedMessage2 = JsonConvert.DeserializeObject<MessageResponse>(stringResponse2);
+
+            Assert.Equal($"{obj.SchoolId} deleted",
+               parsedMessage2.Message);
+            //limpiar los headers
+            _client.DefaultRequestHeaders.Clear();
         }
         [Fact]
         public async Task CreateWalker_FailsOn_DuplicatedSchoolId()
@@ -150,6 +171,11 @@ namespace XUnitTestProject1
         {
             public string Message { get; set; }
 
+        }
+        class CreatedWalkerResponse
+        {
+            public string id { get; set; }
+            public string userName { get; set; }
         }
     }
 }

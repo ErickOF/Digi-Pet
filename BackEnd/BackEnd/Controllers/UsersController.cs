@@ -38,14 +38,6 @@ namespace WebApi.Controllers
             return Ok(result.Item1);
         }
 
-        [AllowAnonymous]
-        [HttpPost]
-        public IActionResult Create([FromForm] User user)
-        {
-
-            return Ok();
-        }
-
        
         [HttpGet]
         public IActionResult GetAll()
@@ -77,7 +69,7 @@ namespace WebApi.Controllers
         {
             bool result = await _userService.DeleteUser(username);
             if (result)
-                return Ok( new { mesage = $"{username} deleted" });
+                return Ok( new { message = $"{username} deleted" });
             else return BadRequest(new { message = "error"});
         }
     }
