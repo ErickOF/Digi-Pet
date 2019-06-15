@@ -30,9 +30,20 @@ namespace WebApi.Controllers
         public async Task<ActionResult<ICollection<PetDto>>> GetAll(){
             var username = User.Claims.Where(c => c.Type == ClaimTypes.Name).FirstOrDefault().Value;
 
-            var owner =await _repository.GetUserByUserName(username);
+            var owner =await _repository.GetOwnerByUserName(username);
 
-            var pets = owner.Pets.Select(p=>new PetDto {Id=p.Id,Name=p.Name,Race=p.Race, Age=p.Age,Size=p.Size,Description=p.Description,Photos=p.Photos }).ToList();
+            var pets = owner.Pets.Select(p => new PetDto
+            {
+                Id = p.Id,
+                Name = p.Name,
+                Race = p.Race,
+                Age = p.Age,
+                Size = p.Size,
+                Description = p.Description,
+                Photos = p.Photos,
+                Trips = p.WalksQuant,
+                DateCreated = p.DateCreated
+            }).ToList();
             return pets;
 
         }
@@ -42,7 +53,7 @@ namespace WebApi.Controllers
         {
             var username = User.Claims.Where(c => c.Type == ClaimTypes.Name).FirstOrDefault().Value;
      
-            var owner = await _repository.GetUserByUserName(username);
+            var owner = await _repository.GetOwnerByUserName(username);
             if (owner == null)
             {
                 return NotFound();
@@ -61,7 +72,9 @@ namespace WebApi.Controllers
                 Age = pet.Age,
                 Size = pet.Size,
                 Description = pet.Description,
-                Photos = pet.Photos
+                Photos = pet.Photos,
+                Trips = pet.WalksQuant,
+                DateCreated = pet.DateCreated
             };
 
 
@@ -73,7 +86,7 @@ namespace WebApi.Controllers
         {
             var username = User.Claims.Where(c => c.Type == ClaimTypes.Name).FirstOrDefault().Value;
 
-            var owner = await _repository.GetUserByUserName(username);
+            var owner = await _repository.GetOwnerByUserName(username);
             if (owner == null)
             {
                 return NotFound();

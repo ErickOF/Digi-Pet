@@ -16,10 +16,9 @@ namespace WebApi.Services
         Task<Tuple<Walker, string>> CreateWalker( WalkerDto walkerDto);
         Task<Tuple<Petowner, string>> CreateOwner(OwnerDto walkerDto);
         Task<Tuple<Pet, string>> CreatePet(PetDto petDto, int ownerId);
-        Task<Petowner> GetUserByUserName(string username);
+        Task<Petowner> GetOwnerByUserName(string username);
         Task<IEnumerable<Petowner>> GetOwners();
         Task<Petowner> GetOwner(int id);
-        Task<Petowner> GetOwnerByUserName(string username);
         Task<Walker> GetWalkerByUserName(string username);
     }
     public class Repository : IRepository
@@ -116,9 +115,13 @@ namespace WebApi.Services
                 }
             }
         }
-        public async Task<Petowner> GetUserByUserName(string username)
+        public async Task<Petowner> GetOwnerByUserName(string username)
         {
-            return await _dbContext.Owners.Include(o => o.User).Include(o => o.Pets).FirstOrDefaultAsync(u => u.User.Username == username);
+            return await _dbContext.Owners
+                .Include(o => o.User)
+                .Include(o => o.Pets)
+                .ThenInclude(p=>p.Walks)
+                .FirstOrDefaultAsync(u => u.User.Username == username);
         }
 
         public async Task<Tuple<Pet, string>> CreatePet(PetDto petDto, int ownerId)
@@ -151,10 +154,6 @@ namespace WebApi.Services
         }
 
 
-        public async Task<Petowner> GetOwnerByUserName(string username)
-        {
-            return await _dbContext.Owners.Include(o => o.Pets).Include(o => o.User).FirstOrDefaultAsync(u => u.User.Username==username);
-        }
 
         public async Task<Walker> GetWalkerByUserName(string username)
         {
