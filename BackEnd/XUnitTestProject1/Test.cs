@@ -152,13 +152,19 @@ namespace XUnitTestProject1
             var serializedObj = JsonConvert.SerializeObject(obj);
             var content = new StringContent(serializedObj, Encoding.UTF8, "application/json");
             var response = await _client.PostAsync(url, content);
-            Assert.Equal(HttpStatusCode.BadRequest,response.StatusCode);
+            response.EnsureSuccessStatusCode();
+            
+            //debe fallar al volver a postear el mismo usuario
+            response = await _client.PostAsync(url, content);
+            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
 
             var serialResponse = await response.Content.ReadAsStringAsync();
             var parsedMessage = JsonConvert.DeserializeObject<MessageResponse>(serialResponse);
 
             Assert.Equal("error creating user: 23505: duplicate key value violates unique constraint \"AK_Users_Username\"",
                parsedMessage.Message);
+
+            var res = DeleteUser(obj.SchoolId);
 
 
         }
@@ -199,22 +205,27 @@ namespace XUnitTestProject1
             await CheckProfileOwner(obj, ownerToken);
 
 
-            //ruta para eliminar usuario
-            var urlDelteUser = $"/users/delete/{obj.Email}";
-            //usar el token de admin
-            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", AdminToken);
-
-            var res = await _client.DeleteAsync(urlDelteUser);
+            //eliminar usuario
+            var res = await DeleteUser(obj.Email);
             res.EnsureSuccessStatusCode();
             var stringResponse2 = await res.Content.ReadAsStringAsync();
             var parsedMessage2 = JsonConvert.DeserializeObject<MessageResponse>(stringResponse2);
 
             Assert.Equal($"{obj.Email} deleted",
                parsedMessage2.Message);
-            //limpiar los headers
-            _client.DefaultRequestHeaders.Clear();
+            
+          
         }
 
+        internal async Task<HttpResponseMessage> DeleteUser(string username)
+        {
+            var urlDelteUser = $"/users/delete/{username}";
+            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", AdminToken);
+            var res = await _client.DeleteAsync(urlDelteUser);
+            //limpiar los headers
+            _client.DefaultRequestHeaders.Clear();
+            return res;
+        }
         internal async Task CheckProfileOwner(OwnerDto ownerDto, string ownerToken)
         {
             _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", ownerToken);
