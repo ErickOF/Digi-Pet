@@ -15,7 +15,8 @@ export class UsersService {
 		return this.http.post(Urls.baseUrl + Urls.activePetCare + id, {},
 						{
 							headers: new HttpHeaders()
-								.set('Authorization', `Bearer ${token}`)
+								.set('Authorization', `Bearer ${token}`),
+							observe: 'response'
 						});
 	}
 
@@ -23,7 +24,8 @@ export class UsersService {
 		return this.http.post(Urls.baseUrl + Urls.blockPetCare + id, {},
 						{
 							headers: new HttpHeaders()
-								.set('Authorization', `Bearer ${token}`)
+								.set('Authorization', `Bearer ${token}`),
+							observe: 'response'
 						});
 	}
 

@@ -2,6 +2,7 @@
 	<div class="row profile-card" *ngFor="let petCare of petCares;">
 		<div class="col-md-12">
 			<div class="card card-user">
+				<ngx-loading [show]="loading"></ngx-loading>
 				<div class="card-body">
 					<div class="author">
 						<div class="row">
