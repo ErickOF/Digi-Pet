@@ -126,7 +126,17 @@ namespace WebApi.Services
 
         public async Task<Tuple<Pet, string>> CreatePet(PetDto petDto, int ownerId)
         {
-            var pet = new Pet { Name=petDto.Name, Race=petDto.Race,Age=petDto.Age, Size=petDto.Size,Description=petDto.Description, Photos=petDto.Photos, PetOwnerId=ownerId };
+            var pet = new Pet
+            {
+                Name = petDto.Name,
+                Race = petDto.Race,
+                Age = petDto.Age,
+                Size = petDto.Size,
+                Description = petDto.Description,
+                Photos = petDto.Photos,
+                PetOwnerId = ownerId,
+                DateCreated= DateTime.UtcNow
+            };
             try
             {
                 _dbContext.Add(pet);

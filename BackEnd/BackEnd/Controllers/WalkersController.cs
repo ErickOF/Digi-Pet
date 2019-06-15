@@ -13,7 +13,7 @@ using WebApi.Model;
 using WebApi.Models;
 using WebApi.Services;
 
-namespace WebApi.View
+namespace WebApi.Controllers
 {
     [Authorize]
     [Route("api/[controller]")]
@@ -90,5 +90,7 @@ namespace WebApi.View
         {
             return _context.Walker.Any(e => e.Id == id);
         }
+
+        
     }
 }

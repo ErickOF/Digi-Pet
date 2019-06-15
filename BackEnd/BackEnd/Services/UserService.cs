@@ -27,6 +27,7 @@ namespace WebApi.Services
         Task<bool> UnBlockWalker(int id);
         bool UsernameExists(string v);
         Task<bool> PersistUser(User user);
+        Task<bool> DeleteUser(string username);
     }
 
     public class UserService : IUserService
@@ -85,8 +86,11 @@ namespace WebApi.Services
             var user = _dbContext.Users.FirstOrDefault(x => x.Id == id);
 
             // return user without password
-            if (user != null) 
+            if (user != null)
+            {
                 user.PasswordHash = null;
+                user.PasswordSalt = null;
+            }
 
             return user;
         }
@@ -94,7 +98,7 @@ namespace WebApi.Services
         public IEnumerable<User> GetAll()
         {
             var users = _dbContext.Users.ToList();
-            return users.Select(u => { u.PasswordHash = null; return u; });
+            return users.Select(u => { u.PasswordHash = u.PasswordSalt= null; return u; });
         }
 
         public void CreatePasswordHash(string password, out byte[] passwordHash, out byte[] passwordSalt)
@@ -179,6 +183,23 @@ namespace WebApi.Services
             walker.Blocked = false;
             var result = await _dbContext.SaveChangesAsync();
             return true;
+        }
+
+        public async Task<bool> DeleteUser(string username)
+        {
+            var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.Username == username);
+            if (user == null) return false;
+            try
+            {
+                var res = _dbContext.Users.Remove(user);
+
+                await _dbContext.SaveChangesAsync();
+                return true;
+            }catch
+            {
+                return false;
+            }
+            
         }
     }
 }

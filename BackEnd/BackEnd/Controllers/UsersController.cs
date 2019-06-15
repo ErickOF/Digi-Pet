@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace WebApi.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = Role.Admin)]
     [ApiController]
     [Route("[controller]")]
     public class UsersController : ControllerBase
@@ -38,15 +38,7 @@ namespace WebApi.Controllers
             return Ok(result.Item1);
         }
 
-        [AllowAnonymous]
-        [HttpPost]
-        public IActionResult Create([FromForm] User user)
-        {
-
-            return Ok();
-        }
-
-        [Authorize(Roles = Role.Admin)]
+       
         [HttpGet]
         public IActionResult GetAll()
         {
@@ -70,6 +62,15 @@ namespace WebApi.Controllers
             }
 
             return Ok(user);
+        }
+
+        [HttpDelete("delete/{username}")]
+        public async Task<IActionResult> DeleteUser(string username)
+        {
+            bool result = await _userService.DeleteUser(username);
+            if (result)
+                return Ok( new { message = $"{username} deleted" });
+            else return BadRequest(new { message = "error"});
         }
     }
 }
