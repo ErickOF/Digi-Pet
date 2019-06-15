@@ -61,7 +61,7 @@ import { OwnerServicesComponent } from './owner/owner-services/owner-services.co
     HttpClientModule,
     MatTabsModule,
     NgxLoadingModule.forRoot({
-      animationType: ngxLoadingAnimationTypes.wanderingCubes,
+      animationType: ngxLoadingAnimationTypes.circleSwish,
       backdropBackgroundColour: 'rgba(0,0,0,0.1)', 
       backdropBorderRadius: '4px',
       primaryColour: '#ffffff', 

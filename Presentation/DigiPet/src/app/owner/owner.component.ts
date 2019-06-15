@@ -19,6 +19,7 @@ export class OwnerComponent implements OnInit {
 		let token = this.dataTransferService.getAccessToken().token;
 		let response = this.usersService.getOwner(token);
 		response.subscribe( data => {
+			console.log(data);
 			this.dataTransferService.setUserInformation(data);
 		}, error => {
 			console.log(error);

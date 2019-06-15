@@ -1,7 +1,7 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { FileUploader } from 'ng2-file-upload';
 import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-import { NgxLoadingComponent, ngxLoadingAnimationTypes } from 'ngx-loading';
+import { NgxLoadingComponent } from 'ngx-loading';
 import { Router } from '@angular/router';
 import Swal from 'sweetalert2';
 
@@ -11,7 +11,7 @@ import { DataTransferService } from './../../services/data-transfer/data-transfe
 
 
 class ImageSnippet {
-  constructor(public src: string, public file: File) {}
+	constructor(public src: string, public file: File) {}
 }
 
 @Component({
@@ -21,7 +21,6 @@ class ImageSnippet {
 })
 export class TabOwnerComponent implements OnInit {
 	public loading = false;
-	public ngxLoadingAnimationTypes = ngxLoadingAnimationTypes;
 
 	public uploader: FileUploader;
 	private hasDragOver = false;
@@ -49,10 +48,10 @@ export class TabOwnerComponent implements OnInit {
 	];
 
 	@Input()
-	private editmode = true;
+	public editmode = true;
 
 	@Input()
-	private url = '';
+	public url = '';
 
 	@Output()
 	private urlChange = new EventEmitter();
@@ -121,6 +120,10 @@ export class TabOwnerComponent implements OnInit {
 
 	get ownerFormControls() {
 		return this.registerOwner.controls;
+	}
+
+	get registerPetsControls() {
+		return (this.registerPets.get('details') as FormArray).controls;
 	}
 
 	public addPet() {

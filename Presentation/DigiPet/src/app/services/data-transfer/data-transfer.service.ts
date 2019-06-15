@@ -17,11 +17,11 @@ export class DataTransferService {
   }
 
   public getRole() {
-    return sessionStorage.getItem('ROLE');
+    return localStorage.getItem('ROLE');
   }
 
   public getUserInformation() {
-    return JSON.parse(sessionStorage.getItem('USER_INFO'));
+    return JSON.parse(localStorage.getItem('USER_INFO'));
   }
 
   public setAccessToken(token) {
@@ -29,11 +29,11 @@ export class DataTransferService {
   }
 
   public setRole(role) {
-    sessionStorage.setItem('ROLE', role);
+    localStorage.setItem('ROLE', role);
   }
 
   public setUserInformation(userInformation) {
-  	sessionStorage.setItem('USER_INFO', JSON.stringify(userInformation));
+  	localStorage.setItem('USER_INFO', JSON.stringify(userInformation));
   }
 
 }

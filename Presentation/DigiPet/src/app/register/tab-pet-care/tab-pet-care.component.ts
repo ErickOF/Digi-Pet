@@ -1,7 +1,7 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { FileUploader } from 'ng2-file-upload';
 import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from  '@angular/forms';
-import { NgxLoadingComponent, ngxLoadingAnimationTypes } from 'ngx-loading';
+import { NgxLoadingComponent } from 'ngx-loading';
 import { Router } from '@angular/router';
 import Swal from 'sweetalert2';
 
@@ -21,7 +21,6 @@ class ImageSnippet {
 })
 export class TabPetCareComponent implements OnInit {
 	public loading = false;
-	public ngxLoadingAnimationTypes = ngxLoadingAnimationTypes;
 
 	public uploader: FileUploader;
 	private hasDragOver = false;
@@ -45,10 +44,10 @@ export class TabPetCareComponent implements OnInit {
 	];
 
 	@Input()
-	private editmode = true;
+	public editmode = true;
 
 	@Input()
-	private url = '';
+	public url = '';
 
 	@Output()
 	private urlChange = new EventEmitter();
