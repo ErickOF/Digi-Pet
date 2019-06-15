@@ -15,7 +15,7 @@ using WebApi.Services;
 
 namespace WebApi.Controllers
 {
-    [Authorize]
+    [Authorize(Roles =Role.Petowner)]
     [Route("api/[controller]")]
     [ApiController]
     public class OwnersController : ControllerBase
@@ -68,7 +68,7 @@ namespace WebApi.Controllers
 
 
         [AllowAnonymous]
-        // POST: api/Walkers
+        // POST: api/Owners
         [HttpPost]
         public async Task<IActionResult> PostOwner([FromBody]OwnerDto ownerDto)
         {
@@ -76,6 +76,13 @@ namespace WebApi.Controllers
             var result = await _repository.CreateOwner(ownerDto);
             if (result.Item1 != null) return Ok(new { id = result.Item1.Id, UserName = result.Item1.User.Username });
             else return BadRequest(new { message = $"error creating user: {result.Item2}" });
+        }
+
+        [HttpPost("requestWalk")]
+        public async Task<IActionResult> PostWalkRequest([FromBody] WalkRequestDto walkRequestDto)
+        {
+
+            return Ok(walkRequestDto);
         }
 
     }
