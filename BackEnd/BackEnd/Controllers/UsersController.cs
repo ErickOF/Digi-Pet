@@ -75,7 +75,10 @@ namespace WebApi.Controllers
         [HttpDelete("delete/{username}")]
         public async Task<IActionResult> DeleteUser(string username)
         {
-            return Ok(username);
+            bool result = await _userService.DeleteUser(username);
+            if (result)
+                return Ok( new { mesage = $"{username} deleted" });
+            else return BadRequest(new { message = "error"});
         }
     }
 }

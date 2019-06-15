@@ -27,6 +27,7 @@ namespace WebApi.Services
         Task<bool> UnBlockWalker(int id);
         bool UsernameExists(string v);
         Task<bool> PersistUser(User user);
+        Task<bool> DeleteUser(string username);
     }
 
     public class UserService : IUserService
@@ -182,6 +183,23 @@ namespace WebApi.Services
             walker.Blocked = false;
             var result = await _dbContext.SaveChangesAsync();
             return true;
+        }
+
+        public async Task<bool> DeleteUser(string username)
+        {
+            var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.Username == username);
+            if (user == null) return false;
+            try
+            {
+                var res = _dbContext.Users.Remove(user);
+
+                await _dbContext.SaveChangesAsync();
+                return true;
+            }catch
+            {
+                return false;
+            }
+            
         }
     }
 }
