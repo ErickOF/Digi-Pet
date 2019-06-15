@@ -1,3 +1,97 @@
-<p>
-  pet-care-information works!
-</p>
+<div class="main-content">
+	<h2 class="text-center" style="margin-bottom: 5%; margin-top: 5%;">
+		Mi Perfil
+	</h2>
+	<div class="row profile-card">
+		<div class="col-md-12"></div>
+		<div class="col-md-12">
+			<div class="card card-user admin-add-technical">
+				<div class="card-body">
+					<div class="author">
+						<div class="col-md-12 text-center" style="margin-top: 2%; margin-bottom: 5%;">
+							<img class="avatar border-gray" src="{{ image }}" alt="...">
+						</div>
+
+						<div class="row">
+							<div class="col-md-6">
+								<p class="" ><b>Nota de Paseos:</b> {{ petCare.rating }}</p>
+							</div>
+							
+							<div class="col-md-6">
+								<p class="" ><b>Cantidad de Paseos:</b> {{ petCare.trips }}</p>
+							</div>
+						</div>
+						
+						<div class="row">
+							<div class="col-md-6">
+								<p class="" ><b>Nombre:</b> {{ petCare.name }}</p>
+							</div>
+							
+							<div class="col-md-6">
+								<p class="" ><b>Apellido:</b> {{ petCare.lastName }}</p>
+							</div>
+						</div>
+
+						<div class="row">
+							<div class="col-md-6">
+								<p class="" ><b>Universidad:</b> {{ petCare.university }}</p>
+							</div>
+							
+							<div class="col-md-6">
+								<p class="" ><b>Carné:</b> {{ petCare.schoolId }}</p>
+							</div>
+						</div>
+						
+						<div class="row">
+							<div class="col-md-6">
+								<p class="" ><b>Correo 1:</b> {{ petCare.email }}</p>
+							</div>
+							
+							<div class="col-md-6">
+								<p class="" ><b>Correo 2:</b> {{ petCare.email2 }}</p>
+							</div>
+						</div>
+
+						<div class="row">
+							<div class="col-md-6">
+								<p class="" ><b>Provincia:</b> {{ petCare.province }}</p>
+							</div>
+							
+							<div class="col-md-6">
+								<p class="" ><b>Canton:</b> {{ petCare.canton }}</p>
+							</div>
+						</div>
+
+						<div class="row">
+							<div class="col-md-6">
+								<p class="" ><b>Número de teléfono:</b> {{ petCare.mobile }}</p>
+							</div>
+							
+							<div class="col-md-6">
+								<p class="" ><b>Fecha de inscripción:</b> {{ petCare.dateCreated }}</p>
+							</div>
+						</div>
+
+						<div class="row">
+							<div class="col-md-12">
+								<p class="" ><b>Descripción:</b> {{ petCare.description }}</p>
+							</div>
+						</div>
+
+						<div class="row">
+							<div class="col-md-12">
+								<p class="" ><b>¿Acepta paseos en otras provincias?</b> {{ petCare.doesOtherProvinces }}</p>
+							</div>
+						</div>
+
+						<div class="row" *ngIf="petCare.doesOtherProvinces == 'Sí'">
+							<div class="col-md-12">
+								<p class="" ><b>Provincias:</b> {{ petCare.otherProvinces }}</p>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

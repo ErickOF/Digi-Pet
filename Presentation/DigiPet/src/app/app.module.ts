@@ -39,6 +39,11 @@ import { PetCareHistoryComponent } from './pet-care/pet-care-history/pet-care-hi
 import { PetCareReportsComponent } from './pet-care/pet-care-reports/pet-care-reports.component';
 import { PetCareServicesComponent } from './pet-care/pet-care-services/pet-care-services.component';
 import { PetCareScheduleComponent } from './pet-care/pet-care-schedule/pet-care-schedule.component';
+import { AdminNavbarComponent } from './admin/admin-navbar/admin-navbar.component';
+import { AdminInformationComponent } from './admin/admin-information/admin-information.component';
+import { AdminPetCaresComponent } from './admin/admin-pet-cares/admin-pet-cares.component';
+import { AdminBusinessReportsComponent } from './admin/admin-business-reports/admin-business-reports.component';
+import { AdminUserReportsComponent } from './admin/admin-user-reports/admin-user-reports.component';
 
 
 @NgModule({
@@ -62,7 +67,12 @@ import { PetCareScheduleComponent } from './pet-care/pet-care-schedule/pet-care-
     PetCareHistoryComponent,
     PetCareReportsComponent,
     PetCareServicesComponent,
-    PetCareScheduleComponent
+    PetCareScheduleComponent,
+    AdminNavbarComponent,
+    AdminInformationComponent,
+    AdminPetCaresComponent,
+    AdminBusinessReportsComponent,
+    AdminUserReportsComponent
   ],
   imports: [
     AppRoutingModule,
