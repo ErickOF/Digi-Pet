@@ -17,7 +17,7 @@ export class PetCareInformationComponent implements OnInit  {
 		this.petCare = this.dataTransferService.getUserInformation();
 		this.petCare.dateCreated = this.petCare.dateCreated.split('T')[0];
 		this.petCare.doesOtherProvinces = this.petCare.doesOtherProvinces? "Sí" : "No";
-		this.petCare.otherProvinces = this.petCare.otherProvinces.join(', ')
+		this.petCare.otherProvinces = this.petCare.otherProvinces.join(', ');
 	}
 
 	ngOnInit() {

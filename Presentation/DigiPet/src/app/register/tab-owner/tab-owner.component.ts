@@ -1,18 +1,15 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
-import { FileUploader } from 'ng2-file-upload';
 import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { NgxLoadingComponent } from 'ngx-loading';
+import { Observable } from "rxjs";
 import { Router } from '@angular/router';
 import Swal from 'sweetalert2';
 
 import { ApiService } from './../../services/api/api.service';
 import { AuthService } from './../../services/auth/auth.service';
 import { DataTransferService } from './../../services/data-transfer/data-transfer.service';
+import { ImgUploadService } from './../../services/uploads/img-upload/img-upload.service';
 
-
-class ImageSnippet {
-	constructor(public src: string, public file: File) {}
-}
 
 @Component({
 	selector: 'app-tab-owner',
@@ -20,60 +17,38 @@ class ImageSnippet {
 	styleUrls: ['./tab-owner.component.css']
 })
 export class TabOwnerComponent implements OnInit {
-	public loading = false;
-
-	public uploader: FileUploader;
-	private hasDragOver = false;
-
-	public imageSrc: string;
+	public downloadURL: Observable<string>;
 	public isSubmitted = false;
+	public loading = false;
+	public loadingImg = false;
+	public loadingImgsPets = [];
 	public pets = [];
-
-	public provinces = [
-		{ id: 0, name: 'San Jose' },
-		{ id: 1, name: 'Alajuela' },
-		{ id: 2, name: 'Cartago' },
-		{ id: 3, name: 'Heredia' },
-		{ id: 4, name: 'Guanacaste' },
-		{ id: 5, name: 'Puntarenas' },
-		{ id: 6, name: 'Limón' }
-	]
-
 	public registerOwner: FormGroup;
 	public registerPets: FormGroup;
-	public universities = [
-		{ id: 0, name: 'TEC'},
-		{ id: 1, name: 'UCR'},
-		{ id: 2, name: 'UNA'}
+	public uploadPercent: Observable<number>;
+	public url = '';
+	public urlsPets = [];
+
+	public provinces = [
+		{ id: 'San Jose', name: 'San Jose' },
+		{ id: 'Alajuela', name: 'Alajuela' },
+		{ id: 'Cartago', name: 'Cartago' },
+		{ id: 'Heredia', name: 'Heredia' },
+		{ id: 'Guanacaste', name: 'Guanacaste' },
+		{ id: 'Puntarenas', name: 'Puntarenas' },
+		{ id: 'Limón', name: 'Limón' }
 	];
 
-	@Input()
-	public editmode = true;
-
-	@Input()
-	public url = '';
-
-	@Output()
-	private urlChange = new EventEmitter();
-	
-	public fileOver(e: any): void {
-		this.hasDragOver = e;
-	}
+	public universities = [
+		{ id: 'TEC', name: 'TEC' },
+		{ id: 'UCR', name: 'UCR' },
+		{ id: 'UNA', name: 'UNA' }
+	];
 
 	constructor(private router: Router, private formBuilder: FormBuilder,
 				private api: ApiService, private authService: AuthService,
-				private dataTransferService: DataTransferService) {
-		this.uploader = new FileUploader({
-			//url: 'http://localhost:9090/upload',
-			disableMultipart: false,
-			autoUpload: true
-		});
-
-		this.uploader.response.subscribe(res => {
-			// Upload returns a JSON with the image IDx
-			this.url = 'http://localhost:9090/get/' + JSON.parse(res).id;
-			this.urlChange.emit(this.url);
-		});
+				private dataTransferService: DataTransferService,
+				private imgUploadService: ImgUploadService) {
 	}
 
 	ngOnInit() {
@@ -112,6 +87,8 @@ export class TabOwnerComponent implements OnInit {
 		});
 
 		this.pets.push(this.createPet());
+		this.loadingImgsPets.push([false, false, false, false, false]);
+		this.urlsPets.push(['', '', '', '', '']);
 
 		this.registerPets = this.formBuilder.group({
 			details: this.formBuilder.array(this.pets)
@@ -129,6 +106,8 @@ export class TabOwnerComponent implements OnInit {
 	public addPet() {
 		const details = this.registerPets.get('details') as FormArray;
 		details.push(this.createPet());
+		this.loadingImgsPets.push([false, false, false, false, false]);
+		this.urlsPets.push(['', '', '', '', '']);
 	}
 
 	private createPet(): FormGroup {
@@ -173,7 +152,13 @@ export class TabOwnerComponent implements OnInit {
 
 	public register() {
 		this.isSubmitted = true;
+		
 		if (!this.registerOwner.valid || !this.registerPets.valid) {
+			return;
+		}
+
+		if (this.url == '') {
+			this.showErrorMsg('¡Sin foto de perfil!', 'Debe seleccionar su foto de perfil');
 			return;
 		}
 
@@ -189,8 +174,11 @@ export class TabOwnerComponent implements OnInit {
 			"Province": ownerInfo.province,
 			"Canton": ownerInfo.canton,
 			"Description": ownerInfo.description,
-			"Pets": this.getPets()
+			"Pets": this.getPets(),
+			"Photo": this.url
 		};
+
+		console.log(owner);
 
 		let response = this.api.registerOwner(owner);
 		response.subscribe(newOwner => {
@@ -205,21 +193,53 @@ export class TabOwnerComponent implements OnInit {
 				this.router.navigateByUrl('owner/profile');
 			}, error => {
 				this.loading = false;
-				Swal.fire({
-					title: '¡Error de conexión!',
-					text: '¡Por favor intente más tarde!',
-					type: 'error',
-					confirmButtonText: 'Cool'
-				});
+				this.showErrorMsg('¡Error de conexión!','¡Por favor intente más tarde!');
 			});
 		}, error => {
 			this.loading = false;
-			Swal.fire({
-				title: '¡Error!',
-				text: '¡El usuario no pudo registrarse. Por favor intente más tarde!',
-				type: 'error',
-				confirmButtonText: 'Cool'
-			});
+			this.showErrorMsg('¡Error!', '¡El usuario no pudo registrarse. Por favor intente más tarde!');
+		});
+	}
+
+	private showErrorMsg(title: string, msg: string) {
+		Swal.fire({
+			title: title,
+			text: msg,
+			type: 'error',
+			confirmButtonText: 'Cool'
+		});
+	}
+
+	public uploadFile(event) {
+		this.loadingImg = true;
+		let file = event.target.files[0];
+		delete event.target.files;
+		if (!file) {
+			this.loadingImg = true;
+			return;
+		}
+		let filePath = file.name.split('.')[0];
+		this.uploadPercent = this.imgUploadService.uploadFile(filePath, file);
+		this.uploadPercent.subscribe(data => {
+			if (data == 100) {
+				this.downloadURL = this.imgUploadService.getImage(filePath);
+				this.downloadURL.subscribe(url => {
+					this.url = url;
+					this.loadingImg = false;
+				}, error => {
+					if (data == 100) {
+						this.downloadURL = this.imgUploadService.getImage(filePath);
+						this.downloadURL.subscribe(url => {
+							this.url = url;
+							this.loadingImg = false;
+						}, error => {
+							this.loadingImg = false;
+						});
+					}
+				});
+			}
+		}, error => {
+			this.loadingImg = false;
 		});
 	}
 

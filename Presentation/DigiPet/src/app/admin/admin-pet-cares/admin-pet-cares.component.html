@@ -7,7 +7,7 @@
 					<div class="author">
 						<div class="row">
 							<div class="text-center col-md-4" style="margin-top: 2%; margin-bottom: 5%;">
-								<img class="avatar border-gray" src="{{ image }}" alt="...">
+								<img class="avatar border-gray" width=250 height=250 src="{{ petCare.photo || image }}" alt="...">
 							</div>
 							
 							<div class="col-md-8">
@@ -27,7 +27,17 @@
 									</div>
 
 									<div class="col-md-6">
-										<p class="" ><b>Carné:</b> {{ petCare.schoolId }}</p>
+										<p class="" ><b>Carné:</b> {{ petCare.userName }}</p>
+									</div>
+								</div>
+
+								<div class="row">
+									<div class="col-md-6">
+										<p class="" ><b>Correos:</b> {{ petCare.email }} <br>{{ petCare.email2 }}</p>
+									</div>
+
+									<div class="col-md-6">
+										<p class="" ><b>Número de teléfono:</b> {{ petCare.mobile }}</p>
 									</div>
 								</div>
 
@@ -42,6 +52,10 @@
 								</div>
 
 								<div class="row">
+									<div class="col-md-6">
+										<p class="" ><b>Fecha de inscripción:</b> {{ petCare.dateCreated.split('T')[0] }}</p>
+									</div>
+
 									<div class="col-md-6">
 										<p *ngIf="petCare.blocked" class="" ><b>Estado:</b><label class="blocked">Bloqueado</label></p>
 										<p *ngIf="!petCare.blocked" class="" ><b>Estado:</b><label class="active">Activo</label></p>

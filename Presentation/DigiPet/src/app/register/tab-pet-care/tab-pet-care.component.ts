@@ -26,19 +26,19 @@ export class TabPetCareComponent implements OnInit {
 	public url = '';
 
 	public provinces = [
-		{ id: 0, name: 'San Jose' },
-		{ id: 1, name: 'Alajuela' },
-		{ id: 2, name: 'Cartago' },
-		{ id: 3, name: 'Heredia' },
-		{ id: 4, name: 'Guanacaste' },
-		{ id: 5, name: 'Puntarenas' },
-		{ id: 6, name: 'Limón' }
+		{ id: 'San Jose', name: 'San Jose' },
+		{ id: 'Alajuela', name: 'Alajuela' },
+		{ id: 'Cartago', name: 'Cartago' },
+		{ id: 'Heredia', name: 'Heredia' },
+		{ id: 'Guanacaste', name: 'Guanacaste' },
+		{ id: 'Puntarenas', name: 'Puntarenas' },
+		{ id: 'Limón', name: 'Limón' }
 	];
 
 	public universities = [
-		{ id: 0, name: 'TEC'},
-		{ id: 1, name: 'UCR'},
-		{ id: 2, name: 'UNA'}
+		{ id: 'TEC', name: 'TEC' },
+		{ id: 'UCR', name: 'UCR' },
+		{ id: 'UNA', name: 'UNA' }
 	];
 
 	constructor(private router: Router, private formBuilder: FormBuilder,
@@ -146,7 +146,8 @@ export class TabPetCareComponent implements OnInit {
 			"Canton": petCareInfo.canton,
 			"DoesOtherProvinces": petCareInfo.doesOtherProvinces,
 			"OtherProvinces": this.getOtherProvinces(petCareInfo.provinces),
-			"Description": petCareInfo.description
+			"Description": petCareInfo.description,
+			"Photo": this.url
 		};
 
 		let response = this.api.registerPetCare(petCare);
