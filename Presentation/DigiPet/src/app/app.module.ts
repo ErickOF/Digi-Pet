@@ -33,6 +33,12 @@ import { OwnerNavbarComponent } from './owner/owner-navbar/owner-navbar.componen
 import { OwnerInformationComponent } from './owner/owner-information/owner-information.component';
 import { OwnerPetsComponent } from './owner/owner-pets/owner-pets.component';
 import { OwnerServicesComponent } from './owner/owner-services/owner-services.component';
+import { PetCareInformationComponent } from './pet-care/pet-care-information/pet-care-information.component';
+import { PetCareNavbarComponent } from './pet-care/pet-care-navbar/pet-care-navbar.component';
+import { PetCareHistoryComponent } from './pet-care/pet-care-history/pet-care-history.component';
+import { PetCareReportsComponent } from './pet-care/pet-care-reports/pet-care-reports.component';
+import { PetCareServicesComponent } from './pet-care/pet-care-services/pet-care-services.component';
+import { PetCareScheduleComponent } from './pet-care/pet-care-schedule/pet-care-schedule.component';
 
 
 @NgModule({
@@ -50,7 +56,13 @@ import { OwnerServicesComponent } from './owner/owner-services/owner-services.co
     OwnerNavbarComponent,
     OwnerInformationComponent,
     OwnerPetsComponent,
-    OwnerServicesComponent
+    OwnerServicesComponent,
+    PetCareInformationComponent,
+    PetCareNavbarComponent,
+    PetCareHistoryComponent,
+    PetCareReportsComponent,
+    PetCareServicesComponent,
+    PetCareScheduleComponent
   ],
   imports: [
     AppRoutingModule,
@@ -61,7 +73,7 @@ import { OwnerServicesComponent } from './owner/owner-services/owner-services.co
     HttpClientModule,
     MatTabsModule,
     NgxLoadingModule.forRoot({
-      animationType: ngxLoadingAnimationTypes.wanderingCubes,
+      animationType: ngxLoadingAnimationTypes.circleSwish,
       backdropBackgroundColour: 'rgba(0,0,0,0.1)', 
       backdropBorderRadius: '4px',
       primaryColour: '#ffffff', 

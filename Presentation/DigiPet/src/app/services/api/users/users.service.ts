@@ -16,7 +16,15 @@ export class UsersService {
 						{
 							headers: new HttpHeaders()
 								.set('Authorization', `Bearer ${token}`)
-    					});
+						});
+	}
+
+	public getPetCare(token: string) {
+		return this.http.get(Urls.baseUrl + Urls.getPetCareProfile,
+						{
+							headers: new HttpHeaders()
+								.set('Authorization', `Bearer ${token}`)
+						});
 	}
 
 }

@@ -5,11 +5,11 @@ import { AuthService } from '../../services/auth/auth.service';
 
 
 @Component({
-	selector: 'app-owner-navbar',
-	templateUrl: './owner-navbar.component.html',
-	styleUrls: ['./owner-navbar.component.css']
+	selector: 'app-pet-care-navbar',
+	templateUrl: './pet-care-navbar.component.html',
+	styleUrls: ['./pet-care-navbar.component.css']
 })
-export class OwnerNavbarComponent implements OnInit {
+export class PetCareNavbarComponent implements OnInit {
 
 	constructor(private authService: AuthService, private router: Router) { }
 

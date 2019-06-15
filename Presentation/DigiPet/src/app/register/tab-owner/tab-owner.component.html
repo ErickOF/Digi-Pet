@@ -1,5 +1,6 @@
 <div class="row justify-text-center" style="margin: 0;">
-	<ngx-loading [show]="loading" [config]="{animationType: ngxLoadingAnimationTypes.circleSwish, primaryColour: primaryColour, backdropBorderRadius: '3px'}" [template]="loadingTemplate"></ngx-loading>
+	<ngx-loading [show]="loading"></ngx-loading>
+	
 	<div class="col-md-12">
 		<div class="text-center">
 			<h3><br>Mi información</h3>
@@ -138,7 +139,7 @@
 					<div class="profile-picture">
 						<img *ngIf="url" width=300 height=300 src="{{ url }}" />
 							<label *ngIf="editmode" for="uploader-input" ng2FileDrop [ngClass]="{'drag-over': hasDragOver}" (fileOver)="fileOver($event)" [uploader]="uploader">
-								<div class="infotext"><span *ngIf="!url">Arrastre su foto<br>o de click para subir</span></div>
+								<div class="infotext"><span *ngIf="!url">Arrastre su foto<br>o click para subir</span></div>
 							</label>
 						<input *ngIf="editmode" type="file" ng2FileSelect [uploader]="uploader" id="uploader-input" style="display:none" />
 					</div>
@@ -152,7 +153,7 @@
 			<h3><br>Mis mascotas</h3>
 		</div>
 		<form [formGroup]="registerPets">
-		  	<div formArrayName="details" class="form-group" *ngFor="let field of registerPets.get('details').controls; let ind = index;">
+		  	<div formArrayName="details" class="form-group" *ngFor="let field of registerPetsControls; let ind = index;">
 			    <div [formGroupName]="ind">
 			      	<div class="row">
 						<div class="col-md-4 text-center">

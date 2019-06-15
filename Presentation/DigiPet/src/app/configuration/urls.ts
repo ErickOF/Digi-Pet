@@ -10,5 +10,5 @@ export class Urls {
 	public static getAllOwners: string = 'api/Owners';
 	public static getPet: string = 'api/Pets/';
 	public static getOwnerProfile: string = 'api/Owners/getprofile';
-	public static getProfilePetCare: string = 'api/walkers/';
+	public static getPetCareProfile: string = 'api/walkers/getprofile';
 }

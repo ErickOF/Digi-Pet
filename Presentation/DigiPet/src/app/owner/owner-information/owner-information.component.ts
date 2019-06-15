@@ -13,11 +13,12 @@ export class OwnerInformationComponent implements OnInit {
 
 	public owner;
 
-	constructor(private dataTransferService: DataTransferService) { }
-
-	ngOnInit() {
+	constructor(private dataTransferService: DataTransferService) {
 		this.owner = this.dataTransferService.getUserInformation();
 		this.owner.dateCreated = this.owner.dateCreated.split('T')[0];
+	}
+
+	ngOnInit() {
 	}
 
 }

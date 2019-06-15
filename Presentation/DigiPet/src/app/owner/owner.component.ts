@@ -12,17 +12,29 @@ import { UsersService } from './../services/api/users/users.service';
 })
 export class OwnerComponent implements OnInit {
 
-	constructor(private router: Router, private usersService: UsersService,
-  				private dataTransferService: DataTransferService) { }
+	public loading = false;
+	public ready = false;
 
-	ngOnInit() {
+	constructor(private router: Router, private usersService: UsersService,
+  				private dataTransferService: DataTransferService) {
+
+		this.loading = true;
+		
 		let token = this.dataTransferService.getAccessToken().token;
 		let response = this.usersService.getOwner(token);
-		response.subscribe( data => {
+		
+		response.subscribe(data => {
 			this.dataTransferService.setUserInformation(data);
+			this.loading = false;
+			this.ready = true;
 		}, error => {
+			this.loading = false;
+			this.ready= true;
 			console.log(error);
 		});
+	}
+
+	ngOnInit() {
 	}
 
 }

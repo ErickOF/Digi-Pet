@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from  '@angular/forms';
-import { NgxLoadingComponent, ngxLoadingAnimationTypes } from 'ngx-loading';
+import { NgxLoadingComponent } from 'ngx-loading';
 import { Router } from '@angular/router';
 import Swal from 'sweetalert2';
 
@@ -19,7 +19,6 @@ export class LoginComponent implements OnInit {
 	public isSubmitted = false;
 	public loading = false;
 	public loginForm: FormGroup;
-	public ngxLoadingAnimationTypes = ngxLoadingAnimationTypes;
 
 	constructor(private authService: AuthService, private router: Router,
 				private formBuilder: FormBuilder, private api: ApiService,
