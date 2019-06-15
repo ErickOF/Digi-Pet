@@ -90,5 +90,7 @@ namespace WebApi.View
         {
             return _context.Walker.Any(e => e.Id == id);
         }
+
+        
     }
 }

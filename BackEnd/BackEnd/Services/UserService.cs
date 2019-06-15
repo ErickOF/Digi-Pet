@@ -94,7 +94,7 @@ namespace WebApi.Services
         public IEnumerable<User> GetAll()
         {
             var users = _dbContext.Users.ToList();
-            return users.Select(u => { u.PasswordHash = null; return u; });
+            return users.Select(u => { u.PasswordHash = u.PasswordSalt= null; return u; });
         }
 
         public void CreatePasswordHash(string password, out byte[] passwordHash, out byte[] passwordSalt)

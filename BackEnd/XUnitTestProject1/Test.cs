@@ -22,14 +22,14 @@ using Microsoft.AspNetCore.Mvc.ViewComponents;
 
 namespace XUnitTestProject1
 {
-    #region snippet1
-    public class Test : IClassFixture<CustomWebApplicationFactory<Startup>>
+    
+    public class Test 
     {
 
         private readonly HttpClient _client;
 
 
-        public Test(CustomWebApplicationFactory<Startup> factory)
+        public Test()
         {
 
             var contentRoot = "C:\\Users\\Allan\\source\\repos\\Digi-Pet\\BackEnd\\BackEnd\\";
@@ -72,14 +72,84 @@ namespace XUnitTestProject1
              var response = await _client.PostAsync(url,formContent);
 
             // Assert
-            response.EnsureSuccessStatusCode(); // Status Code 200-299
+            response.EnsureSuccessStatusCode();
+
             Assert.Equal("application/json; charset=utf-8",
                 response.Content.Headers.ContentType.ToString());
+
             var parsed = JsonConvert.DeserializeObject<AuthedUser>(await response.Content.ReadAsStringAsync());
+
             Assert.Equal( "admin", parsed.UserName);
             Assert.Equal("admin@digipet.com", parsed.Email);
             Assert.NotNull(parsed.Token);
         }
-        #endregion
+        [Fact]
+        public async Task CreateNewWalker__AndThenDeleteIt()
+        {
+            var url = "/api/walkers";
+
+            string[] otherProvinces = { "Heredia", "Alajuela" };
+            var obj = new
+            {
+                SchoolId = "190043530",
+                Password = "12345678",
+                Name = "Bernardo",
+                LastName = "Soto",
+                Email = "bernardo@soto.com",
+                Mobile = "8888888",
+                University = "UNA",
+                Province = "Heredia",
+                Canton = "Heredia",
+                DoesOtherProvinces = "true",
+                OtherProvinces = otherProvinces,
+                Description = "pet nerd"
+            };
+            var serializedObj = JsonConvert.SerializeObject(obj);
+            var content = new StringContent(serializedObj, Encoding.UTF8, "application/json");
+            var response = await _client.PostAsync(url, content);
+            response.EnsureSuccessStatusCode();
+
+        }
+        [Fact]
+        public async Task CreateWalker_FailsOn_DuplicatedSchoolId()
+        {
+            var url = "/api/walkers";
+
+            string[] otherProvinces = { "San Jose", "Cartago" };
+            var obj = new
+            {
+                SchoolId = "200943531",
+                Password = "12345678",
+                Name = "Juan",
+                LastName = "Perez",
+                Email = "juan@perez.com",
+                Mobile = "8888888",
+                University = "TEC",
+                Province = "Cartago",
+                Canton = "Cartago",
+                DoesOtherProvinces = "true",
+                OtherProvinces = otherProvinces,
+                Description = "no"
+            };
+            var serializedObj = JsonConvert.SerializeObject(obj);
+            var content = new StringContent(serializedObj, Encoding.UTF8, "application/json");
+            var response = await _client.PostAsync(url, content);
+            Assert.Equal(HttpStatusCode.BadRequest,response.StatusCode);
+
+            var serialResponse = await response.Content.ReadAsStringAsync();
+            var parsedMessage = JsonConvert.DeserializeObject<MessageResponse>(serialResponse);
+
+            Assert.Equal("error creating user: 23505: duplicate key value violates unique constraint \"AK_Users_Username\"",
+               parsedMessage.Message);
+
+
+        }
+
+
+        class MessageResponse
+        {
+            public string Message { get; set; }
+
+        }
     }
 }
