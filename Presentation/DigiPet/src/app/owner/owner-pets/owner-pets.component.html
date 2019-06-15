@@ -2,59 +2,59 @@
 	Mis Mascotas
 </h2>
 
-	<div class="row profile-card" *ngFor="let pet of pets; let i = index">
-		<div class="col-md-12"></div>
-		<div class="col-md-12">
-			<div class="card card-user admin-add-technical">
-				<div class="card-body">
-					<div class="author">
-						<div class="col-md-12 text-center" style="margin-top: 2%; margin-bottom: 5%;">
-							<img class="avatar border-gray" src="{{ image }}" alt="...">
-						</div>
+<div class="row profile-card" *ngFor="let pet of pets; let i = index">
+	<div class="col-md-12"></div>
+	<div class="col-md-12">
+		<div class="card card-user admin-add-technical">
+			<div class="card-body">
+				<div class="author">
+					<div class="col-md-12 text-center" style="margin-top: 2%; margin-bottom: 5%;">
+						<img class="avatar border-gray" src="{{ image }}" alt="...">
+					</div>
 						
-						<div class="row">
-							<div class="col-md-6">
-								<p class="" ><b>Nombre:</b> {{ pet.name }}</p>
-							</div>
-							
-							<div class="col-md-6">
-								<p class="" ><b>Raza:</b> {{ pet.race }}</p>
-							</div>
+					<div class="row">
+						<div class="col-md-6">
+							<p class="" ><b>Nombre:</b> {{ pet.name }}</p>
 						</div>
+							
+						<div class="col-md-6">
+							<p class="" ><b>Raza:</b> {{ pet.race }}</p>
+						</div>
+					</div>
 						
-						<div class="row">
-							<div class="col-md-6">
-								<p class="" ><b>Edad:</b> {{ pet.age }}</p>
-							</div>
+					<div class="row">
+						<div class="col-md-6">
+							<p class="" ><b>Edad:</b> {{ pet.age }}</p>
+						</div>
 							
-							<div class="col-md-6">
-								<p class="" ><b>Tamaño:</b> {{ pet.size }}</p>
-							</div>
+						<div class="col-md-6">
+							<p class="" ><b>Tamaño:</b> {{ pet.size }}</p>
+						</div>
+					</div>
+
+					<div class="row">
+						<div class="col-md-6">
+							<p class="" ><b>Paseos:</b> {{ pet.trips }}</p>
 						</div>
 
-						<div class="row">
-							<div class="col-md-6">
-								<p class="" ><b>Paseos:</b> {{ pet.trips }}</p>
-							</div>
-
-							<div class="col-md-6">
-								<p class="" ><b>Fecha de inscripcion:</b> {{ pet.dateCreated }}</p>
-							</div>
+						<div class="col-md-6">
+							<p class="" ><b>Fecha de inscripcion:</b> {{ pet.dateCreated }}</p>
 						</div>
+					</div>
 
-						<div class="row">
-							<div class="col-md-12">
-								<p class="" ><b>Descripción:</b> {{ pet.description }}</p>
-							</div>
+					<div class="row">
+						<div class="col-md-12">
+							<p class="" ><b>Descripción:</b> {{ pet.description }}</p>
 						</div>
+					</div>
 
-						<div class="row">
-							<div class="col-md-12 text-center">
-								<button class="btn btn-primary">Pedir Caminata</button>
-							</div>
+					<div class="row">
+						<div class="col-md-12 text-center">
+							<button class="btn btn-primary">Pedir Caminata</button>
 						</div>
 					</div>
 				</div>
 			</div>
 		</div>
 	</div>
+</div>
