@@ -1,24 +1,33 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 
-import { AuthService } from '../services/auth/auth.service';
+import { DataTransferService } from './../services/data-transfer/data-transfer.service';
+import { UsersService } from './../services/api/users/users.service';
 
 
 @Component({
-  selector: 'app-admin',
-  templateUrl: './admin.component.html',
-  styleUrls: ['./admin.component.css']
+	selector: 'app-admin',
+	templateUrl: './admin.component.html',
+	styleUrls: ['./admin.component.css']
 })
 export class AdminComponent implements OnInit {
 
-  constructor(private authService: AuthService, private router: Router) { }
+	public loading = false;
+	public ready = false;
 
-  ngOnInit() {
-  }
+	constructor(private router: Router, private usersService: UsersService,
+  				private dataTransferService: DataTransferService) {
 
-  logout(){
-    this.authService.logout();
-    this.router.navigateByUrl('/login');
-  }
+		this.loading = true;
+		
+		let data = this.dataTransferService.getAccessToken();
+		delete data.token;
+		this.dataTransferService.setUserInformation(data);
+		this.loading = false;
+		this.ready = true;
+	}
+
+	ngOnInit() {
+	}
 
 }

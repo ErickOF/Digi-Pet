@@ -26,7 +26,7 @@ export class LoginComponent implements OnInit {
 				private dataTransferService: DataTransferService) {}
 
 	ngOnInit() {
-		this.authService.logout();
+		localStorage.clear();
 		this.loginForm = this.formBuilder.group({
 			username: ['', Validators.required],
 			password: ['', Validators.required]
