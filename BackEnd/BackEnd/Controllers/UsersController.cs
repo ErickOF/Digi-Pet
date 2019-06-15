@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace WebApi.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = Role.Admin)]
     [ApiController]
     [Route("[controller]")]
     public class UsersController : ControllerBase
@@ -46,7 +46,7 @@ namespace WebApi.Controllers
             return Ok();
         }
 
-        [Authorize(Roles = Role.Admin)]
+       
         [HttpGet]
         public IActionResult GetAll()
         {
@@ -70,6 +70,12 @@ namespace WebApi.Controllers
             }
 
             return Ok(user);
+        }
+
+        [HttpDelete("delete/{username}")]
+        public async Task<IActionResult> DeleteUser(string username)
+        {
+            return Ok(username);
         }
     }
 }
