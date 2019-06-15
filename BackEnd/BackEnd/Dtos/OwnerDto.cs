@@ -29,6 +29,8 @@ namespace WebApi.Dtos
         [Required]
         public ICollection<PetDto> Pets { get; set; }
         public DateTime DateCreated { get; internal set; }
+        [Required]
+        public string Photo { get; set; }
     }
 
 }

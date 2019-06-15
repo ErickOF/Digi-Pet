@@ -32,14 +32,14 @@ namespace WebApi.Controllers
         // GET: api/Walkers
         [Authorize(Roles = Role.Admin)]
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Walker>>> GetWalker()
+        public async Task<ActionResult<IEnumerable<ReturnWalker>>> GetWalker()
         {
-            return await _context.Walker.ToListAsync();
+            return await _repository.GetAllWalkers();
         }
         [Authorize(Roles ="Admin,Walker")]
         // GET: api/Walkers/5
         [HttpGet("getProfile")]
-        public async Task<ActionResult<WalkerDto>> GetWalkerProfile()
+        public async Task<ActionResult<ReturnWalker>> GetWalkerProfile()
         {
             var username = User.Claims.Where(c=>c.Type==ClaimTypes.Name).FirstOrDefault().Value;
             var role = User.Claims.Where(c => c.Type == ClaimTypes.Role).FirstOrDefault().Value;
@@ -50,28 +50,10 @@ namespace WebApi.Controllers
             {
                 return NotFound(new { message="not found" });
             }
+
+            var returnWalker = new ReturnWalker(walker);
             
-            var walkerDto = new WalkerDto
-            {
-                SchoolId = walker.User.Username,
-                Name = walker.User.FirstName,
-                LastName = walker.User.LastName,
-                Email = walker.User.Email,
-                Email2 = walker.User.Email2,
-                Mobile = walker.User.Mobile,
-                University = walker.University,
-                Province = walker.User.Province,
-                Canton = walker.User.Canton,
-                DoesOtherProvinces = walker.DoesOtherProvinces,
-                OtherProvinces = walker.OtherProvinces,
-                Description = walker.User.Description,
-                DateCreated = walker.User.DateCreated,
-                Rating = walker.Score,
-                Trips = walker.Walks.Count
-            }; 
-
-
-            return walkerDto;
+            return returnWalker;
         }
 
 

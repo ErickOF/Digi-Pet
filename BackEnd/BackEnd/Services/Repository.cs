@@ -20,6 +20,8 @@ namespace WebApi.Services
         Task<IEnumerable<Petowner>> GetOwners();
         Task<Petowner> GetOwner(int id);
         Task<Walker> GetWalkerByUserName(string username);
+        Task<Tuple<WalkInfoDto,string>> RequestWalk(WalkRequestDto walkRequestDto);
+        Task<ActionResult<IEnumerable<ReturnWalker>>> GetAllWalkers();
     }
     public class Repository : IRepository
     {
@@ -52,6 +54,7 @@ namespace WebApi.Services
                             Email2 = walkerDto.Email2,
                             Mobile = walkerDto.Mobile,
                             Description = walkerDto.Description,
+                            Photo = walkerDto.Photo,
                             DateCreated = DateTime.UtcNow
                         }, walkerDto.Password),
                         University = walkerDto.University,
@@ -98,7 +101,8 @@ namespace WebApi.Services
                             Email2 = ownerDto.Email2,
                             Mobile = ownerDto.Mobile,
                             DateCreated = DateTime.UtcNow,
-                            Description = ownerDto.Description
+                            Description = ownerDto.Description,
+                            Photo=ownerDto.Photo
                         },ownerDto.Password),
                         Pets = pets
 
@@ -171,6 +175,21 @@ namespace WebApi.Services
                 .Include(o => o.User)
                 .Include(w=>w.Walks).ThenInclude(w=>w.ReportWalks)
                 .FirstOrDefaultAsync(u => u.User.Username == username);
+        }
+
+        public async Task<Tuple<WalkInfoDto, string>> RequestWalk(WalkRequestDto walkRequestDto)
+        {
+            var walkers =  _dbContext.Walker.Include(w => w.User)
+                .Where(w => w.User.Province == walkRequestDto.Province);
+
+            return null;
+        }
+
+        public async Task<ActionResult<IEnumerable<ReturnWalker>>> GetAllWalkers()
+        {
+            return await _dbContext.Walker.Include(w => w.User).Include(w=>w.Walks)
+                .Select(u => new ReturnWalker(u))
+                .ToListAsync();
         }
     }
 }

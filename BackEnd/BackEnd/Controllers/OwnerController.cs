@@ -81,7 +81,7 @@ namespace WebApi.Controllers
         [HttpPost("requestWalk")]
         public async Task<IActionResult> PostWalkRequest([FromBody] WalkRequestDto walkRequestDto)
         {
-
+            //var result = await _repository.RequestWalk(walkRequestDto);
             return Ok(walkRequestDto);
         }
 

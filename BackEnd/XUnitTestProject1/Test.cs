@@ -30,6 +30,7 @@ namespace XUnitTestProject1
 
         private readonly HttpClient _client;
         private const string AdminToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1bmlxdWVfbmFtZSI6ImFkbWluIiwicm9sZSI6IkFkbWluIiwibmJmIjoxNTYwNDQxOTc3LCJleHAiOjE1NjEwNDY3NzcsImlhdCI6MTU2MDQ0MTk3N30.90FQh9uNVfYGhWWHnyeuBIZ45-7AYvEYhRPCQOSc1_M";
+        private const string TestOwnerToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1bmlxdWVfbmFtZSI6ImR1ZW5vX1RFU1RAZ21haWwuY29tIiwicm9sZSI6IlBldE93bmVyIiwibmJmIjoxNTYwNjI2MTQ1LCJleHAiOjE1NjEyMzA5NDUsImlhdCI6MTU2MDYyNjE0NX0.Tz3tg68Vogg5YaYwwd_PGQdtmAkDykPwuHRgzuBnGTQ";
 
 
         public Test()
@@ -99,7 +100,8 @@ namespace XUnitTestProject1
                 Canton = "Heredia",
                 DoesOtherProvinces = "true",
                 OtherProvinces = otherProvinces,
-                Description = "pet nerd"
+                Description = "pet nerd",
+                Photo = "new photo"
             };
             var serializedObj = JsonConvert.SerializeObject(obj);
             var content = new StringContent(serializedObj, Encoding.UTF8, "application/json");
@@ -136,7 +138,7 @@ namespace XUnitTestProject1
             string[] otherProvinces = { "San Jose", "Cartago" };
             var obj = new
             {
-                SchoolId = "200943531",
+                SchoolId = "300943530",
                 Password = "12345678",
                 Name = "Juan",
                 LastName = "Perez",
@@ -147,10 +149,13 @@ namespace XUnitTestProject1
                 Canton = "Cartago",
                 DoesOtherProvinces = "true",
                 OtherProvinces = otherProvinces,
-                Description = "no"
+                Description = "no",
+                Photo= "urlphoto"
             };
             var serializedObj = JsonConvert.SerializeObject(obj);
             var content = new StringContent(serializedObj, Encoding.UTF8, "application/json");
+
+            //crea un usuario nuevo
             var response = await _client.PostAsync(url, content);
             response.EnsureSuccessStatusCode();
             
@@ -164,7 +169,8 @@ namespace XUnitTestProject1
             Assert.Equal("error creating user: 23505: duplicate key value violates unique constraint \"AK_Users_Username\"",
                parsedMessage.Message);
 
-            var res = DeleteUser(obj.SchoolId);
+            var res = await DeleteUser(obj.SchoolId);
+            res.EnsureSuccessStatusCode();
 
 
         }
@@ -189,12 +195,15 @@ namespace XUnitTestProject1
                     new PetDto { Name="Perro Test", Race = "Test ", Age=10,Size = "M",Description="zaguate"},
                     new PetDto {Name = "Perro Test 2", Race="Test", Age = 20,Size="M",Description = "nada"}
                 },
-                Mobile = "88888888"
+                Mobile = "88888888",
+                Photo = "urlphoto"
+                
             };
             var serializedObj = JsonConvert.SerializeObject(obj);
             var content = new StringContent(serializedObj, Encoding.UTF8, "application/json");
             var response = await _client.PostAsync(url, content);
             response.EnsureSuccessStatusCode();
+
             var stringResponse = await response.Content.ReadAsStringAsync();
             var parsedResponse = JsonConvert.DeserializeObject<CreatedWalkerResponse>(stringResponse);
 
@@ -211,10 +220,7 @@ namespace XUnitTestProject1
             var stringResponse2 = await res.Content.ReadAsStringAsync();
             var parsedMessage2 = JsonConvert.DeserializeObject<MessageResponse>(stringResponse2);
 
-            Assert.Equal($"{obj.Email} deleted",
-               parsedMessage2.Message);
-            
-          
+            Assert.Equal($"{obj.Email} deleted",parsedMessage2.Message);
         }
 
         internal async Task<HttpResponseMessage> DeleteUser(string username)
