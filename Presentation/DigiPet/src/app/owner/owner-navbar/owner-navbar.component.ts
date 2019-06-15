@@ -5,20 +5,20 @@ import { AuthService } from '../../services/auth/auth.service';
 
 
 @Component({
-  selector: 'app-owner-navbar',
-  templateUrl: './owner-navbar.component.html',
-  styleUrls: ['./owner-navbar.component.css']
+	selector: 'app-owner-navbar',
+	templateUrl: './owner-navbar.component.html',
+	styleUrls: ['./owner-navbar.component.css']
 })
 export class OwnerNavbarComponent implements OnInit {
 
-  constructor(private authService: AuthService, private router: Router) { }
+	constructor(private authService: AuthService, private router: Router) { }
 
-  ngOnInit() {
-  }
+	ngOnInit() {
+	}
 
-  logout(){
-    this.authService.logout();
-    this.router.navigateByUrl('/login');
-  }
+	logout(){
+		this.authService.logout();
+		this.router.navigateByUrl('/login');
+	}
 
 }
