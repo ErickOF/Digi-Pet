@@ -1,3 +1,36 @@
-<p>
-  admin-information works!
-</p>
+<div class="main-content" style="margin: 2% 2% 2% 2%;">
+	<div class="row profile-card">
+		<div class="col-md-12"></div>
+		<div class="col-md-12">
+			<div class="card card-user">
+				<div class="card-body">
+					<div class="author">
+						<div class="col-md-12 text-center" style="margin-top: 2%; margin-bottom: 5%;">
+							<img class="avatar border-gray" src="{{ image }}" alt="...">
+						</div>
+						
+						<div class="row">
+							<div class="col-md-6">
+								<p class="" ><b>Nombre:</b> {{ admin.firstName }}</p>
+							</div>
+							
+							<div class="col-md-6">
+								<p class="" ><b>Apellido:</b> {{ admin.lastName }}</p>
+							</div>
+						</div>
+						
+						<div class="row">
+							<div class="col-md-6">
+								<p class="" ><b>Usuario:</b> {{ admin.userName }}</p>
+							</div>
+							
+							<div class="col-md-6">
+								<p class="" ><b>Correo:</b> {{ admin.email }}</p>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

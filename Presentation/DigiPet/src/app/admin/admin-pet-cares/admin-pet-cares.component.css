@@ -1,0 +1,9 @@
+.active {
+	color: green;
+	margin-left: 4px;
+}
+
+.blocked {
+	color: red;
+	margin-left: 4px;
+}

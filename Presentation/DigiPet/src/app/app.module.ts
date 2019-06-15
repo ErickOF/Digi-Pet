@@ -5,7 +5,12 @@ import { HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import { NgxLoadingModule, ngxLoadingAnimationTypes } from 'ngx-loading';
 
+import { AngularFireModule } from 'angularfire2';
+import { AngularFireStorageModule } from 'angularfire2/storage';
+
 import { MatTabsModule } from '@angular/material/tabs';
+
+import { environment } from './../environments/environment';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -47,61 +52,63 @@ import { AdminUserReportsComponent } from './admin/admin-user-reports/admin-user
 
 
 @NgModule({
-  declarations: [
-    AdminComponent,
-    AppComponent,
-    LoginComponent,
-    LoginNavbarComponent,
-    OwnerComponent,
-    PetCareComponent,
-    RegisterComponent,
-    RegisterNavbarComponent,
-    TabOwnerComponent,
-    TabPetCareComponent,
-    OwnerNavbarComponent,
-    OwnerInformationComponent,
-    OwnerPetsComponent,
-    OwnerServicesComponent,
-    PetCareInformationComponent,
-    PetCareNavbarComponent,
-    PetCareHistoryComponent,
-    PetCareReportsComponent,
-    PetCareServicesComponent,
-    PetCareScheduleComponent,
-    AdminNavbarComponent,
-    AdminInformationComponent,
-    AdminPetCaresComponent,
-    AdminBusinessReportsComponent,
-    AdminUserReportsComponent
-  ],
-  imports: [
-    AppRoutingModule,
-    BrowserModule,
-    BrowserAnimationsModule,
-    FileUploadModule,
-    FormsModule,
-    HttpClientModule,
-    MatTabsModule,
-    NgxLoadingModule.forRoot({
-      animationType: ngxLoadingAnimationTypes.circleSwish,
-      backdropBackgroundColour: 'rgba(0,0,0,0.1)', 
-      backdropBorderRadius: '4px',
-      primaryColour: '#ffffff', 
-      secondaryColour: '#ffffff', 
-      tertiaryColour: '#ffffff'
-    }),
-    ReactiveFormsModule
-  ],
-  providers: [
-    AdminGuard,
-    AuthService,
-    EncryptionService,
-    OwnerGuard,
-    PetCareGuard,
-  	Urls
-  ],
-  bootstrap: [
-  	AppComponent
-  ]
+	declarations: [
+		AdminComponent,
+		AppComponent,
+		LoginComponent,
+		LoginNavbarComponent,
+		OwnerComponent,
+		PetCareComponent,
+		RegisterComponent,
+		RegisterNavbarComponent,
+		TabOwnerComponent,
+		TabPetCareComponent,
+		OwnerNavbarComponent,
+		OwnerInformationComponent,
+		OwnerPetsComponent,
+		OwnerServicesComponent,
+		PetCareInformationComponent,
+		PetCareNavbarComponent,
+		PetCareHistoryComponent,
+		PetCareReportsComponent,
+		PetCareServicesComponent,
+		PetCareScheduleComponent,
+		AdminNavbarComponent,
+		AdminInformationComponent,
+		AdminPetCaresComponent,
+		AdminBusinessReportsComponent,
+		AdminUserReportsComponent
+	],
+	imports: [
+		AngularFireModule.initializeApp(environment.firebase),
+		AngularFireStorageModule,
+		AppRoutingModule,
+		BrowserModule,
+		BrowserAnimationsModule,
+		FileUploadModule,
+		FormsModule,
+		HttpClientModule,
+		MatTabsModule,
+		NgxLoadingModule.forRoot({
+			animationType: ngxLoadingAnimationTypes.circleSwish,
+			backdropBackgroundColour: 'rgba(0,0,0,0.1)', 
+			backdropBorderRadius: '4px',
+			primaryColour: '#ffffff', 
+			secondaryColour: '#ffffff', 
+			tertiaryColour: '#ffffff'
+		}),
+		ReactiveFormsModule
+	],
+	providers: [
+		AdminGuard,
+		AuthService,
+		EncryptionService,
+		OwnerGuard,
+		PetCareGuard,
+		Urls
+	],
+	bootstrap: [
+		AppComponent
+	]
 })
 export class AppModule { }
