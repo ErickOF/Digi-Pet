@@ -1,3 +1,28 @@
-<p>
-  pet-care-services works!
-</p>
+<h2 class="text-center" style="margin-bottom: 6%; margin-top: 7%;">
+	Reservaciones
+</h2>
+
+<div class="row profile-card" *ngIf="services">
+	<div class="col-md-12"></div>
+	<div class="col-md-12">
+		<div class="card card-user">
+			<div class="card-body">
+				<div class="author">
+					<label>No hay reservaciones pendientes</label>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="row profile-card" *ngFor="let service of services; let i = index">
+	<div class="col-md-12"></div>
+	<div class="col-md-12">
+		<div class="card card-user">
+			<div class="card-body">
+				<div class="author">
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
