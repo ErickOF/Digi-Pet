@@ -148,6 +148,7 @@ namespace WebApi.Services
         {
             try
             {
+                user.DateCreated = DateTime.UtcNow;
                 _dbContext.Users.Add(user);
                 await _dbContext.SaveChangesAsync();
                 return true;
