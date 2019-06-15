@@ -12,10 +12,13 @@ export class OwnerPetsComponent implements OnInit {
 
 	public pets;
 
-	constructor(private dataTransferService: DataTransferService) { }
+	constructor(private dataTransferService: DataTransferService) {
+		this.pets = this.dataTransferService.getUserInformation().pets;
+		for (let i = 0; i < this.pets.length; i++) {
+			this.pets[i].dateCreated = this.pets[i].dateCreated.split('T')[0];
+		}
+	}
 
 	ngOnInit() {
-		this.pets = this.dataTransferService.getUserInformation().pets;
-		console.log(this.pets);
 	}
 }
