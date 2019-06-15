@@ -16,6 +16,7 @@ namespace WebApi.Models
         }
 
         public DbSet<Walker> Walker { get; set; }
+        public DbSet<WalkerSchedule> WalkerSchedule { get; set; }
         public DbSet<Walk> Walks{ get; set; }
 
         public DbSet<User> Users { get; set; }
