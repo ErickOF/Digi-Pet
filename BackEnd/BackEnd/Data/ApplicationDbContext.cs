@@ -16,19 +16,28 @@ namespace WebApi.Models
         }
 
         public DbSet<Walker> Walker { get; set; }
+        public DbSet<WalkerSchedule> WalkerSchedule { get; set; }
         public DbSet<Walk> Walks{ get; set; }
 
         public DbSet<User> Users { get; set; }
         public DbSet<Pet> Pets { get; set; }
 
         public DbSet<Petowner> Owners { get; set; }
+        public DbSet<AppConfiguration> Properties { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
             modelBuilder.Entity<User>(entity =>
             {
                 entity.HasAlternateKey(e => e.Username);
-                //entity.HasMany(u => u.Walkers).WithOne(w => w.User).HasForeignKey(u => u.UserId);
+                
+            });
+
+            modelBuilder.Entity<AppConfiguration>(entity =>
+            {
+                entity.HasKey(e => new { e.Id });
+                entity.HasIndex(e => new { e.Property }).IsUnique();
             });
 
 

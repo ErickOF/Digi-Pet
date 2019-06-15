@@ -35,7 +35,6 @@ namespace WebApi.Model
         public virtual ICollection<Walk> Walks { get; set; }
 
         public bool Blocked { get; set; }
-
-
+        
     }
 }
