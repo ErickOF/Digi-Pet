@@ -19,6 +19,12 @@ namespace WebApi.Controllers
             _userService = userService;
             
         }
+        [AllowAnonymous]
+        [HttpGet("test")]
+        public IActionResult A()
+        {
+            return Ok();
+        }
 
         [AllowAnonymous]
         [HttpPost("authenticate")]

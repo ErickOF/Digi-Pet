@@ -13,6 +13,7 @@ using WebApi.Models;
 using System;
 using Microsoft.AspNetCore.HttpOverrides;
 using WebApi.Entities;
+using System.Reflection;
 
 namespace WebApi
 {
@@ -29,7 +30,8 @@ namespace WebApi
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddCors();
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            services.AddMvc()
+                .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
             // configure strongly typed settings objects
             var appSettingsSection = Configuration.GetSection("AppSettings");

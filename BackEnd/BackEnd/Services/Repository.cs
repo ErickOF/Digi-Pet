@@ -157,7 +157,10 @@ namespace WebApi.Services
 
         public async Task<Walker> GetWalkerByUserName(string username)
         {
-            return await _dbContext.Walker.Include(o => o.User).FirstOrDefaultAsync(u => u.User.Username == username);
+            return await _dbContext.Walker
+                .Include(o => o.User)
+                .Include(w=>w.Walks).ThenInclude(w=>w.ReportWalks)
+                .FirstOrDefaultAsync(u => u.User.Username == username);
         }
     }
 }
