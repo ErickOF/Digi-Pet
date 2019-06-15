@@ -11,6 +11,30 @@ export class UsersService {
 
 	constructor(private http: HttpClient) { }
 
+	public activePetCare(token: string, id: number) {
+		return this.http.post(Urls.baseUrl + Urls.activePetCare + id, {},
+						{
+							headers: new HttpHeaders()
+								.set('Authorization', `Bearer ${token}`)
+						});
+	}
+
+	public blockPetCare(token: string, id: number) {
+		return this.http.post(Urls.baseUrl + Urls.blockPetCare + id, {},
+						{
+							headers: new HttpHeaders()
+								.set('Authorization', `Bearer ${token}`)
+						});
+	}
+
+	public getAllPetCares(token: string) {
+		return this.http.get(Urls.baseUrl + Urls.getAllPetCares,
+						{
+							headers: new HttpHeaders()
+								.set('Authorization', `Bearer ${token}`)
+						});
+	}
+
 	public getOwner(token: string) {
 		return this.http.get(Urls.baseUrl + Urls.getOwnerProfile,
 						{
