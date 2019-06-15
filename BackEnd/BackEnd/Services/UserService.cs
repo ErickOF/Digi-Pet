@@ -136,6 +136,7 @@ namespace WebApi.Services
 
         public bool UsernameExists(string username)
         {
+            
             return _dbContext.Users.FirstOrDefault(u => u.Username == username) != null;
         }
 

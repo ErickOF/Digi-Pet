@@ -35,5 +35,7 @@ namespace WebApi.Dtos
         [Required]
         public string Description { get; set; }
         public DateTime DateCreated { get; internal set; }
+        public decimal Rating { get; internal set; }
+        public int Trips { get; internal set; }
     }
 }

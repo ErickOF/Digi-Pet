@@ -65,7 +65,9 @@ namespace WebApi.View
                 DoesOtherProvinces = walker.DoesOtherProvinces,
                 OtherProvinces = walker.OtherProvinces,
                 Description = walker.User.Description,
-                DateCreated = walker.User.DateCreated
+                DateCreated = walker.User.DateCreated,
+                Rating = walker.Score,
+                Trips = walker.Walks.Count
             }; 
 
 
