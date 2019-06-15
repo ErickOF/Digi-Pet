@@ -85,8 +85,11 @@ namespace WebApi.Services
             var user = _dbContext.Users.FirstOrDefault(x => x.Id == id);
 
             // return user without password
-            if (user != null) 
+            if (user != null)
+            {
                 user.PasswordHash = null;
+                user.PasswordSalt = null;
+            }
 
             return user;
         }
