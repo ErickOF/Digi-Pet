@@ -19,6 +19,8 @@ export class Urls {
 	public static getPet: string = 'api/Pets/';
 	public static getOwnerProfile: string = 'api/Owners/getprofile';
 	public static getPetCareProfile: string = 'api/walkers/getprofile';
+	// Report cards
+	public static getPendingReportCards: string = 'api/walkers/pendingReport';
 	// Get services
 	public static getUpComingWalksByOwner: string = 'api/owners/upcoming';
 	public static getUpComingWalksByPetCare: string = 'api/walkers/upcoming';

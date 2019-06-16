@@ -53,6 +53,14 @@ export class UsersService {
 						});
 	}
 
+	public getPendingReportCards(token: string) {
+		return this.http.get(Urls.baseUrl + Urls.getPendingReportCards,
+						{
+							headers: new HttpHeaders()
+								.set('Authorization', `Bearer ${token}`)
+						});
+	}
+
 	public getUpComingWalksByOwner(token: string) {
 		return this.http.get(Urls.baseUrl + Urls.getUpComingWalksByOwner,
 						{
