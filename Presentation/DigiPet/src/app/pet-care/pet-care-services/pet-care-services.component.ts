@@ -20,7 +20,6 @@ export class PetCareServicesComponent implements OnInit {
 
 		response.subscribe(data => {
 			this.services = data;
-			console.log(this.services);
 		}, error => {
 			console.log(error);
 		});

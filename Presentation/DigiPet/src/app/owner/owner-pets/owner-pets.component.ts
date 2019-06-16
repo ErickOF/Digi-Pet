@@ -184,20 +184,18 @@ export class OwnerPetsComponent implements OnInit {
 			"Description" : walkServiceInfo.description,
 			"ExactAddress": walkServiceInfo.exactAddress
 		};
-
+		
 		let token = this.dataTransferService.getAccessToken().token;
 
 		let response = this.usersService.requestWalkService(token, walkService);
 		response.subscribe(data => {
 			this.loadingService = false;
-			console.log(data);
 			this.showSuccessMsg('¡Éxito!', 'Su caminata fue agendada')
 			this.hideAddPetModal();
 			this.router.navigateByUrl('/RefrshComponent', {skipLocationChange: true})
 						.then(()=>this.router.navigate(['owner/profile']));
 		}, error => {
 			this.loadingService = false;
-			console.log(error);
 			if (error.error == 'cant find walker') {
 				this.showErrorMsg('¡La solicitud no pudo realizarse!', '¡No hay cuidadores para su configuración!');
 			}
