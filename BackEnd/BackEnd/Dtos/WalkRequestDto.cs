@@ -25,6 +25,9 @@ namespace WebApi.Dtos
         [Required]
         public string Description { get; set; }
 
+        [Required]
+        public string ExactAddress { get; set; }
+
         public virtual DateTime End { get
             {
                 return Begin.AddHours((double)Duration);
