@@ -238,7 +238,10 @@ namespace WebApi.Services
             //queda filtrar los paseos que son del mismo dueno pero a distintas horas
             walkers.RemoveAll(w=> 
             {
-                var walks = w.Walks.Where(ww => ww.Pet.PetOwnerId == pet.PetOwnerId && (walkRequestDto.Begin != ww.Begin || walkRequestDto.End != ww.End));
+                var walks = w.Walks.Where(ww => ww.Pet.PetOwnerId == pet.PetOwnerId &&
+                (walkRequestDto.Begin != ww.Begin || walkRequestDto.End != ww.End) &&
+                (walkRequestDto.Begin.Date==ww.Begin.Date)
+                );
                 return walks.Count() != 0;
             });
             walkers.RemoveAll(w=>
