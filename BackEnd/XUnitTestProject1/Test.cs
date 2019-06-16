@@ -291,6 +291,9 @@ namespace XUnitTestProject1
 
                 Assert.Equal(returnedWalker.id, parsedWalkRequest2.WalkerId);
 
+                await CheckOwnerWalks(pets);
+                await CheckWalkerWalks(pets);
+
                 //pide un paseo para el siguiente dia y debe fallar porque el cuidador no tiene hora disponible
                 walkRequest.Begin = DateTime.Today.AddDays(3).AddHours(9);
                 var res5 = await PostWalkRequest(walkRequest, TestOwnerToken);
@@ -358,6 +361,35 @@ namespace XUnitTestProject1
             Assert.Equal(TempWeekSchedule.Week.ElementAt(1).HoursAvailable, resWalkerSchedule[1].HoursAvailable);
 
         }
+
+        internal async Task CheckOwnerWalks(List<PetDto> pets)
+        {
+            var url = "/api/owners/upcoming";
+            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", TestOwnerToken);
+            var res = await _client.GetAsync(url);
+            //limpiar los headers
+            _client.DefaultRequestHeaders.Clear();
+            var walks = JsonConvert.DeserializeObject<List<WalkInfoDto>>(await res.Content.ReadAsStringAsync());
+
+            Assert.Equal(pets[0].Name,walks[0].Pet.Name);
+            Assert.Equal(pets[1].Name,walks[1].Pet.Name);
+
+        }
+
+        internal async Task CheckWalkerWalks(List<PetDto> pets)
+        {
+            var url = "/api/walkers/upcoming";
+            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", TempWalkerToken);
+            var res = await _client.GetAsync(url);
+            //limpiar los headers
+            _client.DefaultRequestHeaders.Clear();
+            var walks = JsonConvert.DeserializeObject<List<WalkInfoDto>>(await res.Content.ReadAsStringAsync());
+
+            Assert.Equal(pets[0].Name, walks[0].Pet.Name);
+            Assert.Equal(pets[1].Name, walks[1].Pet.Name);
+
+        }
+
         internal  Task<HttpResponseMessage> GetProfile(string route,string token)
         {
             var url = $"/api/{route}/getprofile";

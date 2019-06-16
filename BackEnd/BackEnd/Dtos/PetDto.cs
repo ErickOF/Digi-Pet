@@ -23,6 +23,7 @@ namespace WebApi.Dtos
             Photos = pet.Photos;
             DateCreated = pet.DateCreated;
             Trips = pet.WalksQuant;
+            Description = pet.Description;
         }
         public int Id { get; set; }
         [Required, MaxLength(30)]
