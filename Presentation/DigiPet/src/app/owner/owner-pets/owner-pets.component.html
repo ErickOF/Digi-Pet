@@ -2,13 +2,14 @@
 	Mis Mascotas
 </h2>
 
-<div id="myModal" class="modal">
+<!-- Add Pet -->
+<div id="AddPetModal" class="modal">
 
 	<!-- Modal content -->
 	<div class="modal-content">
 		<ngx-loading [show]="loading"></ngx-loading>
 		
-		<span class="close" (click)=hideModal()>&times;</span>
+		<span class="close" (click)=hideAddPetModal()>&times;</span>
 
 		<h2 class="text-center">
 			Agregar Mascota <br><br>
@@ -134,6 +135,7 @@
 	</div>
 </div>
 
+<!-- Show Pets -->
 <div class="row profile-card" *ngFor="let pet of pets; let i = index">
 	<div class="col-md-12">
 		<div class="card card-user">
@@ -201,7 +203,7 @@
 
 <div class="row">
 	<div class="col-md-12 text-right">
-		<button id="myBtn" class="btn-success" (click)=showModal()>Agregar Mascota</button>
+		<button id="myBtn" class="btn-success" (click)=showAddPetModal()>Agregar Mascota</button>
 	</div>
 </div>
 

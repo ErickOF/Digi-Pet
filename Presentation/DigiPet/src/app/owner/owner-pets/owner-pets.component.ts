@@ -12,9 +12,9 @@ import { ImgUploadService } from './../../services/uploads/img-upload/img-upload
 
 
 window.onclick = function(event) {
-	let modal = document.getElementById("myModal");
-	if (event.target == modal) {
-		modal.style.display = "none";
+	let addPetModal = document.getElementById("AddPetModal");
+	if (event.target == addPetModal) {
+		addPetModal.style.display = "none";
 	}
 }
 
@@ -76,16 +76,16 @@ export class OwnerPetsComponent implements OnInit {
 		this.urlsPet[i] = '';
 	}
 
-	public hideModal() {
-		document.getElementById('myModal').style.display='none';
+	public hideAddPetModal() {
+		document.getElementById('AddPetModal').style.display='none';
 	}
 
 	public openFileDialog(i: number) {
 		document.getElementById('selectFile' + i.toString()).click();
 	}
 
-	public showModal() {
-		document.getElementById('myModal').style.display='block';
+	public showAddPetModal() {
+		document.getElementById('AddPetModal').style.display='block';
 	}
 
 	public addPet() {
@@ -117,7 +117,7 @@ export class OwnerPetsComponent implements OnInit {
 		let response = this.api.registerPet(pet, token);
 		response.subscribe(newPet => {
 			this.loading = false;
-			this.hideModal();
+			this.hideAddPetModal();
 			this.router.navigateByUrl('/RefrshComponent', {skipLocationChange: true})
 						.then(()=>this.router.navigate(['owner/profile']));
 		}, error => {
