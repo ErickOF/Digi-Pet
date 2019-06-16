@@ -23,11 +23,19 @@ namespace WebApi.Model
         public decimal Score { get {
                 try
                 {
-                    return Walks.Select(w => w.ReportWalks).Sum(rw => rw.FirstOrDefault().Stars)/Walks.Select(w=>w.ReportWalks).Where(rw=>rw.Count>0).Count();
+                    var totalRatedTrips = Walks.Select(w => w.ReportWalks).Count(rw=>rw.FirstOrDefault().Stars>0);
+
+                    var sumStars = Walks.Select(w => w.ReportWalks).Sum(rw => rw.FirstOrDefault().Stars);
+
+                    return sumStars / totalRatedTrips;
+
+                   
+                    
+
                 }
                 catch
                 {
-                    return 0;
+                    return 5;
                 }
             } }
 
