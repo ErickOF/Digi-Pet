@@ -35,6 +35,27 @@ namespace WebApi.Model
         public virtual ICollection<Walk> Walks { get; set; }
 
         public bool Blocked { get; set; }
+        public bool HasQualityStar { get; set; }
+
+        //puntos segun reglas de negocio
+        public decimal Points { get
+            {
+                var points =(decimal) .0;
+                var walksQuant = Walks.Count();
+
+                if (walksQuant > 50) points += 10; 
+                if (walksQuant > 100) points += 10;
+                if (walksQuant > 500) points += 10;
+
+                if (HasQualityStar) points += 10;
+
+                points += Score*50;
+                //los restantes 10 dependen del canton
+                return points ;
+            }
+        }
+        
+        public virtual decimal TempPoints { get; set; }
         
     }
 }

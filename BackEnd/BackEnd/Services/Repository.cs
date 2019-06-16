@@ -185,8 +185,14 @@ namespace WebApi.Services
 
         public async Task<Tuple<WalkInfoDto, string>> RequestWalk(WalkRequestDto walkRequestDto)
         {
-            var walkers =  _dbContext.Walker.Include(w => w.User)
-                .Where(w => w.User.Province == walkRequestDto.Province);
+            var walkers =  _dbContext.Walker.Include(w => w.User).Include(w=>w.Walks).ThenInclude(wa=>wa.ReportWalks)
+                .Where(w => w.User.Province == walkRequestDto.Province || (w.DoesOtherProvinces && w.OtherProvinces.Contains(walkRequestDto.Province)) &&
+                !w.Blocked
+           ).AsNoTracking();
+            // se le asignan los 10 puntos adicionales si es del canton
+            await walkers.ForEachAsync(w=> w.TempPoints=w.Points+((w.User.Canton==walkRequestDto.Canton && w.User.Province == walkRequestDto.Province)?10:0));
+            walkers.OrderByDescending(w => w.TempPoints);
+
 
             return null;
         }
