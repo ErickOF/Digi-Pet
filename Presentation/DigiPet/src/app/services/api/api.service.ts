@@ -3,6 +3,8 @@ import { HttpClient, HttpHeaders, HttpParams } from "@angular/common/http";
 
 import { Urls } from './../../configuration/urls';
 
+import { UserLogin } from './../../models/user-login/user-login';
+
 
 @Injectable({
 	providedIn: 'root'
@@ -23,7 +25,7 @@ export class ApiService {
 
 	constructor(private http: HttpClient) { }
 
-	public authenticateUser(userLogin): any {
+	public authenticateUser(userLogin: UserLogin): any {
 		const body = new HttpParams()
 						.set('UserName', userLogin.username)
 						.set('Password', userLogin.password);

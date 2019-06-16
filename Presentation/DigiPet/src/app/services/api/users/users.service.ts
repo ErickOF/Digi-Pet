@@ -53,4 +53,32 @@ export class UsersService {
 						});
 	}
 
+	public getUpComingWalks(token: string) {
+		return this.http.get(Urls.baseUrl + Urls.getUpComingWalks,
+						{
+							headers: new HttpHeaders()
+								.set('Authorization', `Bearer ${token}`)
+						});
+	}
+
+	public requestWalkService(token: string, walkService) {
+		return this.http.post(Urls.baseUrl + Urls.requestWalkService, walkService,
+						{
+							headers: new HttpHeaders()
+								.set('Authorization', `Bearer ${token}`)
+								.set('Content-Type', 'application/json'),
+							observe: 'response'
+						});
+	}
+
+	public setSchedule(token: string, schedule) {
+		return this.http.post(Urls.baseUrl + Urls.setSchedule, schedule,
+						{
+							headers: new HttpHeaders()
+								.set('Authorization', `Bearer ${token}`)
+								.set('Content-Type', 'application/json'),
+							observe: 'response'
+						});
+	}
+
 }

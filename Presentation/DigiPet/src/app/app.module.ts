@@ -8,6 +8,7 @@ import { NgxLoadingModule, ngxLoadingAnimationTypes } from 'ngx-loading';
 import { AngularFireModule } from 'angularfire2';
 import { AngularFireStorageModule } from 'angularfire2/storage';
 
+import { MatTableModule } from '@angular/material';
 import { MatTabsModule } from '@angular/material/tabs';
 
 import { environment } from './../environments/environment';
@@ -88,6 +89,7 @@ import { AdminUserReportsComponent } from './admin/admin-user-reports/admin-user
 		FileUploadModule,
 		FormsModule,
 		HttpClientModule,
+		MatTableModule,
 		MatTabsModule,
 		NgxLoadingModule.forRoot({
 			animationType: ngxLoadingAnimationTypes.circleSwish,
