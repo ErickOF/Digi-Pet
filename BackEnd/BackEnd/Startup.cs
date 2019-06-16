@@ -90,8 +90,7 @@ namespace WebApi
             app.UseAuthentication();
             
             app.UseMvc();
-            var testOwnerConfig = Configuration.GetSection("TestOwner");
-            var ownerDto = testOwnerConfig.Get<OwnerDto>();
+           
 
             var adminFromConfig = Configuration.GetSection("Admin");
             var admin = adminFromConfig.Get<User>();
@@ -102,12 +101,6 @@ namespace WebApi
                 {
                     var user = userService.CreateUser(admin, Configuration["Admin:Password"]);
                     userService.PersistUser(user).Wait();
-                }
-
-
-            if (!userService.UsernameExists(ownerDto.Email)) 
-                {
-                    repository.CreateOwner(ownerDto).Wait();
                 }
             
 
