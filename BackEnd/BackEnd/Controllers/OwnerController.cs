@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -21,11 +22,13 @@ namespace WebApi.Controllers
     public class OwnersController : ControllerBase
     {
         private readonly IRepository _repository;
+        private readonly IUserService _userService;
 
-        public OwnersController(IRepository repository)
+        public OwnersController(IRepository repository,IUserService userService)
         {
  
             _repository = repository;
+            _userService = userService;
         }
 
         // GET: api/Owners
@@ -70,10 +73,11 @@ namespace WebApi.Controllers
         {
             var username = User.Claims.Where(c => c.Type == ClaimTypes.Name).FirstOrDefault().Value;
             var owner = await _repository.GetOwnerByUserName(username);
+
             var petsIds = owner.Pets.Select(p => p.Id);
             if (!petsIds.Contains(walkRequestDto.PetId))
             {
-                return BadRequest("pet not yours!");
+                return BadRequest(new { message = "pet not yours!" });
             }
             var result = await _repository.RequestWalk(walkRequestDto);
             if (result.Item1 == null)
@@ -83,5 +87,71 @@ namespace WebApi.Controllers
             return Ok(result.Item1);
         }
 
+        [Authorize(Roles = Role.Petowner)]
+        [HttpGet("history/{petId}")]
+        public async Task<ActionResult<List<WalkInfoDto>>> GetHistory(int petId)
+        {
+            var username = User.Claims.Where(c => c.Type == ClaimTypes.Name).FirstOrDefault().Value;
+            var user = await _repository.GetOwnerByUserName(username);
+            if (!user.Pets.Select(p => p.Id).Contains(petId)){
+                return BadRequest(new { message = "pet not yours" });
+            }
+            var allWalks = await _repository.GetAllPetWalks(petId);
+            allWalks.RemoveAll(w => w.Begin.AddHours((double)w.Duration) > DateTime.UtcNow);
+            allWalks = allWalks.OrderBy(a => a.Begin).ToList();
+            return Ok(allWalks);
+        }
+
+        [Authorize(Roles = Role.Petowner)]
+        [HttpGet("upcoming")]
+        public async Task<ActionResult<List<WalkInfoDto>>> GetUpcoming()
+        {
+            var username = User.Claims.Where(c => c.Type == ClaimTypes.Name).FirstOrDefault().Value;
+            var allWalks = await _repository.GetAllOwnerWalks(username);
+            allWalks.RemoveAll(w => w.Begin < DateTime.UtcNow);
+            allWalks=allWalks.OrderBy(a => a.Begin).ToList();
+            return Ok(allWalks);
+        }
+
+        /*[Authorize(Roles = Role.Petowner)]
+        [HttpGet("pendingReport")]
+        public async Task<ActionResult<List<WalkInfoDto>>> GetpendingReport()
+        {
+            var username = User.Claims.Where(c => c.Type == ClaimTypes.Name).FirstOrDefault().Value;
+            var allWalks = await _repository.GetAllWalkerWalks(username);
+            allWalks.RemoveAll(w => w.Report != null || w.Begin.AddHours((double)w.Duration) > DateTime.UtcNow);
+            return Ok(allWalks);
+        }*/
+
+        [Authorize(Roles = Role.Petowner)]
+        [HttpGet("report/{walkId}")]
+        public async Task<IActionResult> GetReport(int walkId)
+        {
+            var username = User.Claims.Where(c => c.Type == ClaimTypes.Name).FirstOrDefault().Value;
+            if (!_userService.ValidateIfWalkBelongsToUser(username, walkId))
+            {
+                return BadRequest(new { mesagge = "not your walk" });
+            }
+            var report = await _repository.GetReportCard(walkId);
+       
+            return Ok(report);
+        }
+
+        [Authorize(Roles = Role.Petowner)]
+        [HttpPost("rate")]
+        public async Task<IActionResult> RateTrip([FromBody] Rate rate)
+        {
+            var username = User.Claims.Where(c => c.Type == ClaimTypes.Name).FirstOrDefault().Value;
+            if (!_userService.ValidateIfWalkBelongsToUser(username, rate.walkId))
+            {
+                return BadRequest(new { mesagge = "not your walk" });
+            }
+            var res = await _repository.Rate(rate);
+            
+            if (!res.Item1) return BadRequest(new { message = res.Item2 });
+
+            return Ok(new { message = res.Item2 });
+
+        }
     }
 }
