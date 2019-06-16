@@ -5,11 +5,16 @@
 <div class="row profile-card" *ngFor="let pet of pets; let i = index">
 	<div class="col-md-12"></div>
 	<div class="col-md-12">
-		<div class="card card-user admin-add-technical">
+		<div class="card card-user">
 			<div class="card-body">
 				<div class="author">
-					<div class="col-md-12 text-center" style="margin-top: 2%; margin-bottom: 5%;">
-						<img class="avatar border-gray" src="{{ image }}" alt="...">
+
+					<div class="row">
+						<div class="col-md-2" *ngFor="let urlPet of pets.photos;">
+							<div class="text-center">
+								<img width="150" height="150" src="{{ urlPet }}" />
+							</div>
+						</div>
 					</div>
 						
 					<div class="row">

@@ -17,6 +17,7 @@ export class OwnerPetsComponent implements OnInit {
 		for (let i = 0; i < this.pets.length; i++) {
 			this.pets[i].dateCreated = this.pets[i].dateCreated.split('T')[0];
 		}
+		console.log(this.pets);
 	}
 
 	ngOnInit() {
