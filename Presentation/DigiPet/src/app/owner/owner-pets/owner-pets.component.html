@@ -6,7 +6,7 @@
 
 	<!-- Modal content -->
 	<div class="modal-content">
-		<span class="close" onclick="document.getElementById('myModal').style.display='none';">&times;</span>
+		<span class="close" (click)=hideModal()>&times;</span>
 		<p>Some text in the Modal..</p>
 	</div>
 
@@ -73,7 +73,15 @@
 				</div>
 			</div>
 		</div>
+	</div>	
+</div>
+
+<div><label></label></div>
+
+<div class="row">
+	<div class="col-md-12 text-right">
+		<button id="myBtn" class="btn-success" (click)=showModal()>Agregar Mascota</button>
 	</div>
 </div>
 
-<button id="myBtn" onclick="document.getElementById('myModal').style.display='block';">Open Modal</button>
+<div><label></label></div>
