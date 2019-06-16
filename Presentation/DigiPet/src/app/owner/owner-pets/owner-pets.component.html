@@ -2,6 +2,16 @@
 	Mis Mascotas
 </h2>
 
+<div id="myModal" class="modal">
+
+	<!-- Modal content -->
+	<div class="modal-content">
+		<span class="close" onclick="document.getElementById('myModal').style.display='none';">&times;</span>
+		<p>Some text in the Modal..</p>
+	</div>
+
+</div>
+
 <div class="row profile-card" *ngFor="let pet of pets; let i = index">
 	<div class="col-md-12"></div>
 	<div class="col-md-12">
@@ -65,3 +75,5 @@
 		</div>
 	</div>
 </div>
+
+<button id="myBtn" onclick="document.getElementById('myModal').style.display='block';">Open Modal</button>
