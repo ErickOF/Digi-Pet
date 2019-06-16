@@ -70,24 +70,6 @@ export class OwnerPetsComponent implements OnInit {
 			photos: '',
 			description: ['', Validators.maxLength(300)]
 		});
-
-		this.registerWalkService = this.formBuilder.group({
-			name: ['', Validators.compose([
-				Validators.required,
-				Validators.maxLength(30)
-			])],
-			breed: ['', Validators.compose([
-				Validators.required,
-				Validators.maxLength(30)
-			])],
-			age: ['', Validators.compose([
-				Validators.required,
-				Validators.pattern('^[0-9]*$')
-			])],
-			size: 'S',
-			photos: '',
-			description: ['', Validators.maxLength(300)]
-		});
 	}
 
 	ngOnInit() {
@@ -149,6 +131,30 @@ export class OwnerPetsComponent implements OnInit {
 
 	public openFileDialog(i: number) {
 		document.getElementById('selectFile' + i.toString()).click();
+	}
+
+	public requestWalkService(pet) {
+		console.log(pet);
+		
+		this.registerWalkService = this.formBuilder.group({
+			name: ['', Validators.compose([
+				Validators.required,
+				Validators.maxLength(30)
+			])],
+			breed: ['', Validators.compose([
+				Validators.required,
+				Validators.maxLength(30)
+			])],
+			age: ['', Validators.compose([
+				Validators.required,
+				Validators.pattern('^[0-9]*$')
+			])],
+			size: 'S',
+			photos: '',
+			description: ['', Validators.maxLength(300)]
+		});
+
+		this.showWalkServiceModal();
 	}
 
 	public showAddPetModal() {
