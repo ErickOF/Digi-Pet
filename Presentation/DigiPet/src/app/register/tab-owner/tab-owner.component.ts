@@ -149,7 +149,7 @@ export class TabOwnerComponent implements OnInit {
 				"Age": petInfo.age,
 				"Size": petInfo.size,
 				"Description": petInfo.description,
-				"Photo": this.urlsPets[i]
+				"Photos": this.urlsPets[i]
 			});
 		}
 		return pets;

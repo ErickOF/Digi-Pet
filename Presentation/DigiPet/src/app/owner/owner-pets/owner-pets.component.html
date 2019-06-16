@@ -10,12 +10,14 @@
 				<div class="author">
 
 					<div class="row">
-						<div class="col-md-2" *ngFor="let urlPet of pets.photos;">
-							<div class="text-center">
-								<img width="150" height="150" src="{{ urlPet }}" />
+						<div class="col-md-2" *ngFor="let photo of pet.photos; let ind = index;">
+							<div *ngIf="photo!=''" class="text-center">
+								<img width="100" height="100" src="{{ photo }}" />
 							</div>
 						</div>
 					</div>
+
+					<div><label></label></div>
 						
 					<div class="row">
 						<div class="col-md-6">
