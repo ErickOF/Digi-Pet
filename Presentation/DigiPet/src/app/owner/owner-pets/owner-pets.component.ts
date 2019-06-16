@@ -43,22 +43,22 @@ export class OwnerPetsComponent implements OnInit {
 	public urlsPet = ['', '', '', '', ''];
 
 	public duration = [
-		{ id: 0.5, name: 0.5 },
-		{ id: 1, name: 1 },
-		{ id: 1.5, name: 1.5 },
-		{ id: 2, name: 2 },
-		{ id: 2.5, name: 2.5 },
-		{ id: 3, name: 3 },
-		{ id: 3.5, name: 3.5 },
-		{ id: 4, name: 4 },
-		{ id: 4.5, name: 4.5 },
-		{ id: 5, name: 5 },
-		{ id: 5.5, name: 5.5 },
-		{ id: 6, name: 6 },
-		{ id: 6.5, name: 6.5 },
-		{ id: 7, name: 7 },
-		{ id: 7.5, name: 7.5 },
-		{ id: 8, name: 8 }
+		{ id: 0.5, name: "0.5h" },
+		{ id: 1, name: "1h" },
+		{ id: 1.5, name: "1.5h" },
+		{ id: 2, name: "2h" },
+		{ id: 2.5, name: "2.5h" },
+		{ id: 3, name: "3h" },
+		{ id: 3.5, name: "3.5h" },
+		{ id: 4, name: "4h" },
+		{ id: 4.5, name: "4.5h" },
+		{ id: 5, name: "5h" },
+		{ id: 5.5, name: "5.5h" },
+		{ id: 6, name: "6h" },
+		{ id: 6.5, name: "6.5h" },
+		{ id: 7, name: "7h" },
+		{ id: 7.5, name: "7.5h" },
+		{ id: 8, name: "8h" }
 
 	];
 
@@ -164,10 +164,21 @@ export class OwnerPetsComponent implements OnInit {
 
 	public confirmWalkService() {
 		this.isSubmittedWS = true;
-		console.log(this.registerWalkService, this.registerWalkService.controls, this.registerWalkService.value);
 		
 		if (!this.registerWalkService.valid) {
 			return;
+		}
+
+		let walkServiceInfo = this.registerWalkService.value;
+
+		let walkService = { 
+			"PetId" : walkServiceInfo.idPet,
+			"Begin" : walkServiceInfo.date,
+			"Duration" : walkServiceInfo.duration,
+			"Province" : walkServiceInfo.province,
+			"Canton" : walkServiceInfo.canton,
+			"Description" : walkServiceInfo.description,
+			"ExactAddress": walkServiceInfo.exactAddress
 		}
 	}
 
@@ -209,6 +220,25 @@ export class OwnerPetsComponent implements OnInit {
 
 	public showAddPetModal() {
 		document.getElementById('AddPetModal').style.display='block';
+		this.registerPet = this.formBuilder.group({
+			name: ['', Validators.compose([
+				Validators.required,
+				Validators.maxLength(30)
+			])],
+			breed: ['', Validators.compose([
+				Validators.required,
+				Validators.maxLength(30)
+			])],
+			age: ['', Validators.compose([
+				Validators.required,
+				Validators.pattern('^[0-9]*$')
+			])],
+			size: 'S',
+			photos: '',
+			description: ['', Validators.maxLength(300)]
+		});
+
+		this.urlsPet = ['', '', '', '', ''];
 	}
 
 	public showWalkServiceModal() {

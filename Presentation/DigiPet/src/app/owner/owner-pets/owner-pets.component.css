@@ -171,6 +171,7 @@ h5 {
 	border-color: #05a;
 }
 
+.has-error input[type="datetime-local"],
 .has-error input[type="email"],
 .has-error input[type="password"],
 .has-error input[type="text"],
