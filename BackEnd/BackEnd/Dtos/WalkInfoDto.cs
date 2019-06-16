@@ -8,6 +8,10 @@ namespace WebApi.Dtos
 {
     public class WalkInfoDto
     {
+        public WalkInfoDto()
+        {
+
+        }
         public WalkInfoDto(Walk walk)
         {
             Id = walk.Id;
@@ -16,14 +20,22 @@ namespace WebApi.Dtos
             Province = walk.Province;
             Canton = walk.Canton;
             Description = walk.Description;
-            PetId = walk.PetId;
+            Pet = new PetDto( walk.Pet);
             WalkerId = walk.WalkerId;
+            ExactAddress = walk.ExactAddress;
+            if(walk.ReportWalks!=null && walk.ReportWalks.Count != 0)
+            {
+                Report = walk.ReportWalks.Select(rw => { rw.Walk = null; return rw; }).ToList();
+            }
+            
+            
         }
         public int Id { get; set; }
-        public int PetId { get; set; }
+        public PetDto Pet { get; set; }
 
         public int WalkerId { get; set; }
-
+        public string ExactAddress { get; private set; }
+        public ICollection<ReportWalk> Report { get; }
         public DateTime Begin { get; set; }
 
         public decimal Duration { get; set; }
