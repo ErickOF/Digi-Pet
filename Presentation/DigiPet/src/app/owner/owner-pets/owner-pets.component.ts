@@ -13,8 +13,14 @@ import { ImgUploadService } from './../../services/uploads/img-upload/img-upload
 
 window.onclick = function(event) {
 	let addPetModal = document.getElementById("AddPetModal");
+	let walkServiceModal = document.getElementById("WalkServiceModal");
+	
 	if (event.target == addPetModal) {
 		addPetModal.style.display = "none";
+	}
+
+	if (event.target == walkServiceModal) {
+		walkServiceModal.style.display = "none";
 	}
 }
 
@@ -30,6 +36,7 @@ export class OwnerPetsComponent implements OnInit {
 	public loadingImgsPet = [false, false, false, false, false];
 	public pets;
 	public registerPet: FormGroup;
+	public registerWalkService: FormGroup;
 	public uploadPercent: Observable<number>;
 	public urlsPet = ['', '', '', '', ''];
 
@@ -63,6 +70,24 @@ export class OwnerPetsComponent implements OnInit {
 			photos: '',
 			description: ['', Validators.maxLength(300)]
 		});
+
+		this.registerWalkService = this.formBuilder.group({
+			name: ['', Validators.compose([
+				Validators.required,
+				Validators.maxLength(30)
+			])],
+			breed: ['', Validators.compose([
+				Validators.required,
+				Validators.maxLength(30)
+			])],
+			age: ['', Validators.compose([
+				Validators.required,
+				Validators.pattern('^[0-9]*$')
+			])],
+			size: 'S',
+			photos: '',
+			description: ['', Validators.maxLength(300)]
+		});
 	}
 
 	ngOnInit() {
@@ -70,22 +95,6 @@ export class OwnerPetsComponent implements OnInit {
 
 	get petFormControls() {
 		return this.registerPet.controls;
-	}
-
-	public deleteImage(i) {
-		this.urlsPet[i] = '';
-	}
-
-	public hideAddPetModal() {
-		document.getElementById('AddPetModal').style.display='none';
-	}
-
-	public openFileDialog(i: number) {
-		document.getElementById('selectFile' + i.toString()).click();
-	}
-
-	public showAddPetModal() {
-		document.getElementById('AddPetModal').style.display='block';
 	}
 
 	public addPet() {
@@ -124,6 +133,30 @@ export class OwnerPetsComponent implements OnInit {
 			this.loading = false;
 			this.showErrorMsg('¡Error!', '¡La mascota no pudo registrarse. Por favor intente más tarde!');
 		});
+	}
+
+	public deleteImage(i) {
+		this.urlsPet[i] = '';
+	}
+
+	public hideAddPetModal() {
+		document.getElementById('AddPetModal').style.display='none';
+	}
+
+	public hideWalkServiceModal() {
+		document.getElementById('WalkServiceModal').style.display='none';
+	}
+
+	public openFileDialog(i: number) {
+		document.getElementById('selectFile' + i.toString()).click();
+	}
+
+	public showAddPetModal() {
+		document.getElementById('AddPetModal').style.display='block';
+	}
+
+	public showWalkServiceModal() {
+		document.getElementById('WalkServiceModal').style.display='block';
 	}
 
 	private showErrorMsg(title: string, msg: string) {
