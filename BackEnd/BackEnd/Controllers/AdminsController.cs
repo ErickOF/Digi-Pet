@@ -16,10 +16,12 @@ namespace WebApi.Controllers
     public class AdminsController : ControllerBase
     {
         private readonly IUserService _userService;
+        private readonly IRepository _repo;
 
-        public AdminsController(IUserService userService)
+        public AdminsController(IUserService userService, IRepository repository)
         {
             _userService = userService;
+            _repo = repository;
         }
         [HttpPost("blockWalker/{id}")]
         public async Task<IActionResult> BlockWalker(int id)
@@ -46,6 +48,14 @@ namespace WebApi.Controllers
             {
                 return BadRequest(new { message = "error" });
             }
+        }
+        //solo para test
+        [HttpDelete("deleteWalk")]
+        public async Task<ActionResult<bool>> DeleteWalk(int id)
+        {
+            var res = await _repo.DropWalk(id);
+            if (res) return Ok(res);
+            else return BadRequest(res);
         }
     }
 }
