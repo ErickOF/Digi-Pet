@@ -244,6 +244,8 @@ namespace XUnitTestProject1
                 Assert.Equal(TempWalker.SchoolId, returnedWalker.userName);
                 Assert.NotEqual(0, returnedWalker.id);
 
+                
+
                 if (string.IsNullOrEmpty(TempWalkerToken))//autentica nuevo usuario
                 {
                     TempWalkerToken = await Authenticate(TempWalker.SchoolId, TempWalker.Password);
@@ -263,7 +265,7 @@ namespace XUnitTestProject1
                 var walkRequest = new WalkRequestDto
                 {
                     PetId = pets[0].Id,
-                    Begin = DateTime.Today.AddDays(2).AddHours(9),
+                    Begin = DateTime.Today.AddDays(2).AddHours(9).ToUniversalTime(),
                     Duration = 1,
                     Province = TempWalker.Province,
                     Canton = TempWalker.Canton,
@@ -288,10 +290,45 @@ namespace XUnitTestProject1
                 Assert.Equal(returnedWalker.id, parsedWalkRequest2.WalkerId);
 
                 //pide un paseo para el siguiente dia y debe fallar porque el cuidador no tiene hora disponible
-                walkRequest.Begin = DateTime.Today.AddDays(2).AddHours(9);
+                walkRequest.Begin = DateTime.Today.AddDays(3).AddHours(9);
                 var res5 = await PostWalkRequest(walkRequest, TestOwnerToken);
                 Assert.Equal(HttpStatusCode.BadRequest, res5.StatusCode);
 
+                var resBlockWalker = await BlockUnblockWalker(returnedWalker.id, true);
+                resBlockWalker.EnsureSuccessStatusCode();
+
+                var resGetProfile = await GetProfile("walkers", TempWalkerToken);
+                resGetProfile.EnsureSuccessStatusCode();
+                var resWalkerProfile = JsonConvert.DeserializeObject<ReturnWalker>(await resGetProfile.Content.ReadAsStringAsync());
+                Assert.Equal(returnedWalker.id, resWalkerProfile.Id);
+                //se verifica que se haya bloqueado perfil
+                Assert.True(resWalkerProfile.Blocked);
+
+
+
+                //al pedir en el dia que tiene disponible pero al estar bloqueado, no se pueden encontrar 
+                walkRequest.Begin = DateTime.Today.AddDays(3).AddHours(15);
+                var res6 = await PostWalkRequest(walkRequest, TestOwnerToken);
+                Assert.Equal(HttpStatusCode.BadRequest, res6.StatusCode);
+
+                var resUnBlockWalker = await BlockUnblockWalker(returnedWalker.id, false);
+                resUnBlockWalker.EnsureSuccessStatusCode();
+                var resGetProfile2 = await GetProfile("walkers", TempWalkerToken);
+                resGetProfile2.EnsureSuccessStatusCode();
+                var resWalkerProfile2 = JsonConvert.DeserializeObject<ReturnWalker>(await resGetProfile2.Content.ReadAsStringAsync());
+                Assert.Equal(returnedWalker.id, resWalkerProfile2.Id);
+
+                //se verifica que se haya desbloqueado perfil
+                Assert.False(resWalkerProfile2.Blocked);
+
+                //al desbloquear usuario se debe poder volver a encontrar un cuidador
+
+                var res7 = await PostWalkRequest(walkRequest, TestOwnerToken);
+                res7.EnsureSuccessStatusCode();
+                var message7 = await res7.Content.ReadAsStringAsync();
+                var parsedWalkRequest7 = JsonConvert.DeserializeObject<WalkInfoDto>(message7);
+
+                Assert.Equal(returnedWalker.id, parsedWalkRequest7.WalkerId);
 
 
             }
@@ -302,17 +339,27 @@ namespace XUnitTestProject1
                 await DeleteUser(TempWalker.SchoolId);
             }
         }
-
-       /* internal async Task Delete(string userName)
+        internal  Task<HttpResponseMessage> GetProfile(string route,string token)
         {
-            var res = await DeleteUser(userName);
-            res.EnsureSuccessStatusCode();
-            var stringResponse2 = await res.Content.ReadAsStringAsync();
-            var parsedMessage2 = JsonConvert.DeserializeObject<MessageResponse>(stringResponse2);
+            var url = $"/api/{route}/getprofile";
+            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            var res =  _client.GetAsync(url);
+            //limpiar los headers
+            _client.DefaultRequestHeaders.Clear();
+            return res;
+        }
 
-            Assert.Equal($"{userName} deleted", parsedMessage2.Message);
-        }*/
+        internal async Task<HttpResponseMessage> BlockUnblockWalker(int walkerId,bool block)
+        {
+            string url = block ? $"/api/admins/blockWalker/{walkerId}": $"api/admins/unblockWalker/{walkerId}";
+            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", AdminToken);
+            var res = await _client.PostAsync(url,null);
+            //limpiar los headers
+            _client.DefaultRequestHeaders.Clear();
+            return res;
+        }
 
+        #region interno
         internal async Task<HttpResponseMessage> PostWalkerSchedule(WeekScheduleDto obj)
         {
             var url = "/api/walkers/schedule";
@@ -345,8 +392,6 @@ namespace XUnitTestProject1
             var parsedWalkRequest = await res.Content.ReadAsStringAsync();
 
             return res;
-
-            
         }
 
         internal async Task<HttpResponseMessage> DeleteUser(string username)
@@ -395,6 +440,8 @@ namespace XUnitTestProject1
             public int id { get; set; }
             public string userName { get; set; }
         }
+        #endregion
+
         #endregion
     }
 }
