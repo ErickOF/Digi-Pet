@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
 using WebApi.Entities;
@@ -54,8 +55,10 @@ namespace WebApi.Model
                 return points ;
             }
         }
-        
+        [NotMapped]
         public virtual decimal TempPoints { get; set; }
-        
+
+        public virtual ICollection<WalkerSchedule> WalkerSchedules { get; set; }
+
     }
 }

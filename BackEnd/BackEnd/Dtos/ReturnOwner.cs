@@ -29,7 +29,9 @@ namespace WebApi.Dtos
                 Age = p.Age,
                 Size = p.Size,
                 Description = p.Description,
-                Photos = p.Photos
+                Photos = p.Photos,
+                DateCreated = p.DateCreated,
+                Trips=p.Walks.Count
             }
             ).ToList();
             Photo = owner.User.Photo;
