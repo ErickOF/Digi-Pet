@@ -28,16 +28,27 @@ export class ApiService {
 						.set('UserName', userLogin.username)
 						.set('Password', userLogin.password);
 		return this.http.post(Urls.baseUrl + Urls.authenticateUser, body,
-						  						this.httpOptionsUrlEncoded);
-	}
-
-	public registerPetCare(petCare) {
-		return this.http.post(Urls.baseUrl + Urls.createPetCare, petCare,
-												this.httpOptionsJSON);
+						  					this.httpOptionsUrlEncoded);
 	}
 
 	public registerOwner(owner) {
 		return this.http.post(Urls.baseUrl + Urls.createOwner, owner,
-												this.httpOptionsJSON);
+											this.httpOptionsJSON);
 	}
+
+	public registerPet(pet, token) {
+		return this.http.post(Urls.baseUrl + Urls.createPet, pet,
+						{
+							headers: new HttpHeaders()
+								.set('Authorization', `Bearer ${token}`)
+								.set('Content-Type', 'application/json'),
+							observe: 'response'
+						});
+	}
+
+	public registerPetCare(petCare) {
+		return this.http.post(Urls.baseUrl + Urls.createPetCare, petCare,
+											this.httpOptionsJSON);
+	}
+
 }

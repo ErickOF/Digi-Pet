@@ -1,4 +1,7 @@
+/* 'Open Sans' font from Google Fonts */
+@import url(https://fonts.googleapis.com/css?family=Open+Sans:400,700);
 body {font-family: Arial, Helvetica, sans-serif;}
+
 
 /* The Modal (background) */
 .modal {
@@ -76,4 +79,152 @@ body {font-family: Arial, Helvetica, sans-serif;}
 @keyframes fadeIn {
 	from {opacity: 0} 
 	to {opacity: 1}
+}
+
+.register {
+	width: 400px;
+	margin: 16px auto;
+	font-size: 16px;
+}
+
+.register-header,
+.register p {
+	margin-top: 0;
+	margin-bottom: 0;
+}
+
+.register-triangle {
+	width: 0;
+	margin-right: auto;
+	margin-left: auto;
+	border: 12px solid transparent;
+	border-bottom-color: rgb(15, 66, 107);
+}
+
+.register-header {
+	background: rgb(19, 77, 129);
+	padding: 20px;
+	font-size: 1.4em;
+	font-weight: normal;
+	text-align: center;
+	text-transform: uppercase;
+	color: #fff;
+}
+
+h1 {
+	font-size: 2.5em;
+	font-weight: normal;
+	text-align: center;
+	text-transform: uppercase;
+}
+
+h5 {
+	font-weight: normal;
+	text-align: center;
+	text-transform: uppercase;
+}
+
+.register-container {
+	padding: 5%;
+}
+
+.register p {
+	padding: 5%;
+}
+
+.register input {
+	box-sizing: border-box;
+	display: block;
+	width: 100%;
+	border-width: 1px;
+	border-style: solid;
+	padding: 16px;
+	outline: 0;
+	font-family: inherit;
+	font-size: 0.95em;
+}
+
+.register input[type="email"],
+.register input[type="password"] {
+	background: #fff;
+	border-color: #bbb;
+	color: #555;
+}
+
+.register input[type="email"]:focus,
+.register input[type="password"]:focus {
+	border-color: #888;
+}
+
+.register input[type="submit"] {
+	background: rgb(1, 29, 51);
+	border-color: transparent;
+	color: #fff;
+	cursor: pointer;
+}
+
+.register input[type="submit"]:hover {
+	background: #17c;
+}
+
+.register input[type="submit"]:focus {
+	border-color: #05a;
+}
+
+.has-error input[type="email"],
+.has-error input[type="password"],
+.has-error input[type="text"],
+.has-error select[type="text"],
+.has-error textarea[type="text"] {
+	border-color: rgb(216, 12, 12);
+	color: rgb(230, 14, 14);
+}
+
+div.text-error {
+	color: red;
+	margin-bottom: 3%;
+}
+
+.profile-picture {
+	position: relative;
+	z-index: 1;
+	width: 300px;
+	height:300px;
+	background-image:url(/assets/profile-placeholder.png);
+	background-size: contain;
+	border-radius: 1em;
+}
+
+.profile-picture img {
+	width: 300px;
+	height: 300px;
+	position: absolute;
+	z-index: 2;
+	border-radius: 1em;
+}
+
+.profile-picture label {
+	width: 300px;
+	height: 300px;
+	position: relative;
+	z-index: 3;
+}
+
+.profile-picture .drag-over .infotext {
+	color: white;
+	border: dashed 5px white;
+}
+
+.profile-picture .infotext {
+	margin-left: 5px;
+	margin-top: 5px;
+	height: 290px;
+	width: 290px;
+	vertical-align: middle;
+	text-align: center;
+	color: rgba(255,255,255,0.8);
+	border: dashed 3px rgba(255,255,255,0.8);
+	border-radius: 10px;
+	padding-top: 110px;
+	font-size: 150%;
 }
