@@ -155,6 +155,10 @@ export class TabOwnerComponent implements OnInit {
 		return pets;
 	}
 
+	public openFileDialog(i: number) {
+		document.getElementById('selectFile' + i.toString()).click();
+	}
+
 	public register() {
 		this.isSubmitted = true;
 		

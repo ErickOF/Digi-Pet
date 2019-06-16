@@ -242,8 +242,8 @@
 								<img width="150" height="150" src="{{ urlPet }}" />
 							</div>
 							<div class="text-center">
-								<input type="file" id="selectFile" (change)="uploadPetImg($event, ind, i)" style="display: none;">
-								<input *ngIf="urlPet == ''" type="button" class="btn-primary" value="Subir" onclick="document.getElementById('selectFile').click();" />
+								<input type="file" id="{{ 'selectFile' + i}}" (change)="uploadPetImg($event, ind, i)" style="display: none;">
+								<input *ngIf="urlPet == ''" type="button" class="btn-primary" value="Subir" (click)="openFileDialog(i)" />
 								<input *ngIf="urlPet != ''" type="button" class="btn-danger" value="Eliminar" (click)="deleteImage(ind, i)" />
 							</div>
 						</div>
