@@ -15,7 +15,7 @@ using WebApi.Services;
 
 namespace WebApi.Controllers
 {
-    [Authorize(Roles =Role.Petowner)]
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class OwnersController : ControllerBase
@@ -31,15 +31,16 @@ namespace WebApi.Controllers
         // GET: api/Owners
         [Authorize(Roles=Role.Admin)]
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Petowner>>> GetOwner()
+        public async Task<ActionResult<IEnumerable<ReturnOwner>>> GetOwner()
         {
             var owners =await _repository.GetOwners();
+
             return Ok(owners);
         }
         [Authorize(Roles = "Admin,PetOwner")]
         // GET: api/Owners/5
         [HttpGet("getprofile")]
-        public async Task<ActionResult<OwnerDto>> GetOwnerProfile()
+        public async Task<ActionResult<ReturnOwner>> GetOwnerProfile()
         {
             var username = User.Claims.Where(c => c.Type == ClaimTypes.Name).FirstOrDefault().Value;
             var role = User.Claims.Where(c => c.Type == ClaimTypes.Role).FirstOrDefault().Value;
@@ -49,21 +50,7 @@ namespace WebApi.Controllers
             {
                 return NotFound();
             }
-            var ownerDto = new OwnerDto
-            {
-                Name = owner.User.FirstName,
-                LastName = owner.User.LastName,
-                Email = owner.User.Email,
-                Email2 = owner.User.Email2,
-                Mobile = owner.User.Mobile,
-                Province = owner.User.Province,
-                Canton = owner.User.Canton,
-                Description = owner.User.Description,
-                DateCreated = owner.User.DateCreated,
-                Pets = owner.Pets.Select(p => new PetDto {Id=p.Id,Name=p.Name,Race=p.Race,Age=p.Age,Size=p.Size,Description=p.Description,Photos=p.Photos }).ToList()
-                
-            };
-            return ownerDto;
+            return owner;
         }
 
 
@@ -77,11 +64,11 @@ namespace WebApi.Controllers
             if (result.Item1 != null) return Ok(new { id = result.Item1.Id, UserName = result.Item1.User.Username });
             else return BadRequest(new { message = $"error creating user: {result.Item2}" });
         }
-
+        [Authorize(Roles = Role.Petowner)]
         [HttpPost("requestWalk")]
         public async Task<IActionResult> PostWalkRequest([FromBody] WalkRequestDto walkRequestDto)
         {
-            //var result = await _repository.RequestWalk(walkRequestDto);
+            var result = await _repository.RequestWalk(walkRequestDto);
             return Ok(walkRequestDto);
         }
 

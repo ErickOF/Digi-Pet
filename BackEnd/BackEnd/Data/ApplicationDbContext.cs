@@ -40,6 +40,11 @@ namespace WebApi.Models
                 entity.HasIndex(e => new { e.Property }).IsUnique();
             });
 
+            modelBuilder.Entity<WalkerSchedule>(entity =>
+            {
+                entity.HasKey(e => new { e.Id });
+                entity.HasIndex(e => new { e.WalkerId, e.Date }).IsUnique();
+            });
 
 
         }

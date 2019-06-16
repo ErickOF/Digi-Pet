@@ -13,6 +13,5 @@ namespace WebApi.Model
         public string Property { get; set; }
         [Required]
         public string Value { get; set; }
-
     }
 }

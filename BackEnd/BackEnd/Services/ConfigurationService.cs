@@ -48,7 +48,7 @@ namespace WebApi.Services
             {
                 try
                 {
-                     await _dbContext.Properties.AddAsync(new AppConfiguration { Property = key, Value = defaultValue });
+                    _dbContext.Properties.Add(new AppConfiguration { Property = key, Value = defaultValue });
                     await _dbContext.SaveChangesAsync();
                     trans.Commit();
                     return new Tuple<string, string>(key,defaultValue);
@@ -101,12 +101,14 @@ namespace WebApi.Services
                 if (name == "Secret") continue;
                 try
                 {
+                    var obj= await _dbContext.Properties.FirstOrDefaultAsync(p=>p.Property==name);
+                    if (obj != null) continue;
                     await PutProperty(name, value);
                 }
                 catch
                 {
 
-                    throw;
+                    
                 }
             }
         }
@@ -115,5 +117,8 @@ namespace WebApi.Services
     public class ConfigurationValues
     {
         public const string MinimumMinutesBeforeAskingService = "MinimumMinutesBeforeAskingService";
+        public const string HourPriceWalkUSD = "HourPriceWalkUSD";
+        public const string MinimumUpdateSheduleHours = "MinimumUpdateSheduleHours";
+        public const string MaximumUpdateSheduleHours = "MaximumUpdateSheduleHours";
     }
 }

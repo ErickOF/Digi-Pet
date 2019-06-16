@@ -21,9 +21,9 @@ namespace WebApi.Controllers
         }
         [AllowAnonymous]
         [HttpGet("test")]
-        public IActionResult A()
+        public IActionResult A([FromBody] WeekScheduleDto weekScheduleDto)
         {
-            return Ok();
+            return Ok(weekScheduleDto);
         }
 
         [AllowAnonymous]

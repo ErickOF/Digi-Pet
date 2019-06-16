@@ -20,6 +20,5 @@ namespace WebApi.Model
         public DateTime Date { get; set; }
         [Required,ValidateHoursAvailable]
         public int[] HoursAvailable { get; set; }//{}
-
     }
 }
