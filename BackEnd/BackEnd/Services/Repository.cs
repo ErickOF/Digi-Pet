@@ -23,6 +23,14 @@ namespace WebApi.Services
         Task<Tuple<WalkInfoDto,string>> RequestWalk(WalkRequestDto walkRequestDto);
         Task<ActionResult<IEnumerable<ReturnWalker>>> GetAllWalkers();
         Task<string> AddSchedule(WeekScheduleDto weekScheduleDto, string username);
+        Task<bool> DropWalk(int id);
+        Task<List<WalkInfoDto>> GetAllWalkerWalks(string username);
+        Task<List<WalkInfoDto>> GetAllPetWalks( int petId);
+        Task<List<WalkInfoDto>> GetAllOwnerWalks(string username);
+        Task<ReportWalk> GetReportCard(int walkId);
+        Task<Tuple<bool,string>> Rate(Rate rate);
+        Task<Tuple<bool, string>> AddReport(ReportWalk report);
+        Task<List<ScheduleDto>> GetSchedule(string username);
     }
     public class Repository : IRepository
     {
@@ -241,7 +249,10 @@ namespace WebApi.Services
                 );
 
             // se le asignan los 10 puntos adicionales si es del canton
-            walkers.ForEach(w => w.TempPoints = w.Points + ((w.User.Canton == walkRequestDto.Canton && w.User.Province == walkRequestDto.Province) ? 10 : 0));
+            walkers.ForEach(w => {
+                w.TempPoints = w.Points + ((w.User.Canton == walkRequestDto.Canton && w.User.Province == walkRequestDto.Province) ? 10 : 0);
+                if (w.Walks.Select(wa => wa.Pet.PetOwnerId).Contains(pet.PetOwnerId)) w.TempPoints = 0;//se desincentiva asignar un cuidador otra vez
+            });
             walkers.OrderByDescending(w => w.TempPoints);
             if (walkers.Count() == 0)
             {
@@ -275,7 +286,8 @@ namespace WebApi.Services
                 Canton = walkRequestDto.Canton,
                 Description = walkRequestDto.Description,
                 PetId = walkRequestDto.PetId,
-                WalkerId = walker.Id
+                WalkerId = walker.Id,
+                ExactAddress = walkRequestDto.ExactAddress
             };
             await _dbContext.Walks.AddAsync(walk);
             try
@@ -345,6 +357,124 @@ namespace WebApi.Services
                     return e.Message;                   
                 }
             }
+        }
+
+        public async Task<bool> DropWalk(int id)
+        {
+            try
+            {
+                var entity = await _dbContext.Walks.FindAsync(id);
+                _dbContext.Walks.Remove(entity);
+             await   _dbContext.SaveChangesAsync();
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        public Task<List<WalkInfoDto>> GetAllWalkerWalks(string username)
+        {
+            return _dbContext.Walks.Include(w => w.Walker).ThenInclude(w => w.User)
+                .Include(w=>w.ReportWalks)
+                .Include(w=>w.Pet)
+                .Where(w => w.Walker.User.Username == username)
+                .Select(w => new WalkInfoDto(w))
+                .ToListAsync();
+        }
+
+        public Task<List<WalkInfoDto>> GetAllPetWalks( int petId)
+        {
+            return _dbContext.Walks.Include(w=>w.Pet).ThenInclude(p=>p.Petowner)
+             .Include(w => w.ReportWalks)
+             .Where(w => w.PetId==petId)
+             .Select(w => new WalkInfoDto(w))
+             .ToListAsync();
+        }
+
+        public Task<List<WalkInfoDto>> GetAllOwnerWalks(string username)
+        {
+            return _dbContext.Walks.Include(w => w.Pet)
+                .ThenInclude(p => p.Petowner).ThenInclude(po=>po.User)
+           .Include(w => w.ReportWalks)
+           .Where(w => w.Pet.Petowner.User.Username==username)
+           .Select(w => new WalkInfoDto(w))
+           .ToListAsync();
+        }
+
+        public Task<ReportWalk> GetReportCard(int walkId)
+        {
+            return _dbContext.Reports.FirstOrDefaultAsync(r => r.WalkId == walkId);
+        }
+        
+        public async Task<Tuple<bool, string>> Rate(Rate rate)
+        {
+            int walkId=rate.walkId; int stars = rate.stars;
+            if (stars < 1 || stars > 5)
+            {
+                return new Tuple<bool, string>(false, "stars must be between 1-5");
+            }
+            var report = await _dbContext.Reports.FirstOrDefaultAsync(r => r.WalkId == walkId);
+
+            if (report == null)
+            {
+                return new Tuple<bool, string>(false, "report for walk not found");
+            }
+            report.Stars = stars;
+            _dbContext.Attach(report).State = EntityState.Modified;
+
+            if (rate.Denuncia != null)
+            {
+                await _dbContext.Denuncias.AddAsync(new Denuncia { DateCreated=DateTime.UtcNow,
+                    Description=rate.Denuncia.Description,
+                    WalkId=walkId});
+            }
+            try
+            {
+                await _dbContext.SaveChangesAsync();
+                return new Tuple<bool, string>(true, "ok");
+            }
+            catch
+            {
+                return new Tuple<bool, string>(false, "couln't save rate");
+            }
+
+
+        }
+
+        public async Task<Tuple<bool,string>> AddReport(ReportWalk report)
+        {
+            var walk = await  _dbContext.Walks
+                .Include(w=>w.ReportWalks)
+                .Where(w=>w.ReportWalks==null || w.ReportWalks.Count==0)
+                .FirstOrDefaultAsync(r=>r.Id==report.WalkId);
+            if(walk == null)
+            {
+                return new Tuple<bool, string>(false, "report already made or pending walk");
+            }
+
+
+            try
+            {
+                await _dbContext.Reports.AddAsync(report);
+                await _dbContext.SaveChangesAsync();
+                return new Tuple<bool, string>(true, "success");
+            }
+            catch (Exception e)
+            {
+
+                return new Tuple<bool, string>(false, e.Message);
+            }
+        }
+
+        public Task<List<ScheduleDto>> GetSchedule(string username)
+        {
+            return _dbContext.WalkerSchedule
+                 .Include(sch => sch.Walker).ThenInclude(w => w.User)
+                 .Where(sch => sch.Walker.User.Username == username && sch.Date.Date >= DateTime.UtcNow.Date)
+                 .Select(sch=>new ScheduleDto { Date=sch.Date, HoursAvailable=sch.HoursAvailable })
+                 .AsNoTracking().ToListAsync();
         }
     }
 }
