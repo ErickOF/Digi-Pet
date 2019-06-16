@@ -53,6 +53,14 @@ export class UsersService {
 						});
 	}
 
+	public getUpComingWalksByOwner(token: string) {
+		return this.http.get(Urls.baseUrl + Urls.getUpComingWalksByOwner,
+						{
+							headers: new HttpHeaders()
+								.set('Authorization', `Bearer ${token}`)
+						});
+	}
+
 	public getUpComingWalksByPetCare(token: string) {
 		return this.http.get(Urls.baseUrl + Urls.getUpComingWalksByPetCare,
 						{
