@@ -72,7 +72,6 @@ export class PetCareScheduleComponent implements OnInit {
 	}
 
 	public save() {
-		console.log(this.schedule);
 		this.loading = true;
 		let token = this.dataTransferService.getAccessToken().token;
 		let response = this.usersService.setSchedule(token, this.schedule);

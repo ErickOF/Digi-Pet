@@ -16,11 +16,10 @@ export class PetCareServicesComponent implements OnInit {
 	constructor(private dataTransferService: DataTransferService,
 				private usersService: UsersService) {
 		let token = this.dataTransferService.getAccessToken().token;
-		let response = this.usersService.getUpComingWalks(token);
+		let response = this.usersService.getUpComingWalksByPetCare(token);
 
 		response.subscribe(data => {
 			this.services = data;
-			console.log(this.services);
 		}, error => {
 			console.log(error);
 		});

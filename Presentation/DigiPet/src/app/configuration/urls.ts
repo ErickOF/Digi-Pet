@@ -20,7 +20,8 @@ export class Urls {
 	public static getOwnerProfile: string = 'api/Owners/getprofile';
 	public static getPetCareProfile: string = 'api/walkers/getprofile';
 	// Get services
-	public static getUpComingWalks: string = 'api/walkers/upcoming';
+	public static getUpComingWalksByOwner: string = 'api/owners/upcoming';
+	public static getUpComingWalksByPetCare: string = 'api/walkers/upcoming';
 	// Request Services
 	public static requestWalkService: string = 'api/owners/requestWalk';
 	// Set

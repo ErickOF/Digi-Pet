@@ -53,8 +53,16 @@ export class UsersService {
 						});
 	}
 
-	public getUpComingWalks(token: string) {
-		return this.http.get(Urls.baseUrl + Urls.getUpComingWalks,
+	public getUpComingWalksByOwner(token: string) {
+		return this.http.get(Urls.baseUrl + Urls.getUpComingWalksByOwner,
+						{
+							headers: new HttpHeaders()
+								.set('Authorization', `Bearer ${token}`)
+						});
+	}
+
+	public getUpComingWalksByPetCare(token: string) {
+		return this.http.get(Urls.baseUrl + Urls.getUpComingWalksByPetCare,
 						{
 							headers: new HttpHeaders()
 								.set('Authorization', `Bearer ${token}`)
