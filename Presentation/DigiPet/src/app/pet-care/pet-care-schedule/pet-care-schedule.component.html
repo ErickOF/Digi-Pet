@@ -1,3 +1,25 @@
-<p>
-  pet-care-schedule works!
-</p>
+<h2 class="text-center" style="margin: 5% 0% 5% 0%;">
+	Horario
+</h2>
+
+<table mat-table [dataSource]="dataSource" class="mat-elevation-z8" style="width: 100%;"> 
+	<ng-container [matColumnDef]="col" *ngFor="let col of hours">
+		<mat-header-cell *matHeaderCellDef> {{ col }} </mat-header-cell>
+		<div *ngIf="col == 'Horario'">
+			<mat-cell *matCellDef="let element"> {{ element }} </mat-cell>
+		</div>
+
+		<div>
+			<mat-cell *matCellDef="let element">
+				<input type="checkbox" (change)="checkboxClick($event, col, element)" />
+			</mat-cell>
+		</div>
+
+	</ng-container>
+
+	<mat-header-row *matHeaderRowDef="hours"></mat-header-row>
+	<mat-row *matRowDef="let row; columns: hours;"></mat-row>
+</table>
+
+<div><label></label></div>
+<div><label></label></div>
