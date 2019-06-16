@@ -130,6 +130,10 @@ export class TabOwnerComponent implements OnInit {
 		});
 	}
 
+	public deleteImage(pet, i) {
+		this.urlsPets[pet][i] = '';
+	}
+
 	public getPetFormControls(index: number) {
 		return ((this.registerPets.get('details') as FormArray).controls[index] as FormGroup).controls;
 	}
@@ -144,10 +148,15 @@ export class TabOwnerComponent implements OnInit {
 				"Race": petInfo.breed,
 				"Age": petInfo.age,
 				"Size": petInfo.size,
-				"Description": petInfo.description
+				"Description": petInfo.description,
+				"Photos": this.urlsPets[i]
 			});
 		}
 		return pets;
+	}
+
+	public openFileDialog(i: number) {
+		document.getElementById('selectFile' + i.toString()).click();
 	}
 
 	public register() {
@@ -162,7 +171,13 @@ export class TabOwnerComponent implements OnInit {
 			return;
 		}
 
+		if (!this.validateUrlsPets()) {
+			this.showErrorMsg('¡Mascota sin foto!', 'Debe seleccionar al menos una foto por mascota');
+			return;
+		}
+
 		this.loading = true;
+		
 		let ownerInfo = this.registerOwner.value;
 		let owner = {
 			"Password": ownerInfo.password,
@@ -177,8 +192,6 @@ export class TabOwnerComponent implements OnInit {
 			"Pets": this.getPets(),
 			"Photo": this.url
 		};
-
-		console.log(owner);
 
 		let response = this.api.registerOwner(owner);
 		response.subscribe(newOwner => {
@@ -212,12 +225,15 @@ export class TabOwnerComponent implements OnInit {
 
 	public uploadFile(event) {
 		this.loadingImg = true;
+		
 		let file = event.target.files[0];
 		delete event.target.files;
+
 		if (!file) {
 			this.loadingImg = true;
 			return;
 		}
+		
 		let filePath = file.name.split('.')[0];
 		this.uploadPercent = this.imgUploadService.uploadFile(filePath, file);
 		this.uploadPercent.subscribe(data => {
@@ -241,6 +257,59 @@ export class TabOwnerComponent implements OnInit {
 		}, error => {
 			this.loadingImg = false;
 		});
+	}
+
+	public uploadPetImg(event, pet, i) {
+		this.loadingImgsPets[pet][i] = true;
+		
+		let file = event.target.files[0];
+		delete event.target.files;
+
+		if (!file) {
+			this.loadingImgsPets[pet][i] = true;
+			return;
+		}
+		
+		let filePath = file.name.split('.')[0];
+		this.uploadPercent = this.imgUploadService.uploadFile(filePath, file);
+		this.uploadPercent.subscribe(data => {
+			if (data == 100) {
+				this.downloadURL = this.imgUploadService.getImage(filePath);
+				this.downloadURL.subscribe(url => {
+					this.urlsPets[pet][i] = url;
+					this.loadingImgsPets[pet][i] = false;
+				}, error => {
+					if (data == 100) {
+						this.downloadURL = this.imgUploadService.getImage(filePath);
+						this.downloadURL.subscribe(url => {
+							this.urlsPets[pet][i] = url;
+							this.loadingImgsPets[pet][i] = false;
+						}, error => {
+							this.loadingImgsPets[pet][i] = false;
+						});
+					}
+				});
+			}
+		}, error => {
+			this.loadingImgsPets[pet][i] = false;
+		});
+	}
+
+	private validateUrlsPets() {
+		for (let i in this.urlsPets) {
+			let valid  = false;
+			for (let j in this.urlsPets[i]) {
+				if (this.urlsPets[i][j] != '') {
+					valid = true;
+					break;
+				}
+			}
+
+			if (!valid) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 }
