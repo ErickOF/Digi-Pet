@@ -21,6 +21,7 @@ namespace WebApi.Services
         User GetById(int id);
         IEnumerable<User> GetAll();
         void CreatePasswordHash(string password, out byte[] passwordHash, out byte[] passwordSalt);
+        bool ValidateIfWalkBelongsToUser(string username, int walkId);
 
         User CreateUser(User user, string password);
         Task<bool> BlockWalker(int id);
@@ -200,6 +201,13 @@ namespace WebApi.Services
             {
                 return false;
             }
+            
+        }
+
+        public bool ValidateIfWalkBelongsToUser(string username,int walkId)
+        {
+            return _dbContext.Walks.Include(w => w.Pet).ThenInclude(p => p.Petowner).ThenInclude(po => po.User)
+                .Where(w => w.Pet.Petowner.User.Username == username).Select(w => w.Id).Contains(walkId);
             
         }
     }
