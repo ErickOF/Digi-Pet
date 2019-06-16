@@ -8,6 +8,10 @@ namespace WebApi.Dtos
 {
     public class ReturnWalker
     {
+        public ReturnWalker()
+        {
+
+        }
         public ReturnWalker(Walker u)
         {
             Id = u.Id;
