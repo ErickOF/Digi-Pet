@@ -16,12 +16,13 @@ namespace WebApi.Services
         Task<Tuple<Walker, string>> CreateWalker( WalkerDto walkerDto);
         Task<Tuple<Petowner, string>> CreateOwner(OwnerDto walkerDto);
         Task<Tuple<Pet, string>> CreatePet(PetDto petDto, int ownerId);
-        Task<Petowner> GetOwnerByUserName(string username);
-        Task<IEnumerable<Petowner>> GetOwners();
-        Task<Petowner> GetOwner(int id);
+        Task<ReturnOwner> GetOwnerByUserName(string username);
+        Task<IEnumerable<ReturnOwner>> GetOwners();
+        Task<ReturnOwner> GetOwner(int id);
         Task<Walker> GetWalkerByUserName(string username);
         Task<Tuple<WalkInfoDto,string>> RequestWalk(WalkRequestDto walkRequestDto);
         Task<ActionResult<IEnumerable<ReturnWalker>>> GetAllWalkers();
+        Task<string> AddSchedule(WeekScheduleDto weekScheduleDto, string username);
     }
     public class Repository : IRepository
     {
@@ -119,13 +120,15 @@ namespace WebApi.Services
                 }
             }
         }
-        public async Task<Petowner> GetOwnerByUserName(string username)
+        public async Task<ReturnOwner> GetOwnerByUserName(string username)
         {
-            return await _dbContext.Owners
+            var owner= await _dbContext.Owners
                 .Include(o => o.User)
                 .Include(o => o.Pets)
                 .ThenInclude(p=>p.Walks)
                 .FirstOrDefaultAsync(u => u.User.Username == username);
+
+            return new ReturnOwner (owner);
         }
 
         public async Task<Tuple<Pet, string>> CreatePet(PetDto petDto, int ownerId)
@@ -155,16 +158,19 @@ namespace WebApi.Services
         }
 
 
-        public async Task<IEnumerable<Petowner>> GetOwners()
+        public async Task<IEnumerable<ReturnOwner>> GetOwners()
         {
-            var owners= await _dbContext.Owners.Include(o=>o.User).ToListAsync();
+            var owners= await _dbContext.Owners.Include(o=>o.User).Include(o=>o.Pets).ToListAsync();
 
-            return owners.Select(u => { u.User.PasswordHash = null; return u; });
+            return owners.Select(u => new ReturnOwner(u));
         }
 
-        public async Task<Petowner> GetOwner(int id)
+        public async Task<ReturnOwner> GetOwner(int id)
         {
-            return await _dbContext.Owners.Include(o => o.Pets).Include(o=>o.User).FirstOrDefaultAsync(u => u.Id==id);
+            var owner= await _dbContext.Owners.Include(o => o.Pets).Include(o=>o.User).FirstOrDefaultAsync(u => u.Id==id);
+
+            return new ReturnOwner(owner);
+
         }
 
 
@@ -190,6 +196,56 @@ namespace WebApi.Services
             return await _dbContext.Walker.Include(w => w.User).Include(w=>w.Walks)
                 .Select(u => new ReturnWalker(u))
                 .ToListAsync();
+        }
+
+        public async Task<string> AddSchedule(WeekScheduleDto weekScheduleDto, string username)
+        {
+            var walker = await GetWalkerByUserName(username);
+            if (walker == null) return "walker not found";
+
+            using (var trans = await _dbContext.Database.BeginTransactionAsync())
+            {
+                try
+                {
+                    var scheds = weekScheduleDto.Week.Select(s =>
+                    {
+                        var existing = _dbContext.WalkerSchedule.FirstOrDefault(e => e.WalkerId == walker.Id && e.Date.Date == s.Date.Date);
+                        if (existing != null)
+                        {
+                            existing.HoursAvailable = s.HoursAvailable;
+                            return existing;
+                        }
+                        else
+                        {
+                            return new WalkerSchedule
+                            {
+                                Id = 0,
+                                WalkerId = walker.Id,
+                                Date = s.Date.Date,
+                                HoursAvailable = s.HoursAvailable
+                            };
+                        }
+
+
+                    }).ToList();
+                    var schedsCopy = scheds.ToList();
+
+                    scheds.RemoveAll(sch => sch.Id==0);
+                    scheds.ForEach(e => { _dbContext.Attach(e).State = EntityState.Modified; });
+
+                    schedsCopy.RemoveAll(sch => sch.Id!=0);
+
+                    await _dbContext.WalkerSchedule.AddRangeAsync(schedsCopy);
+                    await _dbContext.SaveChangesAsync();
+                    trans.Commit();
+                    return "success";
+                }
+                catch (Exception e)
+                {
+                    trans.Rollback();
+                    return e.Message;                   
+                }
+            }
         }
     }
 }

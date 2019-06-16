@@ -31,20 +31,7 @@ namespace WebApi.Controllers
             var username = User.Claims.Where(c => c.Type == ClaimTypes.Name).FirstOrDefault().Value;
 
             var owner =await _repository.GetOwnerByUserName(username);
-
-            var pets = owner.Pets.Select(p => new PetDto
-            {
-                Id = p.Id,
-                Name = p.Name,
-                Race = p.Race,
-                Age = p.Age,
-                Size = p.Size,
-                Description = p.Description,
-                Photos = p.Photos,
-                Trips = p.WalksQuant,
-                DateCreated = p.DateCreated
-            }).ToList();
-            return pets;
+            return owner.Pets;
 
         }
         // GET: api/Pets/5
@@ -64,21 +51,8 @@ namespace WebApi.Controllers
             {
                 return NotFound();
             }
-            var petDto = new PetDto
-            {
-                Id = pet.Id,
-                Name = pet.Name,
-                Race = pet.Race,
-                Age = pet.Age,
-                Size = pet.Size,
-                Description = pet.Description,
-                Photos = pet.Photos,
-                Trips = pet.WalksQuant,
-                DateCreated = pet.DateCreated
-            };
+            return pet;
 
-
-            return petDto;
         }
         // POST: api/Pets
         [HttpPost]

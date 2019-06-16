@@ -67,12 +67,22 @@ namespace WebApi.Controllers
             if (result.Item1 != null) return Ok(new { id=result.Item1.Id, UserName=result.Item1.User.Username });
             else return BadRequest(new { message = $"error creating user: {result.Item2}"});
         }
-
-        private bool WalkerExists(int id)
+        [Authorize(Roles = Role.Walker)]
+        [HttpPost("schedule")]
+        public async Task<IActionResult> PostSchedule([FromBody] WeekScheduleDto weekScheduleDto)
         {
-            return _context.Walker.Any(e => e.Id == id);
+            var username = User.Claims.Where(c => c.Type == ClaimTypes.Name).FirstOrDefault().Value;
+            var result = await _repository.AddSchedule(weekScheduleDto,username);
+
+            if (result == "success")
+            {
+                return Ok(result);
+            }
+            return BadRequest(result);
         }
 
-        
+
+
+
     }
 }

@@ -9,7 +9,7 @@ using WebApi.Services;
 
 namespace WebApi.CustomAttributes
 {
-    public class ValidateDate :ValidationAttribute
+    public class ValidateDate : ValidationAttribute
     {
 
         protected override ValidationResult IsValid(object value, ValidationContext validationContext)
