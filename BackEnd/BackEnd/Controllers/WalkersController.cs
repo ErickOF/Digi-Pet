@@ -80,8 +80,68 @@ namespace WebApi.Controllers
             }
             return BadRequest(result);
         }
+        [Authorize(Roles = Role.Walker)]
+        [HttpGet("schedule")]
+        public async Task<IActionResult> GetSchedule()
+        {
+            var username = User.Claims.Where(c => c.Type == ClaimTypes.Name).FirstOrDefault().Value;
+            var res = await _repository.GetSchedule(username);
 
+            return Ok(res.OrderBy(s=>s.Date));
 
+        }
+
+        [Authorize(Roles =Role.Walker)]
+        [HttpGet("history")]
+        public async Task<ActionResult<List<WalkInfoDto>>> GetHistory()
+        {
+            var username = User.Claims.Where(c => c.Type == ClaimTypes.Name).FirstOrDefault().Value;
+            var allWalks = await _repository.GetAllWalkerWalks(username);
+            allWalks.RemoveAll(w=>w.Begin.AddHours((double)w.Duration)>DateTime.UtcNow);
+            allWalks = allWalks.OrderBy(a => a.Begin).ToList();
+            return Ok(allWalks);
+        }
+
+        [Authorize(Roles = Role.Walker)]
+        [HttpGet("upcoming")]
+        public async Task<ActionResult<List<WalkInfoDto>>> GetUpcoming()
+        {
+            var username = User.Claims.Where(c => c.Type == ClaimTypes.Name).FirstOrDefault().Value;
+            var allWalks = await _repository.GetAllWalkerWalks(username);
+            allWalks.RemoveAll(w => w.Begin < DateTime.UtcNow);
+            allWalks = allWalks.OrderBy(a => a.Begin).ToList();
+            return Ok(allWalks);
+        }
+
+        [Authorize(Roles = Role.Walker)]
+        [HttpGet("pendingReport")]
+        public async Task<ActionResult<List<WalkInfoDto>>> GetpendingReport()
+        {
+            var username = User.Claims.Where(c => c.Type == ClaimTypes.Name).FirstOrDefault().Value;
+            var allWalks = await _repository.GetAllWalkerWalks(username);
+            allWalks.RemoveAll(w => w.Report!=null || w.Begin.AddHours((double)w.Duration)>DateTime.UtcNow);
+            allWalks = allWalks.OrderByDescending(a => a.Begin).ToList();
+            return Ok(allWalks);
+        }
+
+        [Authorize(Roles = Role.Walker)]
+        [HttpPost("postReport")]
+        public async Task<IActionResult> PostReport([FromBody] ReportWalk report)
+        {
+            var username = User.Claims.Where(c => c.Type == ClaimTypes.Name).FirstOrDefault().Value;
+
+            var walker = await _repository.GetWalkerByUserName(username);
+            if (!walker.Walks.Select(w => w.Id).Contains(report.WalkId))
+                return BadRequest(new { message = "not your walk" });
+
+            var result =await _repository.AddReport(report);
+            if (!result.Item1)
+            {
+                return BadRequest(new { message = result.Item2 });
+            }
+
+            return Ok(new { message = result.Item2 });
+        }
 
 
     }
