@@ -32,6 +32,7 @@ window.onclick = function(event) {
 export class OwnerPetsComponent implements OnInit {
 	public downloadURL: Observable<string>;
 	public isSubmitted = false;
+	public isSubmittedWS = false;
 	public loading = false;
 	public loadingImgsPet = [false, false, false, false, false];
 	public loadingService = false;
@@ -40,6 +41,26 @@ export class OwnerPetsComponent implements OnInit {
 	public registerWalkService: FormGroup;
 	public uploadPercent: Observable<number>;
 	public urlsPet = ['', '', '', '', ''];
+
+	public duration = [
+		{ id: 0.5, name: 0.5 },
+		{ id: 1, name: 1 },
+		{ id: 1.5, name: 1.5 },
+		{ id: 2, name: 2 },
+		{ id: 2.5, name: 2.5 },
+		{ id: 3, name: 3 },
+		{ id: 3.5, name: 3.5 },
+		{ id: 4, name: 4 },
+		{ id: 4.5, name: 4.5 },
+		{ id: 5, name: 5 },
+		{ id: 5.5, name: 5.5 },
+		{ id: 6, name: 6 },
+		{ id: 6.5, name: 6.5 },
+		{ id: 7, name: 7 },
+		{ id: 7.5, name: 7.5 },
+		{ id: 8, name: 8 }
+
+	];
 
 	public provinces = [
 		{ id: 'San Jose', name: 'San Jose' },
@@ -87,14 +108,8 @@ export class OwnerPetsComponent implements OnInit {
 			duration: ['', Validators.required],
 			province: ['', Validators.required],
 			canton: ['', Validators.required],
-			description: ['', Validators.compose([
-				Validators.required,
-				Validators.maxLength(300)
-			])],
-			exactAddress: ['', Validators.compose([
-				Validators.required,
-				Validators.maxLength(300)
-			])]
+			description: ['', Validators.required],
+			exactAddress: ['', Validators.required]
 		});
 	}
 
@@ -147,6 +162,15 @@ export class OwnerPetsComponent implements OnInit {
 		});
 	}
 
+	public confirmWalkService() {
+		this.isSubmittedWS = true;
+		console.log(this.registerWalkService, this.registerWalkService.controls, this.registerWalkService.value);
+		
+		if (!this.registerWalkService.valid) {
+			return;
+		}
+	}
+
 	public deleteImage(i) {
 		this.urlsPet[i] = '';
 	}
@@ -165,6 +189,7 @@ export class OwnerPetsComponent implements OnInit {
 
 	public requestWalkService(idPet) {
 		this.registerWalkService = this.formBuilder.group({
+			idPet: idPet,
 			date: ['', Validators.required],
 			duration: ['', Validators.required],
 			province: ['', Validators.required],

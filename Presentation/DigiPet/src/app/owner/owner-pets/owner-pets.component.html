@@ -25,26 +25,29 @@
 
 				<div class="col-md-6 text-center">
 
-					<p [ngClass]="{ 'has-error': isSubmitted && walkServiceFormControls.date.errors }">
+					<p [ngClass]="{ 'has-error': isSubmittedWS && walkServiceFormControls.date.errors }">
 						<input type="datetime-local" class="form-control" placeholder="YYYY-MM-DD HH:MM:SS" formControlName="date">
 					</p>
 				</div>
 
 				<div class="col-md-6 text-center">
-					<p [ngClass]="{ 'has-error': isSubmitted && walkServiceFormControls.duration.errors }">
-						<input type="text" class="form-control" placeholder="Duración" formControlName="duration">
+					<p [ngClass]="{ 'has-error': isSubmittedWS && walkServiceFormControls.duration.errors }">
+						<select id="duration" type="text" class="form-control" formControlName="duration">
+							<option value="">--Duración--</option>
+							<option *ngFor="let time of duration" [value]="time.id"> {{ time.name }} </option>
+						</select>
 					</p>
 				</div>
 			</div>
 
 			<div class="row">
-				<div *ngIf="isSubmitted && walkServiceFormControls.date.errors" class="help-block col-md-6">
+				<div *ngIf="isSubmittedWS && walkServiceFormControls.date.errors" class="help-block col-md-6">
 					<div class="text-error" *ngIf="walkServiceFormControls.date.errors.required">La fecha es requerida</div>
 				</div>
 
-				<div *ngIf="!(isSubmitted && walkServiceFormControls.date.errors)" class="help-block col-md-6"></div>
+				<div *ngIf="!(isSubmittedWS && walkServiceFormControls.date.errors)" class="help-block col-md-6"></div>
 
-				<div *ngIf="isSubmitted && walkServiceFormControls.duration.errors" class="help-block col-md-6">
+				<div *ngIf="isSubmittedWS && walkServiceFormControls.duration.errors" class="help-block col-md-6">
 					<div class="text-error" *ngIf="walkServiceFormControls.duration.errors.required">La duración es requerida</div>
 				</div>
 			</div>
@@ -52,7 +55,7 @@
 			<!-- Address -->
 			<div class="row">
 				<div class="col-md-6 text-center">
-					<p [ngClass]="{ 'has-error': isSubmitted && walkServiceFormControls.province.errors }">
+					<p [ngClass]="{ 'has-error': isSubmittedWS && walkServiceFormControls.province.errors }">
 						<select id="province" type="text" class="form-control" formControlName="province">
 							<option value="">--Provincia--</option>
 							<option *ngFor="let province of provinces" [value]="province.id"> {{ province.name }} </option>
@@ -61,39 +64,55 @@
 				</div>
 
 				<div class="col-md-6 text-center">
-					<p [ngClass]="{ 'has-error': isSubmitted && walkServiceFormControls.canton.errors }">
+					<p [ngClass]="{ 'has-error': isSubmittedWS && walkServiceFormControls.canton.errors }">
 						<input type="text" class="form-control" placeholder="Cantón" formControlName="canton">
 					</p>
 				</div>
 			</div>
 
 			<div class="row">
-				<div *ngIf="isSubmitted && (walkServiceFormControls.province.errors)" class="help-block col-md-6">
+				<div *ngIf="isSubmittedWS && (walkServiceFormControls.province.errors)" class="help-block col-md-6">
 					<div class="text-error" *ngIf="walkServiceFormControls.province.errors.required">La provincia es requerida</div>
 				</div>
-				<div *ngIf="!(isSubmitted && walkServiceFormControls.province.errors)" class="help-block col-md-6">
+
+				<div *ngIf="!(isSubmittedWS && walkServiceFormControls.province.errors)" class="help-block col-md-6">
 				</div>
 
-				<div *ngIf="isSubmitted && (walkServiceFormControls.canton.errors)" class="help-block col-md-6">
+				<div *ngIf="isSubmittedWS && (walkServiceFormControls.canton.errors)" class="help-block col-md-6">
 					<div class="text-error" *ngIf="walkServiceFormControls.canton.errors.required">El cantón es requerido</div>
+				</div>
+			</div>
+
+			<div class="row">
+				<p class="col-md-12" [ngClass]="{ 'has-error': isSubmittedWS && walkServiceFormControls.exactAddress.errors }">
+					<textarea type="text" class="form-control col-md-12" rows="4" placeholder="Dirección exacta" formControlName="exactAddress"></textarea>
+				</p>
+			</div>
+
+			<div class="row">
+				<div *ngIf="isSubmittedWS && (walkServiceFormControls.exactAddress.errors)" class="help-block col-md-6">
+					<div class="text-error" *ngIf="walkServiceFormControls.exactAddress.errors.required">La dirección exacta es requerida</div>
 				</div>
 			</div>
 
 			<div><label></label></div>
 
 			<div class="row">
-				<p class="col-md-12">
-					<textarea type="text" class="form-control col-md-12" rows="4" placeholder="Descripción (Opcional)" formControlName="description"></textarea>
+				<p class="col-md-12" [ngClass]="{ 'has-error': isSubmittedWS && walkServiceFormControls.description.errors }">
+					<textarea type="text" class="form-control col-md-12" rows="4" placeholder="Descripción" formControlName="description"></textarea>
 				</p>
 			</div>
 
-			<div><label></label></div>
-			<div><label></label></div>
+			<div class="row">
+				<div *ngIf="isSubmittedWS && (walkServiceFormControls.description.errors)" class="help-block col-md-6">
+					<div class="text-error" *ngIf="walkServiceFormControls.description.errors.required">La descripción es requerida</div>
+				</div>
+			</div>
 
 			<!-- Submit -->
 			<div class="text-center">
 				<p>
-					<input type="submit" class="btn btn-success" value="Solicitar" (click)="addPet()">
+					<input type="submit" class="btn btn-success" value="Solicitar" (click)="confirmWalkService()">
 				</p>
 			</div>
 		</form>
