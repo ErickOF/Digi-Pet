@@ -8,6 +8,10 @@ namespace WebApi.Dtos
 {
     public class ReturnOwner
     {
+        public ReturnOwner()
+        {
+
+        }
         public ReturnOwner(Petowner owner)
         {
 
