@@ -135,16 +135,15 @@
 
 			<!-- Profile image -->
 			<div class="row">
-				<div class="col-md-12 text-center">
+				<div class="col-md-12">
 					<div class="profile-picture">
-						<img *ngIf="url" width=300 height=300 src="{{ url }}" />
-							<label *ngIf="editmode" for="uploader-input" ng2FileDrop [ngClass]="{'drag-over': hasDragOver}" (fileOver)="fileOver($event)" [uploader]="uploader">
-								<div class="infotext"><span *ngIf="!url">Arrastre su foto<br>o click para subir</span></div>
-							</label>
-						<input *ngIf="editmode" type="file" ng2FileSelect [uploader]="uploader" id="uploader-input" style="display:none" />
+						<ngx-loading [show]="loadingImg"></ngx-loading>
+						<img *ngIf="url" width=250 height=250 src="{{ url }}" />
 					</div>
+					<input type="file" (change)="uploadFile($event)">
 				</div>
 			</div>
+
 		</form>
 	</div>
 
@@ -235,10 +234,10 @@
 							<textarea type="text" class="form-control col-md-12" rows="4" placeholder="Descripción (Opcional)" formControlName="description"></textarea>
 						</p>
 					</div>
-			    	
-			    	<hr style="border-color: '#000000'">
-		    	</div>
-		 	</div>
+
+					<hr style="border-color: '#000000'">
+				</div>
+			</div>
 		</form>
 	</div>
 

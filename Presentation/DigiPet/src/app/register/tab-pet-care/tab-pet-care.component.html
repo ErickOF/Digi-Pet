@@ -6,16 +6,16 @@
 		<div class="row">
 			<div class="col-md-6 text-center">
 				<p [ngClass]="{ 'has-error': isSubmitted && petCareFormControls.name.errors }">
-		     	<input type="text" class="form-control" placeholder="Nombre" formControlName="name">
-		   	</p>
+				<input type="text" class="form-control" placeholder="Nombre" formControlName="name">
+			</p>
 			</div>
 
 			<div class="col-md-6 text-center">
 				<p [ngClass]="{ 'has-error': isSubmitted && petCareFormControls.lastname.errors }">
-		      <input type="text" class="form-control" placeholder="Apellido" formControlName="lastname">
-		    </p>
+					<input type="text" class="form-control" placeholder="Apellido" formControlName="lastname">
+				</p>
 			</div>
-	  </div>
+		</div>
 
 		<div class="row">
 			<div *ngIf="isSubmitted && petCareFormControls.name.errors" class="help-block col-md-6">
@@ -124,16 +124,16 @@
 		<div class="row">
 			<div class="col-md-6 text-center">
 				<p [ngClass]="{ 'has-error': isSubmitted && petCareFormControls.telephoneNumber.errors }">
-		     	<input type="text" class="form-control" placeholder="Número de teléfono" formControlName="telephoneNumber">
-		   	</p>
+					<input type="text" class="form-control" placeholder="Número de teléfono" formControlName="telephoneNumber">
+				</p>
 			</div>
 
 			<div class="col-md-6 text-center">
 				<p [ngClass]="{ 'has-error': isSubmitted && petCareFormControls.password.errors }">
-		      <input type="password" class="form-control" placeholder="Contraseña" formControlName="password">
-		    </p>
+					<input type="password" class="form-control" placeholder="Contraseña" formControlName="password">
+				</p>
 			</div>
-	  </div>
+		</div>
 
 		<div class="row">
 			<div *ngIf="isSubmitted && petCareFormControls.telephoneNumber.errors" class="help-block col-md-6">
@@ -203,18 +203,16 @@
 
 		<!-- Profile image -->
 		<div class="row">
-	    <div class="col-md-12 text-center">
-	    	<div class="profile-picture">
-				<img *ngIf="url" width=300 height=300 src="{{ url }}" />
-				<label *ngIf="editmode" for="uploader-input" ng2FileDrop [ngClass]="{'drag-over': hasDragOver}" (fileOver)="fileOver($event)" [uploader]="uploader">
-				    <div class="infotext"><span *ngIf="!url">Arrastre su foto<br>o click para subir</span></div>
-				</label>
-				<input *ngIf="editmode" type="file" ng2FileSelect [uploader]="uploader" id="uploader-input" style="display:none" />
+			<div class="col-md-12">
+				<div class="profile-picture">
+					<ngx-loading [show]="loadingImg"></ngx-loading>
+					<img *ngIf="url" width=250 height=250 src="{{ url }}" />
+				</div>
+				<input type="file" (change)="uploadFile($event)">
 			</div>
-	    </div>
-	</div>
+		</div>
 
-	<div class="col-md-12"><label></label></div>
+		<div class="col-md-12"><label></label></div>
 
 		<!-- Submit -->
 		<p>

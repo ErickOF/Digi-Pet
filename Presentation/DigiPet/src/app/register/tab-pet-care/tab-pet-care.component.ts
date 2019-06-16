@@ -1,18 +1,15 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
-import { FileUploader } from 'ng2-file-upload';
 import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from  '@angular/forms';
 import { NgxLoadingComponent } from 'ngx-loading';
+import { Observable } from "rxjs";
 import { Router } from '@angular/router';
 import Swal from 'sweetalert2';
 
 import { ApiService } from './../../services/api/api.service';
 import { AuthService } from './../../services/auth/auth.service';
 import { DataTransferService } from './../../services/data-transfer/data-transfer.service';
+import { ImgUploadService } from './../../services/uploads/img-upload/img-upload.service';
 
-
-class ImageSnippet {
-	constructor(public src: string, public file: File) {}
-}
 
 @Component({
 	selector: 'app-tab-pet-care',
@@ -20,56 +17,34 @@ class ImageSnippet {
 	styleUrls: ['./tab-pet-care.component.css']
 })
 export class TabPetCareComponent implements OnInit {
-	public loading = false;
-
-	public uploader: FileUploader;
-	private hasDragOver = false;
-
-	public imageSrc: string;
+	public downloadURL: Observable<string>;
 	public isSubmitted = false;
-	public provinces = [
-		{ id: 0, name: 'San Jose' },
-		{ id: 1, name: 'Alajuela' },
-		{ id: 2, name: 'Cartago' },
-		{ id: 3, name: 'Heredia' },
-		{ id: 4, name: 'Guanacaste' },
-		{ id: 5, name: 'Puntarenas' },
-		{ id: 6, name: 'Limón' }
-	]
+	public loading = false;
+	public loadingImg = false;
 	public registerPetCare: FormGroup;
-	public universities = [
-		{ id: 0, name: 'TEC'},
-		{ id: 1, name: 'UCR'},
-		{ id: 2, name: 'UNA'}
-	];
-
-	@Input()
-	public editmode = true;
-
-	@Input()
+	public uploadPercent: Observable<number>;
 	public url = '';
 
-	@Output()
-	private urlChange = new EventEmitter();
-	
-	public fileOver(e: any): void {
-		this.hasDragOver = e;
-	}
+	public provinces = [
+		{ id: 'San Jose', name: 'San Jose' },
+		{ id: 'Alajuela', name: 'Alajuela' },
+		{ id: 'Cartago', name: 'Cartago' },
+		{ id: 'Heredia', name: 'Heredia' },
+		{ id: 'Guanacaste', name: 'Guanacaste' },
+		{ id: 'Puntarenas', name: 'Puntarenas' },
+		{ id: 'Limón', name: 'Limón' }
+	];
+
+	public universities = [
+		{ id: 'TEC', name: 'TEC' },
+		{ id: 'UCR', name: 'UCR' },
+		{ id: 'UNA', name: 'UNA' }
+	];
 
 	constructor(private router: Router, private formBuilder: FormBuilder,
 				private api: ApiService, private authService: AuthService,
-				private dataTransferService: DataTransferService) {
-		this.uploader = new FileUploader({
-			//url: 'http://localhost:9090/upload',
-			disableMultipart: false,
-			autoUpload: true
-		});
-
-		this.uploader.response.subscribe(res => {
-			// Upload returns a JSON with the image IDx
-			this.url = 'http://localhost:9090/get/' + JSON.parse(res).id;
-			this.urlChange.emit(this.url);
-		});
+				private dataTransferService: DataTransferService,
+				private imgUploadService: ImgUploadService) {
 	}
 
 	ngOnInit() {
@@ -150,6 +125,11 @@ export class TabPetCareComponent implements OnInit {
 			return;
 		}
 
+		if (this.url == '') {
+			this.showErrorMsg('¡Sin foto de perfil!', 'Debe seleccionar su foto de perfil');
+			return;
+		}
+
 		this.loading = true;
 
 		let petCareInfo = this.registerPetCare.value;
@@ -166,7 +146,8 @@ export class TabPetCareComponent implements OnInit {
 			"Canton": petCareInfo.canton,
 			"DoesOtherProvinces": petCareInfo.doesOtherProvinces,
 			"OtherProvinces": this.getOtherProvinces(petCareInfo.provinces),
-			"Description": petCareInfo.description
+			"Description": petCareInfo.description,
+			"Photo": this.url
 		};
 
 		let response = this.api.registerPetCare(petCare);
@@ -183,21 +164,53 @@ export class TabPetCareComponent implements OnInit {
 				this.router.navigateByUrl('petcare/profile');
 			}, error => {
 				this.loading = false;
-				Swal.fire({
-					title: '¡Error de conexión!',
-					text: '¡Por favor intente más tarde!',
-					type: 'error',
-					confirmButtonText: 'Cool'
-				});
+				this.showErrorMsg('¡Error de conexión!','¡Por favor intente más tarde!');
 			});
 		}, error => {
 			this.loading = false;
-			Swal.fire({
-				title: '¡Error!',
-				text: '¡El usuario no pudo registrarse. Por favor intente más tarde!',
-				type: 'error',
-				confirmButtonText: 'Cool'
-			});
+			this.showErrorMsg('¡Error!', '¡El usuario no pudo registrarse. Por favor intente más tarde!');
+		});
+	}
+
+	private showErrorMsg(title: string, msg: string) {
+		Swal.fire({
+			title: title,
+			text: msg,
+			type: 'error',
+			confirmButtonText: 'Cool'
+		});
+	}
+
+	public uploadFile(event) {
+		this.loadingImg = true;
+		let file = event.target.files[0];
+		delete event.target.files;
+		if (!file) {
+			this.loadingImg = true;
+			return;
+		}
+		let filePath = file.name.split('.')[0];
+		this.uploadPercent = this.imgUploadService.uploadFile(filePath, file);
+		this.uploadPercent.subscribe(data => {
+			if (data == 100) {
+				this.downloadURL = this.imgUploadService.getImage(filePath);
+				this.downloadURL.subscribe(url => {
+					this.url = url;
+					this.loadingImg = false;
+				}, error => {
+					if (data == 100) {
+						this.downloadURL = this.imgUploadService.getImage(filePath);
+						this.downloadURL.subscribe(url => {
+							this.url = url;
+							this.loadingImg = false;
+						}, error => {
+							this.loadingImg = false;
+						});
+					}
+				});
+			}
+		}, error => {
+			this.loadingImg = false;
 		});
 	}
 

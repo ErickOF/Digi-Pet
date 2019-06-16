@@ -16,6 +16,7 @@ export class OwnerInformationComponent implements OnInit {
 	constructor(private dataTransferService: DataTransferService) {
 		this.owner = this.dataTransferService.getUserInformation();
 		this.owner.dateCreated = this.owner.dateCreated.split('T')[0];
+		console.log(this.owner);
 	}
 
 	ngOnInit() {
