@@ -9,6 +9,7 @@ import { ApiService } from './../../services/api/api.service';
 import { AuthService } from './../../services/auth/auth.service';
 import { DataTransferService } from './../../services/data-transfer/data-transfer.service';
 import { ImgUploadService } from './../../services/uploads/img-upload/img-upload.service';
+import { UsersService } from './../../services/api/users/users.service';
 
 
 window.onclick = function(event) {
@@ -77,7 +78,8 @@ export class OwnerPetsComponent implements OnInit {
 				private dataTransferService: DataTransferService,
 				private formBuilder: FormBuilder,
 				private imgUploadService: ImgUploadService,
-				private router: Router) {
+				private router: Router,
+				private usersService: UsersService) {
 
 		this.pets = this.dataTransferService.getUserInformation().pets;
 
@@ -169,17 +171,38 @@ export class OwnerPetsComponent implements OnInit {
 			return;
 		}
 
+		this.loadingService = true;
+
 		let walkServiceInfo = this.registerWalkService.value;
 
 		let walkService = { 
 			"PetId" : walkServiceInfo.idPet,
-			"Begin" : walkServiceInfo.date,
+			"Begin" : walkServiceInfo.date.split('T').join(' '),
 			"Duration" : walkServiceInfo.duration,
 			"Province" : walkServiceInfo.province,
 			"Canton" : walkServiceInfo.canton,
 			"Description" : walkServiceInfo.description,
 			"ExactAddress": walkServiceInfo.exactAddress
-		}
+		};
+
+		let token = this.dataTransferService.getAccessToken().token;
+
+		let response = this.usersService.requestWalkService(token, walkService);
+		response.subscribe(data => {
+			this.loadingService = false;
+			console.log(data);
+			this.showSuccessMsg('¡Éxito!', 'Su caminata fue agendada')
+			this.hideAddPetModal();
+			this.router.navigateByUrl('/RefrshComponent', {skipLocationChange: true})
+						.then(()=>this.router.navigate(['owner/profile']));
+		}, error => {
+			this.loadingService = false;
+			console.log(error);
+			if (error.error == 'cant find walker') {
+				this.showErrorMsg('¡La solicitud no pudo realizarse!', '¡No hay cuidadores para su configuración!');
+			}
+			this.showErrorMsg('¡Error!', '¡La solicitud no pudo realizarse. Por favor intente más tarde!');
+		});
 	}
 
 	public deleteImage(i) {
@@ -250,7 +273,16 @@ export class OwnerPetsComponent implements OnInit {
 			title: title,
 			text: msg,
 			type: 'error',
-			confirmButtonText: 'Cool'
+			confirmButtonText: 'Ok'
+		});
+	}
+
+	private showSuccessMsg(title: string, msg: string) {
+		Swal.fire({
+			title: title,
+			text: msg,
+			type: 'success',
+			confirmButtonText: 'Ok'
 		});
 	}
 
