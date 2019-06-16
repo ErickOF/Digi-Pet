@@ -8,93 +8,74 @@
 
 	<!-- Modal content -->
 	<div class="modal-content">
-		<ngx-loading [show]="loading"></ngx-loading>
+		<ngx-loading [show]="loadingService"></ngx-loading>
 		
 		<span class="close" (click)=hideWalkServiceModal()>&times;</span>
 
 		<h2 class="text-center">
-			Solicitar Caminata <br><br>
+			Solicitar Caminata
 		</h2>
 		
-		<form [formGroup]="registerPet" class="register-container col-md-12">
+		<form [formGroup]="registerWalkService" class="register-container col-md-12">
+			<!-- Date and duration -->
 			<div class="row">
-				<div class="col-md-4 text-center">
-					<p [ngClass]="{ 'has-error': isSubmitted && petFormControls.name.errors }">
-						<input type="text" class="form-control" placeholder="Nombre" formControlName="name">
-					</p>
-				</div>
-
-				<div class="col-md-4 text-center">
-					<p [ngClass]="{ 'has-error': isSubmitted && petFormControls.breed.errors }">
-						<input type="text" class="form-control" placeholder="Raza" formControlName="breed">
-					</p>
-				</div>
-
-				<div class="col-md-4 text-center">
-					<p [ngClass]="{ 'has-error': isSubmitted && petFormControls.age.errors }">
-						<input type="text" class="form-control" placeholder="Edad" formControlName="age">
-					</p>
-				</div>
-			</div>
-
-			<div class="row">
-				<div *ngIf="isSubmitted && petFormControls.name.errors" class="help-block col-md-4">
-					<div class="text-error" *ngIf="petFormControls.name.errors.required">El nombre es requerido</div>
-					
-					<div class="text-error" *ngIf="petFormControls.name.errors.maxlength">El nombre debe tener entre 1 y 30 caracteres</div>
-				</div>
-
-				<div *ngIf="!(isSubmitted && petFormControls.name.errors)" class="help-block col-md-4"></div>
-
-				<div *ngIf="isSubmitted && petFormControls.breed.errors" class="help-block col-md-4">
-					<div class="text-error" *ngIf="petFormControls.breed.errors.required">La raza es requerida</div>
-					
-					<div class="text-error" *ngIf="petFormControls.breed.errors.maxlength">La raza debe tener entre 1 y 30 caracteres</div>
-				</div>
-
-				<div *ngIf="!(isSubmitted && petFormControls.breed.errors)" class="help-block col-md-4"></div>
-
-				<div *ngIf="isSubmitted && petFormControls.age.errors" class="help-block col-md-4">
-					<div class="text-error" *ngIf="petFormControls.age.errors.required">La edad es requerida</div>
-					
-					<div class="text-error" *ngIf="petFormControls.age.errors.pattern">La edad debe ser solo numérica</div>
-				</div>
-				<div *ngIf="!(isSubmitted && petFormControls.age.errors)" class="help-block col-md-6"></div>
-			</div>
-
-			<div class="row form-check-inline">
 				<div class="col-md-12">
-					<label>Tamaño</label>
+					<label>Fecha y Hora:</label>
+				</div>
 
-					<div class="form-check col-md-12">
-						<div class="form-check form-check-inline">
-							<input class="form-check-input" type="radio" value="S" formControlName="size" checked>
-							<label class="form-check-label">
-								S
-							</label>
-						</div>
+				<div class="col-md-6 text-center">
 
-						<div class="form-check form-check-inline">
-							<input class="form-check-input" type="radio" value="M" formControlName="size">
-							<label class="form-check-label">
-								M
-							</label>
-						</div>
+					<p [ngClass]="{ 'has-error': isSubmitted && walkServiceFormControls.date.errors }">
+						<input type="datetime-local" class="form-control" placeholder="YYYY-MM-DD HH:MM:SS" formControlName="date">
+					</p>
+				</div>
 
-						<div class="form-check form-check-inline">
-							<input class="form-check-input" type="radio" value="L" formControlName="size">
-							<label class="form-check-label">
-								L
-							</label>
-						</div>
+				<div class="col-md-6 text-center">
+					<p [ngClass]="{ 'has-error': isSubmitted && walkServiceFormControls.duration.errors }">
+						<input type="text" class="form-control" placeholder="Duración" formControlName="duration">
+					</p>
+				</div>
+			</div>
 
-						<div class="form-check form-check-inline">
-							<input class="form-check-input" type="radio" value="XL" formControlName="size">
-							<label class="form-check-label">
-								XL
-							</label>
-						</div>
-					</div>
+			<div class="row">
+				<div *ngIf="isSubmitted && walkServiceFormControls.date.errors" class="help-block col-md-6">
+					<div class="text-error" *ngIf="walkServiceFormControls.date.errors.required">La fecha es requerida</div>
+				</div>
+
+				<div *ngIf="!(isSubmitted && walkServiceFormControls.date.errors)" class="help-block col-md-6"></div>
+
+				<div *ngIf="isSubmitted && walkServiceFormControls.duration.errors" class="help-block col-md-6">
+					<div class="text-error" *ngIf="walkServiceFormControls.duration.errors.required">La duración es requerida</div>
+				</div>
+			</div>
+			
+			<!-- Address -->
+			<div class="row">
+				<div class="col-md-6 text-center">
+					<p [ngClass]="{ 'has-error': isSubmitted && walkServiceFormControls.province.errors }">
+						<select id="province" type="text" class="form-control" formControlName="province">
+							<option value="">--Provincia--</option>
+							<option *ngFor="let province of provinces" [value]="province.id"> {{ province.name }} </option>
+						</select>
+					</p>
+				</div>
+
+				<div class="col-md-6 text-center">
+					<p [ngClass]="{ 'has-error': isSubmitted && walkServiceFormControls.canton.errors }">
+						<input type="text" class="form-control" placeholder="Cantón" formControlName="canton">
+					</p>
+				</div>
+			</div>
+
+			<div class="row">
+				<div *ngIf="isSubmitted && (walkServiceFormControls.province.errors)" class="help-block col-md-6">
+					<div class="text-error" *ngIf="walkServiceFormControls.province.errors.required">La provincia es requerida</div>
+				</div>
+				<div *ngIf="!(isSubmitted && walkServiceFormControls.province.errors)" class="help-block col-md-6">
+				</div>
+
+				<div *ngIf="isSubmitted && (walkServiceFormControls.canton.errors)" class="help-block col-md-6">
+					<div class="text-error" *ngIf="walkServiceFormControls.canton.errors.required">El cantón es requerido</div>
 				</div>
 			</div>
 
@@ -106,30 +87,13 @@
 				</p>
 			</div>
 
-			<div class="row">
-				<div class="col-md-2" *ngFor="let urlPet of urlsPet; let i = index;">
-					<div class="text-center">
-						<ngx-loading [show]="loadingImgsPet[i]"></ngx-loading>
-						<img width="150" height="150" src="{{ urlPet }}" />
-					</div>
-
-					<div><label></label></div>
-
-					<div class="text-center">
-						<input type="file" id="{{ 'selectFile' + i}}" (change)="uploadPetImg($event, i)" style="display: none;">
-						<input *ngIf="urlPet == ''" type="button" class="btn-primary" value="Subir" (click)="openFileDialog(i)" />
-						<input *ngIf="urlPet != ''" type="button" class="btn-danger" value="Eliminar" (click)="deleteImage(i)" />
-					</div>
-				</div>
-			</div>
-
 			<div><label></label></div>
 			<div><label></label></div>
 
 			<!-- Submit -->
 			<div class="text-center">
 				<p>
-					<input type="submit" class="btn btn-success" value="Agregar" (click)="addPet()">
+					<input type="submit" class="btn btn-success" value="Solicitar" (click)="addPet()">
 				</p>
 			</div>
 		</form>

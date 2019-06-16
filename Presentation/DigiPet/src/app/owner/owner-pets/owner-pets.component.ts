@@ -34,11 +34,22 @@ export class OwnerPetsComponent implements OnInit {
 	public isSubmitted = false;
 	public loading = false;
 	public loadingImgsPet = [false, false, false, false, false];
+	public loadingService = false;
 	public pets;
 	public registerPet: FormGroup;
 	public registerWalkService: FormGroup;
 	public uploadPercent: Observable<number>;
 	public urlsPet = ['', '', '', '', ''];
+
+	public provinces = [
+		{ id: 'San Jose', name: 'San Jose' },
+		{ id: 'Alajuela', name: 'Alajuela' },
+		{ id: 'Cartago', name: 'Cartago' },
+		{ id: 'Heredia', name: 'Heredia' },
+		{ id: 'Guanacaste', name: 'Guanacaste' },
+		{ id: 'Puntarenas', name: 'Puntarenas' },
+		{ id: 'Limón', name: 'Limón' }
+	];
 
 	constructor(private api: ApiService,
 				private authService: AuthService,
@@ -70,6 +81,21 @@ export class OwnerPetsComponent implements OnInit {
 			photos: '',
 			description: ['', Validators.maxLength(300)]
 		});
+
+		this.registerWalkService = this.formBuilder.group({
+			date: ['', Validators.required],
+			duration: ['', Validators.required],
+			province: ['', Validators.required],
+			canton: ['', Validators.required],
+			description: ['', Validators.compose([
+				Validators.required,
+				Validators.maxLength(300)
+			])],
+			exactAddress: ['', Validators.compose([
+				Validators.required,
+				Validators.maxLength(300)
+			])]
+		});
 	}
 
 	ngOnInit() {
@@ -77,6 +103,10 @@ export class OwnerPetsComponent implements OnInit {
 
 	get petFormControls() {
 		return this.registerPet.controls;
+	}
+
+	get walkServiceFormControls() {
+		return this.registerWalkService.controls;
 	}
 
 	public addPet() {
@@ -134,23 +164,19 @@ export class OwnerPetsComponent implements OnInit {
 	}
 
 	public requestWalkService(idPet) {
-
 		this.registerWalkService = this.formBuilder.group({
-			name: ['', Validators.compose([
+			date: ['', Validators.required],
+			duration: ['', Validators.required],
+			province: ['', Validators.required],
+			canton: ['', Validators.required],
+			description: ['', Validators.compose([
 				Validators.required,
-				Validators.maxLength(30)
+				Validators.maxLength(300)
 			])],
-			breed: ['', Validators.compose([
+			exactAddress: ['', Validators.compose([
 				Validators.required,
-				Validators.maxLength(30)
-			])],
-			age: ['', Validators.compose([
-				Validators.required,
-				Validators.pattern('^[0-9]*$')
-			])],
-			size: 'S',
-			photos: '',
-			description: ['', Validators.maxLength(300)]
+				Validators.maxLength(300)
+			])]
 		});
 
 		this.showWalkServiceModal();
