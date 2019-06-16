@@ -53,8 +53,8 @@ namespace XUnitTestProject1
         {
             Week = new List<ScheduleDto>()
             {
-                new ScheduleDto{Date=DateTime.Today.AddDays(2), HoursAvailable= Enumerable.Range(0,23).ToArray()},
-                new ScheduleDto{Date=DateTime.Today.AddDays(3), HoursAvailable= new int[]{13,14,15,16,17,18 } },
+                new ScheduleDto{Date=DateTime.Today.AddDays(2).Date, HoursAvailable= Enumerable.Range(0,23).ToArray()},
+                new ScheduleDto{Date=DateTime.Today.AddDays(3).Date, HoursAvailable= new int[]{13,14,15,16,17,18 } },
             }
         };
         private static string TempWalkerToken { get; set; }
@@ -254,6 +254,8 @@ namespace XUnitTestProject1
                 res = await PostWalkerSchedule(TempWeekSchedule);//se crea un horario
                 res.EnsureSuccessStatusCode();
 
+                await CompareWalkerScheduleWithOriginal();// se compara el horario creado
+
                 var res2 = await CreateOwner(TestOwner);
                 if (string.IsNullOrEmpty(TestOwnerToken))
                 {
@@ -338,6 +340,23 @@ namespace XUnitTestProject1
                 await DeleteUser(TestOwner.Email);
                 await DeleteUser(TempWalker.SchoolId);
             }
+        }
+
+        internal async Task CompareWalkerScheduleWithOriginal()
+        {
+            var url = "/api/walkers/schedule";
+            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", TempWalkerToken);
+            var res = await _client.GetAsync(url);
+            //limpiar los headers
+            _client.DefaultRequestHeaders.Clear();
+            var resWalkerSchedule = JsonConvert.DeserializeObject<List<ScheduleDto>>(await res.Content.ReadAsStringAsync());
+
+            Assert.Equal(TempWeekSchedule.Week.ElementAt(0).Date, resWalkerSchedule[0].Date);
+            Assert.Equal(TempWeekSchedule.Week.ElementAt(0).HoursAvailable, resWalkerSchedule[0].HoursAvailable);
+
+            Assert.Equal(TempWeekSchedule.Week.ElementAt(1).Date, resWalkerSchedule[1].Date);
+            Assert.Equal(TempWeekSchedule.Week.ElementAt(1).HoursAvailable, resWalkerSchedule[1].HoursAvailable);
+
         }
         internal  Task<HttpResponseMessage> GetProfile(string route,string token)
         {
