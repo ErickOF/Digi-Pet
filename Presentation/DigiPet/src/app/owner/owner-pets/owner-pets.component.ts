@@ -133,9 +133,8 @@ export class OwnerPetsComponent implements OnInit {
 		document.getElementById('selectFile' + i.toString()).click();
 	}
 
-	public requestWalkService(pet) {
-		console.log(pet);
-		
+	public requestWalkService(idPet) {
+
 		this.registerWalkService = this.formBuilder.group({
 			name: ['', Validators.compose([
 				Validators.required,
