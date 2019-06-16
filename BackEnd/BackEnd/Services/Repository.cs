@@ -28,11 +28,13 @@ namespace WebApi.Services
     {
         private readonly ApplicationDbContext _dbContext;
         private readonly IUserService _userService;
+        private readonly IUserChoose _userChoose;
 
-        public Repository(ApplicationDbContext dbContext,IUserService userService)
+        public Repository(ApplicationDbContext dbContext, IUserService userService, IUserChoose userChoose)
         {
             _dbContext = dbContext;
             _userService = userService;
+            _userChoose = userChoose;
         }
         public async Task<Tuple<Walker,string>> CreateWalker(WalkerDto walkerDto)
         {
@@ -182,19 +184,110 @@ namespace WebApi.Services
                 .Include(w=>w.Walks).ThenInclude(w=>w.ReportWalks)
                 .FirstOrDefaultAsync(u => u.User.Username == username);
         }
+        internal int maxDuration(int[] hours,int begin)
+        {
+            int available = 0;
+            hours = hours.OrderBy(i => i).ToArray();
+            for (int i =0; i < hours.Length-1; i++)
+            {
+                var hour = hours[i];
+                if (hour != begin) continue;
+                if (hours[i + 1] != hour + 1) break;
+                available++;
+            }
+            return available;
 
+        }
         public async Task<Tuple<WalkInfoDto, string>> RequestWalk(WalkRequestDto walkRequestDto)
         {
-            var walkers =  _dbContext.Walker.Include(w => w.User).Include(w=>w.Walks).ThenInclude(wa=>wa.ReportWalks)
-                .Where(w => w.User.Province == walkRequestDto.Province || (w.DoesOtherProvinces && w.OtherProvinces.Contains(walkRequestDto.Province)) &&
-                !w.Blocked
-           ).AsNoTracking();
+
+            if (walkRequestDto.Begin.Date != walkRequestDto.End.Date) return new Tuple<WalkInfoDto,string>(null,"no se puede ese rango de horas");
+
+            var pet = await _dbContext.Pets.Include(p => p.Petowner).FirstOrDefaultAsync(p=>p.Id==walkRequestDto.PetId);
+
+
+            var walkers = _dbContext.Walker.Include(w => w.User)
+                .Include(w => w.Walks).ThenInclude(wa => wa.Pet).ThenInclude(p => p.Petowner)
+                .Include(w => w.WalkerSchedules)
+                //se filtran por provincia, se quitan los bloqueados y los que tienen agendado horas disponibles para el dia
+                .Where(w => (w.User.Province == walkRequestDto.Province || (w.DoesOtherProvinces && w.OtherProvinces.Contains(walkRequestDto.Province))) &&
+                !w.Blocked && w.WalkerSchedules.Select(we => we.Date).Contains(walkRequestDto.Begin.Date)
+                && w.WalkerSchedules.First(we => we.Date == walkRequestDto.Begin).HoursAvailable.Contains(walkRequestDto.Begin.AddMinutes(-30).Hour)
+                && w.WalkerSchedules.First(we => we.Date == walkRequestDto.Begin).HoursAvailable.Contains(walkRequestDto.End.AddMinutes(30).Hour)
+                && maxDuration(w.WalkerSchedules.First(we=>we.Date==walkRequestDto.Begin).HoursAvailable,walkRequestDto.Begin.Hour) >= walkRequestDto.Duration
+           ).ToList();
+           
+           
+            walkers.RemoveAll(w=>
+            {
+                //remueve aquellos cuidadores que tienen conflicto de horarios
+                var walks=w.Walks.Where(
+                    ww =>( (walkRequestDto.Begin >= ww.Begin.AddMinutes(-30) && walkRequestDto.Begin <= ww.Begin.AddMinutes(30)) ||
+                   (walkRequestDto.End >= ww.Begin.AddMinutes(-30) && walkRequestDto.End <= ww.Begin.AddMinutes(30)) )&& ww.Pet.PetOwnerId !=pet.PetOwnerId
+                );
+                return walks.Count() != 0;
+            });
+            //queda filtrar los paseos que son del mismo dueno pero a distintas horas
+            walkers.RemoveAll(w=> 
+            {
+                var walks = w.Walks.Where(ww => ww.Pet.PetOwnerId == pet.PetOwnerId && (walkRequestDto.Begin != ww.Begin || walkRequestDto.End != ww.End));
+                return walks.Count() != 0;
+            });
+            walkers.RemoveAll(w=>
+            {
+                var walks = w.Walks.Where(ww => ww.Province != walkRequestDto.Province && ww.Canton != walkRequestDto.Canton);
+                return walks.Count() != 0;
+            }
+                );
+
             // se le asignan los 10 puntos adicionales si es del canton
-            await walkers.ForEachAsync(w=> w.TempPoints=w.Points+((w.User.Canton==walkRequestDto.Canton && w.User.Province == walkRequestDto.Province)?10:0));
+            walkers.ForEach(w => w.TempPoints = w.Points + ((w.User.Canton == walkRequestDto.Canton && w.User.Province == walkRequestDto.Province) ? 10 : 0));
             walkers.OrderByDescending(w => w.TempPoints);
+            if (walkers.Count() == 0)
+            {
+                return new Tuple<WalkInfoDto, string>(null, "cant find walker");
+            }
 
-
-            return null;
+            Walker walker;
+            //rota la seleccion nuevo/viejo
+            var next = _userChoose.NextWalker();
+            if (next== UserChoose.New)
+            {
+                walker = walkers.FirstOrDefault(w => w.Walks.Count == 0);
+                if (walker == null)
+                    walker = walkers.First();
+            }
+            else
+            {
+                walker = walkers.FirstOrDefault(w => w.Walks.Count != 0);
+                if (walker == null)
+                {
+                    walker = walkers.First();
+                }
+            }
+            var chosenWalker = walker;
+            if (chosenWalker == null) return new Tuple<WalkInfoDto, string>(null, "no se puede ese rango de horas");
+            var walk = new Walk
+            {
+                Begin = walkRequestDto.Begin,
+                Duration = walkRequestDto.Duration,
+                Province = walkRequestDto.Province,
+                Canton = walkRequestDto.Canton,
+                Description = walkRequestDto.Description,
+                PetId = walkRequestDto.PetId,
+                WalkerId = walker.Id
+            };
+            await _dbContext.Walks.AddAsync(walk);
+            try
+            {
+                await _dbContext.SaveChangesAsync();
+                return new Tuple<WalkInfoDto, string>(new WalkInfoDto(walk), "success");
+            }
+            catch (Exception e)
+            {
+                return new Tuple<WalkInfoDto, string>(null,e.Message);
+            }
+            
         }
 
         public async Task<ActionResult<IEnumerable<ReturnWalker>>> GetAllWalkers()

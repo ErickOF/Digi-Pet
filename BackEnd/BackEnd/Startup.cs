@@ -70,6 +70,7 @@ namespace WebApi
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IRepository,Repository>();
             services.AddScoped<IConfigurationService, ConfigurationService>();
+            services.AddSingleton<IUserChoose,UserChoose>();
 
             services.AddDbContext<ApplicationDbContext>(options =>
                     options.UseNpgsql(Configuration.GetConnectionString("ApplicationDbContext")));
@@ -95,22 +96,21 @@ namespace WebApi
             var adminFromConfig = Configuration.GetSection("Admin");
             var admin = adminFromConfig.Get<User>();
            
-            try
-            {
+   
                 //se agrega usuario por defecto
                 if (!userService.UsernameExists(admin.Username))
                 {
                     var user = userService.CreateUser(admin, Configuration["Admin:Password"]);
                     userService.PersistUser(user).Wait();
                 }
-                if (!userService.UsernameExists(ownerDto.Email))
+
+
+            if (!userService.UsernameExists(ownerDto.Email)) 
                 {
                     repository.CreateOwner(ownerDto).Wait();
                 }
-                
+            
 
-            }
-            catch { }
 
             try
             {

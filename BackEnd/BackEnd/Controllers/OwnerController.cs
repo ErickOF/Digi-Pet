@@ -68,8 +68,19 @@ namespace WebApi.Controllers
         [HttpPost("requestWalk")]
         public async Task<IActionResult> PostWalkRequest([FromBody] WalkRequestDto walkRequestDto)
         {
+            var username = User.Claims.Where(c => c.Type == ClaimTypes.Name).FirstOrDefault().Value;
+            var owner = await _repository.GetOwnerByUserName(username);
+            var petsIds = owner.Pets.Select(p => p.Id);
+            if (!petsIds.Contains(walkRequestDto.PetId))
+            {
+                return BadRequest("pet not yours!");
+            }
             var result = await _repository.RequestWalk(walkRequestDto);
-            return Ok(walkRequestDto);
+            if (result.Item1 == null)
+            {
+                return BadRequest(result.Item2);
+            }
+            return Ok(result.Item1);
         }
 
     }
