@@ -1,5 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 
+import { DataTransferService } from './../../services/data-transfer/data-transfer.service';
+import { UsersService } from './../../services/api/users/users.service';
+
 
 @Component({
 	selector: 'app-pet-care-services',
@@ -8,9 +11,21 @@ import { Component, OnInit } from '@angular/core';
 })
 export class PetCareServicesComponent implements OnInit {
 
-	public services = [];
+	public services;
 
-	constructor() { }
+	constructor(private dataTransferService: DataTransferService,
+				private usersService: UsersService) {
+		let token = this.dataTransferService.getAccessToken().token;
+		let response = this.usersService.getUpComingWalks(token);
+
+		response.subscribe(data => {
+			this.services = data;
+			console.log(this.services);
+		}, error => {
+			console.log(error);
+		});
+		
+	}
 
 	ngOnInit() {
 	}

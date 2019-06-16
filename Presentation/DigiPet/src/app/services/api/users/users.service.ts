@@ -53,6 +53,14 @@ export class UsersService {
 						});
 	}
 
+	public getUpComingWalks(token: string) {
+		return this.http.get(Urls.baseUrl + Urls.getUpComingWalks,
+						{
+							headers: new HttpHeaders()
+								.set('Authorization', `Bearer ${token}`)
+						});
+	}
+
 	public requestWalkService(token: string, walkService) {
 		return this.http.post(Urls.baseUrl + Urls.requestWalkService, walkService,
 						{

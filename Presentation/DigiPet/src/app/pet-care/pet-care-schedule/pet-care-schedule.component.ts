@@ -29,7 +29,6 @@ export class PetCareScheduleComponent implements OnInit {
 		this.date = new Date();
 		this.hours = this.startAndEndOfWeek(this.date.toString());
 		this.dataSource = this.generateSchedule();
-		console.log(this.dataTransferService.getAccessToken().token);
 	}
 
 	ngOnInit() {
