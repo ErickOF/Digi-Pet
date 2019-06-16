@@ -53,4 +53,14 @@ export class UsersService {
 						});
 	}
 
+	public setSchedule(token: string, schedule) {
+		return this.http.post(Urls.baseUrl + Urls.setSchedule, schedule,
+						{
+							headers: new HttpHeaders()
+								.set('Authorization', `Bearer ${token}`)
+								.set('Content-Type', 'application/json'),
+							observe: 'response'
+						});
+	}
+
 }
