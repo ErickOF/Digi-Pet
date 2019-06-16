@@ -30,9 +30,66 @@ namespace XUnitTestProject1
 
         private readonly HttpClient _client;
         private const string AdminToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1bmlxdWVfbmFtZSI6ImFkbWluIiwicm9sZSI6IkFkbWluIiwibmJmIjoxNTYwNDQxOTc3LCJleHAiOjE1NjEwNDY3NzcsImlhdCI6MTU2MDQ0MTk3N30.90FQh9uNVfYGhWWHnyeuBIZ45-7AYvEYhRPCQOSc1_M";
-        private const string TestOwnerToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1bmlxdWVfbmFtZSI6ImR1ZW5vX1RFU1RAZ21haWwuY29tIiwicm9sZSI6IlBldE93bmVyIiwibmJmIjoxNTYwNjI2MTQ1LCJleHAiOjE1NjEyMzA5NDUsImlhdCI6MTU2MDYyNjE0NX0.Tz3tg68Vogg5YaYwwd_PGQdtmAkDykPwuHRgzuBnGTQ";
+        
+        #region tempData
+        private WalkerDto TempWalker = new  WalkerDto
+        {
+            SchoolId = "300943530",
+            Password = "12345678",
+            Name = "TEST",
+            LastName = "WALKER",
+            Email = "TEST@pWALKER.com",
+            Mobile = "8888888",
+            University = "TEC",
+            Province = "CartagoTEST123",
+            Canton = "CartagoTEST123",
+            DoesOtherProvinces = true,
+            OtherProvinces = new string[] { "HerediaTEST",   "AlajuelaTEST"},
+            Description = "no",
+            Photo = "urlphoto"
+        };
 
+        private WeekScheduleDto TempWeekSchedule = new WeekScheduleDto
+        {
+            Week = new List<ScheduleDto>()
+            {
+                new ScheduleDto{Date=DateTime.Today.AddDays(2), HoursAvailable= Enumerable.Range(0,23).ToArray()},
+                new ScheduleDto{Date=DateTime.Today.AddDays(3), HoursAvailable= new int[]{13,14,15,16,17,18 } },
+            }
+        };
+        private static string TempWalkerToken { get; set; }
+        private OwnerDto TestOwner = new OwnerDto
+        {
+            Password = "12345678",
+            Name = "Dueño 2",
+            LastName = "de Perro",
+            Email = "dueno_TEST@gmail.com",
+            Province = "Cartago",
+            Canton = "Cartago",
+            Description = "no",
+            Pets = new List<PetDto>()
+            {
+                new PetDto{
+                    Name = "PERRO TEST 1",
+                    Race = "SRD",
+                    Age = 1,
+                    Size = "M",
+                    Description = "zaguate"
+                },
+                new PetDto {
+                    Name = "PERRO TEST 2",
+                    Race = "Beagle",
+                    Age = 2,
+                    Size = "M",
+                    Description = "gordo"
+                }
+            },
+            Mobile = "88888888",
+            Photo = "url test"
+        };
+        private static string TestOwnerToken { get; set; }
 
+        #endregion
         public Test()
         {
 
@@ -81,86 +138,50 @@ namespace XUnitTestProject1
             Assert.NotNull(parsed.Token);
             return (parsed.Token);
         }
+
+        #region Tt
+        /*
         [Fact]
         public async Task CreateNewWalker__AndThenDeleteIt()
         {
-            var url = "/api/walkers";
-
-            string[] otherProvinces = { "Heredia", "Alajuela" };
-            var obj = new
-            {
-                SchoolId = "190043530",
-                Password = "12345678",
-                Name = "Bernardo",
-                LastName = "Soto",
-                Email = "bernardo@soto.com",
-                Mobile = "8888888",
-                University = "UNA",
-                Province = "Heredia",
-                Canton = "Heredia",
-                DoesOtherProvinces = "true",
-                OtherProvinces = otherProvinces,
-                Description = "pet nerd",
-                Photo = "new photo"
-            };
-            var serializedObj = JsonConvert.SerializeObject(obj);
-            var content = new StringContent(serializedObj, Encoding.UTF8, "application/json");
-            var response = await _client.PostAsync(url, content);
+            
+            var response = await CreateWalker(TempWalker);//se crea un cuidador
             response.EnsureSuccessStatusCode();
             var stringResponse = await response.Content.ReadAsStringAsync();
             var parsedResponse = JsonConvert.DeserializeObject<CreatedWalkerResponse>(stringResponse);
 
-            Assert.Equal(obj.SchoolId, parsedResponse.userName);
+            Assert.Equal(TempWalker.SchoolId, parsedResponse.userName);
             Assert.NotNull(parsedResponse.id);
 
-            //ruta para eliminar usuario
-            var urlDelteUser = $"/users/delete/{obj.SchoolId}";
-            //usar el token de admin
-            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", AdminToken);
+            if (string.IsNullOrEmpty(TempWalkerToken))//autentica nuevo usuario
+            {
+                TempWalkerToken = await Authenticate(TempWalker.SchoolId, TempWalker.Password);
+            }
 
-            var res = await _client.DeleteAsync(urlDelteUser);
+            response = await PostWalkerSchedule(TempWeekSchedule);//se crea un horario
+            response.EnsureSuccessStatusCode();
+
+
+            var res = await DeleteUser(TempWalker.SchoolId);
             res.EnsureSuccessStatusCode();
             var stringResponse2 = await res.Content.ReadAsStringAsync();
             var parsedMessage2 = JsonConvert.DeserializeObject<MessageResponse>(stringResponse2);
 
-            Assert.Equal($"{obj.SchoolId} deleted",
+            Assert.Equal($"{TempWalker.SchoolId} deleted",
                parsedMessage2.Message);
-            //limpiar los headers
-            _client.DefaultRequestHeaders.Clear();
         }
-
+        */
+        #endregion
 
         [Fact]
         public async Task CreateWalker_FailsOn_DuplicatedSchoolId()
         {
-            var url = "/api/walkers";
-
-            string[] otherProvinces = { "San Jose", "Cartago" };
-            var obj = new
-            {
-                SchoolId = "300943530",
-                Password = "12345678",
-                Name = "Juan",
-                LastName = "Perez",
-                Email = "juan@perez.com",
-                Mobile = "8888888",
-                University = "TEC",
-                Province = "Cartago",
-                Canton = "Cartago",
-                DoesOtherProvinces = "true",
-                OtherProvinces = otherProvinces,
-                Description = "no",
-                Photo= "urlphoto"
-            };
-            var serializedObj = JsonConvert.SerializeObject(obj);
-            var content = new StringContent(serializedObj, Encoding.UTF8, "application/json");
-
             //crea un usuario nuevo
-            var response = await _client.PostAsync(url, content);
+            var response = await CreateWalker(TempWalker);
             response.EnsureSuccessStatusCode();
-            
+
             //debe fallar al volver a postear el mismo usuario
-            response = await _client.PostAsync(url, content);
+            response = await CreateWalker(TempWalker);
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
 
             var serialResponse = await response.Content.ReadAsStringAsync();
@@ -169,58 +190,208 @@ namespace XUnitTestProject1
             Assert.Equal("error creating user: 23505: duplicate key value violates unique constraint \"AK_Users_Username\"",
                parsedMessage.Message);
 
-            var res = await DeleteUser(obj.SchoolId);
+            var res = await DeleteUser(TempWalker.SchoolId);
             res.EnsureSuccessStatusCode();
-
-
         }
 
-        //crea owner, lo autentica, consulta mascotas y luego elimina
+        #region t1
+            /*
         [Fact]
         public async Task CreateNewOwner__AndThenDeleteIt()
         {
-            var url = "/api/owners";
 
-            var obj = new OwnerDto
-            {
-                Password = "12345678",
-                Name = "Nuevo Dueño 2",
-                LastName = "de Perro",
-                Email = "duenoTest@gmail.com",
-                Province = "Cartago",
-                Canton = "Cartago",
-                Description = "no",
-                Pets = new PetDto[]
-                {
-                    new PetDto { Name="Perro Test", Race = "Test ", Age=10,Size = "M",Description="zaguate"},
-                    new PetDto {Name = "Perro Test 2", Race="Test", Age = 20,Size="M",Description = "nada"}
-                },
-                Mobile = "88888888",
-                Photo = "urlphoto"
-                
-            };
-            var serializedObj = JsonConvert.SerializeObject(obj);
-            var content = new StringContent(serializedObj, Encoding.UTF8, "application/json");
-            var response = await _client.PostAsync(url, content);
+
+            var response = await  CreateOwner(TestOwner);
             response.EnsureSuccessStatusCode();
 
             var stringResponse = await response.Content.ReadAsStringAsync();
             var parsedResponse = JsonConvert.DeserializeObject<CreatedWalkerResponse>(stringResponse);
 
-            Assert.Equal(obj.Email, parsedResponse.userName);
+            Assert.Equal(TestOwner.Email, parsedResponse.userName);
             Assert.NotNull(parsedResponse.id);
 
-            var ownerToken = await Authenticate(obj.Email, obj.Password);
-            await CheckProfileOwner(obj, ownerToken);
-
+         
 
             //eliminar usuario
-            var res = await DeleteUser(obj.Email);
+            var res = await DeleteUser(TestOwner.Email);
             res.EnsureSuccessStatusCode();
             var stringResponse2 = await res.Content.ReadAsStringAsync();
             var parsedMessage2 = JsonConvert.DeserializeObject<MessageResponse>(stringResponse2);
 
-            Assert.Equal($"{obj.Email} deleted",parsedMessage2.Message);
+            Assert.Equal($"{TestOwner.Email} deleted",parsedMessage2.Message);
+        }
+        */
+        #endregion t1
+
+        internal async Task<HttpResponseMessage> CreateOwner(OwnerDto obj)
+        {
+            var url = "/api/owners";
+            var serializedObj = JsonConvert.SerializeObject(TestOwner);
+            var content = new StringContent(serializedObj, Encoding.UTF8, "application/json");
+            return await _client.PostAsync(url, content);
+        }
+
+        [Fact]
+        public async Task RequestWalk_Path()
+        {
+            try
+            {
+                var res = await CreateWalker(TempWalker);//crea cuidador
+                res.EnsureSuccessStatusCode();
+                var returnedWalker = JsonConvert.DeserializeObject<CreatedWalkerResponse>(await res.Content.ReadAsStringAsync());
+
+
+                Assert.Equal(TempWalker.SchoolId, returnedWalker.userName);
+                Assert.NotEqual(0, returnedWalker.id);
+
+                
+
+                if (string.IsNullOrEmpty(TempWalkerToken))//autentica nuevo usuario
+                {
+                    TempWalkerToken = await Authenticate(TempWalker.SchoolId, TempWalker.Password);
+                }
+
+                res = await PostWalkerSchedule(TempWeekSchedule);//se crea un horario
+                res.EnsureSuccessStatusCode();
+
+                var res2 = await CreateOwner(TestOwner);
+                if (string.IsNullOrEmpty(TestOwnerToken))
+                {
+                    TestOwnerToken = await Authenticate(TestOwner.Email, TestOwner.Password);
+                }
+
+                var pets = await GetPets(TestOwnerToken);
+                Assert.Equal(2, pets.Count);
+                var walkRequest = new WalkRequestDto
+                {
+                    PetId = pets[0].Id,
+                    Begin = DateTime.Today.AddDays(2).AddHours(9).ToUniversalTime(),
+                    Duration = 1,
+                    Province = TempWalker.Province,
+                    Canton = TempWalker.Canton,
+                    Description = "noo",
+                    ExactAddress = "direccion exacta"
+                };
+
+                // pide paseo para una mascota
+                var res3 = await PostWalkRequest(walkRequest, TestOwnerToken);
+                res3.EnsureSuccessStatusCode();
+                var message3 = await res3.Content.ReadAsStringAsync();
+                var parsedWalkRequest = JsonConvert.DeserializeObject<WalkInfoDto>(message3);
+
+                Assert.Equal(returnedWalker.id, parsedWalkRequest.WalkerId);
+                //pide paseo para la otra mascota y debe asignar el mismo
+                walkRequest.PetId = pets[1].Id;
+                var res4 = await PostWalkRequest(walkRequest, TestOwnerToken);
+                res4.EnsureSuccessStatusCode();
+                var message4 = await res3.Content.ReadAsStringAsync();
+                var parsedWalkRequest2 = JsonConvert.DeserializeObject<WalkInfoDto>(message4);
+
+                Assert.Equal(returnedWalker.id, parsedWalkRequest2.WalkerId);
+
+                //pide un paseo para el siguiente dia y debe fallar porque el cuidador no tiene hora disponible
+                walkRequest.Begin = DateTime.Today.AddDays(3).AddHours(9);
+                var res5 = await PostWalkRequest(walkRequest, TestOwnerToken);
+                Assert.Equal(HttpStatusCode.BadRequest, res5.StatusCode);
+
+                var resBlockWalker = await BlockUnblockWalker(returnedWalker.id, true);
+                resBlockWalker.EnsureSuccessStatusCode();
+
+                var resGetProfile = await GetProfile("walkers", TempWalkerToken);
+                resGetProfile.EnsureSuccessStatusCode();
+                var resWalkerProfile = JsonConvert.DeserializeObject<ReturnWalker>(await resGetProfile.Content.ReadAsStringAsync());
+                Assert.Equal(returnedWalker.id, resWalkerProfile.Id);
+                //se verifica que se haya bloqueado perfil
+                Assert.True(resWalkerProfile.Blocked);
+
+
+
+                //al pedir en el dia que tiene disponible pero al estar bloqueado, no se pueden encontrar 
+                walkRequest.Begin = DateTime.Today.AddDays(3).AddHours(15);
+                var res6 = await PostWalkRequest(walkRequest, TestOwnerToken);
+                Assert.Equal(HttpStatusCode.BadRequest, res6.StatusCode);
+
+                var resUnBlockWalker = await BlockUnblockWalker(returnedWalker.id, false);
+                resUnBlockWalker.EnsureSuccessStatusCode();
+                var resGetProfile2 = await GetProfile("walkers", TempWalkerToken);
+                resGetProfile2.EnsureSuccessStatusCode();
+                var resWalkerProfile2 = JsonConvert.DeserializeObject<ReturnWalker>(await resGetProfile2.Content.ReadAsStringAsync());
+                Assert.Equal(returnedWalker.id, resWalkerProfile2.Id);
+
+                //se verifica que se haya desbloqueado perfil
+                Assert.False(resWalkerProfile2.Blocked);
+
+                //al desbloquear usuario se debe poder volver a encontrar un cuidador
+
+                var res7 = await PostWalkRequest(walkRequest, TestOwnerToken);
+                res7.EnsureSuccessStatusCode();
+                var message7 = await res7.Content.ReadAsStringAsync();
+                var parsedWalkRequest7 = JsonConvert.DeserializeObject<WalkInfoDto>(message7);
+
+                Assert.Equal(returnedWalker.id, parsedWalkRequest7.WalkerId);
+
+
+            }
+            finally
+            {
+                //eliminar dueño y cuidador
+                await DeleteUser(TestOwner.Email);
+                await DeleteUser(TempWalker.SchoolId);
+            }
+        }
+        internal  Task<HttpResponseMessage> GetProfile(string route,string token)
+        {
+            var url = $"/api/{route}/getprofile";
+            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            var res =  _client.GetAsync(url);
+            //limpiar los headers
+            _client.DefaultRequestHeaders.Clear();
+            return res;
+        }
+
+        internal async Task<HttpResponseMessage> BlockUnblockWalker(int walkerId,bool block)
+        {
+            string url = block ? $"/api/admins/blockWalker/{walkerId}": $"api/admins/unblockWalker/{walkerId}";
+            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", AdminToken);
+            var res = await _client.PostAsync(url,null);
+            //limpiar los headers
+            _client.DefaultRequestHeaders.Clear();
+            return res;
+        }
+
+        #region interno
+        internal async Task<HttpResponseMessage> PostWalkerSchedule(WeekScheduleDto obj)
+        {
+            var url = "/api/walkers/schedule";
+            var serializedObj = JsonConvert.SerializeObject(obj);
+            var content = new StringContent(serializedObj, Encoding.UTF8, "application/json");
+            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", TempWalkerToken);
+            var res = await _client.PostAsync(url, content);
+            //limpiar los headers
+            _client.DefaultRequestHeaders.Clear();
+            var parsedWalkRequest = await res.Content.ReadAsStringAsync();
+            return res;
+        }
+
+        internal async Task<HttpResponseMessage> CreateWalker(WalkerDto obj)
+        {
+            var url = "/api/walkers";
+            var serializedObj = JsonConvert.SerializeObject(obj);
+            var content = new StringContent(serializedObj, Encoding.UTF8, "application/json");
+            return await _client.PostAsync(url, content);
+        }
+
+        internal async Task<HttpResponseMessage> PostWalkRequest(WalkRequestDto requestDto, string ownerToken)
+        {
+            var url = "/api/owners/requestWalk";
+            var serializedObj = JsonConvert.SerializeObject(requestDto);
+            var content = new StringContent(serializedObj, Encoding.UTF8, "application/json");
+            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", ownerToken);
+            var res= await _client.PostAsync(url,content);
+            _client.DefaultRequestHeaders.Clear();
+            var parsedWalkRequest = await res.Content.ReadAsStringAsync();
+
+            return res;
         }
 
         internal async Task<HttpResponseMessage> DeleteUser(string username)
@@ -232,42 +403,20 @@ namespace XUnitTestProject1
             _client.DefaultRequestHeaders.Clear();
             return res;
         }
-        internal async Task CheckProfileOwner(OwnerDto ownerDto, string ownerToken)
-        {
-            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", ownerToken);
 
-            await CheckPets(ownerToken);
-            
-            _client.DefaultRequestHeaders.Clear();
-        }
-        internal async Task CheckPets( string ownerToken)
+        internal async Task<List<PetDto>> GetPets( string ownerToken)
         {
             var url = "api/pets/";
-
+            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", ownerToken);
             var response = await _client.GetAsync(url);
             response.EnsureSuccessStatusCode();
 
             var stringResponse = await response.Content.ReadAsStringAsync();
-            var parsedResponse = JsonConvert.DeserializeObject<PetDto[]>(stringResponse);
-            Assert.Equal(2, parsedResponse.Length);
-            Assert.All(parsedResponse, item => Assert.Contains("Perro Test", item.Name));
+            _client.DefaultRequestHeaders.Clear();
+            return JsonConvert.DeserializeObject<List<PetDto>>(stringResponse);
 
-            // compara pet 1 o 1
-            var url2 = $"api/pets/{parsedResponse[0].Id}";
-            var response2 = await _client.GetAsync(url2);
-            response2.EnsureSuccessStatusCode();
-            var stringResponse2 = await response2.Content.ReadAsStringAsync();
-            var parsedResponse2 = JsonConvert.DeserializeObject<PetDto>(stringResponse2);
-            Assert.True(ComparePets(parsedResponse[0], parsedResponse2));
-
-            var url3 = $"api/pets/{parsedResponse[1].Id}";
-            var response3 = await _client.GetAsync(url3);
-            response3.EnsureSuccessStatusCode();
-            var stringResponse3 = await response3.Content.ReadAsStringAsync();
-            var parsedResponse3 = JsonConvert.DeserializeObject<PetDto>(stringResponse3);
-           Assert.True(ComparePets(parsedResponse[1], parsedResponse3));
         }
-
+        /*
         internal bool ComparePets(PetDto pet1, PetDto pet2)
         {
             
@@ -278,7 +427,7 @@ namespace XUnitTestProject1
                     pet1.Photos.SequenceEqual(pet2.Photos):true) &&
                 pet1.Trips==pet2.Trips &&
                 pet1.Description==pet2.Description && pet1.DateCreated==pet2.DateCreated;
-        }
+        }*/
 
         #region helperClasses
         class MessageResponse
@@ -288,9 +437,11 @@ namespace XUnitTestProject1
         }
         class CreatedWalkerResponse
         {
-            public string id { get; set; }
+            public int id { get; set; }
             public string userName { get; set; }
         }
+        #endregion
+
         #endregion
     }
 }

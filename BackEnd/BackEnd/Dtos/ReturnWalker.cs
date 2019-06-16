@@ -8,6 +8,10 @@ namespace WebApi.Dtos
 {
     public class ReturnWalker
     {
+        public ReturnWalker()
+        {
+
+        }
         public ReturnWalker(Walker u)
         {
             Id = u.Id;
@@ -27,6 +31,7 @@ namespace WebApi.Dtos
             Rating = u.Score;
             Trips = u.Walks.Count;
             Photo = u.User.Photo;
+            Blocked = u.Blocked;
         }
 
         public int Id { get;  set; }
@@ -46,6 +51,7 @@ namespace WebApi.Dtos
         public decimal Rating { get;  set; }
         public int Trips { get;  set; }
         public string Photo { get;  set; }
+        public bool Blocked { get;  set; }
     }
 }
 

@@ -24,6 +24,8 @@ namespace WebApi.Models
 
         public DbSet<Petowner> Owners { get; set; }
         public DbSet<AppConfiguration> Properties { get; set; }
+        public DbSet<ReportWalk> Reports { get;  set; }
+        public DbSet<Denuncia> Denuncias { get; internal set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -44,6 +46,12 @@ namespace WebApi.Models
             {
                 entity.HasKey(e => new { e.Id });
                 entity.HasIndex(e => new { e.WalkerId, e.Date }).IsUnique();
+            });
+
+            modelBuilder.Entity<Walk>(entity =>
+            {
+                entity.HasKey(e => new { e.Id });
+                entity.HasIndex(e => new { e.PetId, e.Begin }).IsUnique();
             });
 
 

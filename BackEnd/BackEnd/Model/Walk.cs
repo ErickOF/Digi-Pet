@@ -34,6 +34,8 @@ namespace WebApi.Model
         public string Canton { get; set; }
         [Required]
         public string Description { get; set; }
+        [Required]
+        public string ExactAddress { get; set; }
 
         public virtual ICollection<ReportWalk> ReportWalks { get; set; }
     }
