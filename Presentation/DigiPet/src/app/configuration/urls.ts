@@ -24,8 +24,10 @@ export class Urls {
 	// Get services
 	public static getUpComingWalksByOwner: string = 'api/owners/upcoming';
 	public static getUpComingWalksByPetCare: string = 'api/walkers/upcoming';
+	public static getWalksHistoryByPetCare: string = 'api/walkers/history';
 	// Request Services
 	public static requestWalkService: string = 'api/owners/requestWalk';
 	// Set
+	public static setPendintReportCard: string = 'api/walkers/postReport';
 	public static setSchedule: string = 'api/walkers/schedule/';
 }

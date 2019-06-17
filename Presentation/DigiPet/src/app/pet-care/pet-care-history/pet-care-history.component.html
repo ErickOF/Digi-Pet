@@ -2,25 +2,154 @@
 	Historial de Servicios
 </h4>
 
-<div class="row profile-card" *ngIf="history">
+<!-- No services -->
+<div class="row profile-card" *ngIf="history.length == 0">
 	<div class="col-md-12"></div>
 	<div class="col-md-12">
 		<div class="card card-user">
 			<div class="card-body">
 				<div class="author">
-					<label>No se encontraron servicios en el historial</label>
+					<label>No hay reservaciones pendientes</label>
 				</div>
 			</div>
 		</div>
 	</div>
 </div>
 
+<!-- Show each service -->
 <div class="row profile-card" *ngFor="let service of history; let i = index">
 	<div class="col-md-12"></div>
 	<div class="col-md-12">
 		<div class="card card-user">
 			<div class="card-body">
 				<div class="author">
+
+					<div class="row">
+						<div class="col-md-12 text-center">
+							<p class="" ><b>Caminata: </b> <b> {{ service.id }} </b></p>
+						</div>
+					</div>
+						
+					<div class="row">
+						<div class="col-md-6">
+							<p class="" ><b>Fecha:</b> {{ service.begin.split('T')[0] }}</p>
+						</div>
+
+						<div class="col-md-6">
+							<p class="" ><b>Hora:</b> {{ service.begin.split('T')[1] }}</p>
+						</div>
+					</div>
+
+					<div class="row">
+						<div class="col-md-6">
+							<p class="" ><b>Duración:</b> {{ service.duration }}</p>
+						</div>
+					</div>
+
+					<div class="row">
+						<div class="col-md-6">
+							<p class="" ><b>Provincia:</b> {{ service.province }}</p>
+						</div>
+						
+						<div class="col-md-6">
+							<p class="" ><b>Cantón:</b> {{ service.canton }}</p>
+						</div>
+					</div>
+
+					<div class="row">
+						<div class="col-md-12">
+							<p class="" ><b>Dirección exacta:</b> {{ service.exactAddress }}</p>
+						</div>
+					</div>
+
+					<div class="row">
+						<div class="col-md-6">
+							<p class="" ><b>Nombre:</b> {{ service.pet.name }}</p>
+						</div>
+						
+						<div class="col-md-6">
+							<p class="" ><b>Raza:</b> {{ service.pet.race }}</p>
+						</div>
+					</div>
+
+					<div class="row">
+						<div class="col-md-6">
+							<p class="" ><b>Edad:</b> {{ service.pet.age }}</p>
+						</div>
+						
+						<div class="col-md-6">
+							<p class="" ><b>Tamaño:</b> {{ service.pet.size }}</p>
+						</div>
+					</div>
+
+					<div class="row">
+						<div class="col-md-12">
+							<p class="" ><b>Descripción:</b> {{ service.description }}</p>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<!-- Submit -->
+			<div class="text-center">
+				<p>
+					<input type="submit" class="btn btn-success" value="Ver tarjeta de reporte" (click)="showReportCard(service.report[0], service.id)">
+				</p>
+			</div>
+
+		</div>
+	</div>
+</div>
+
+<!-- Show Report Card -->
+<div id="ReportCardViewModal" class="modal">
+
+	<!-- Modal content -->
+	<div class="modal-content">
+		<span class="close" (click)=hideReportCardViewModal()>&times;</span>
+
+		<h2 class="text-center">
+			Tarjeta de Reporte {{ idReport }}
+		</h2>
+		
+		<div class="row">
+			<div class="col-md-6">
+				<p>
+					<label><b>Distancia recorrida: </b>{{ report.distance }}km</label>
+				</p>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-md-12">
+				<p>
+					<label><b>Comentarios: </b>{{ report.comments }}</label>
+				</p>
+			</div>
+		</div>
+
+		<div class="row">
+			<h4 class="col-md-6">Necesidades</h4>
+		</div>
+
+		<div *ngFor="let need of report.necesidades; let i = index;">
+			<div>
+				<div class="row">
+					<p class="col-md-12">
+						<label><b>{{ i+1 }}. </b>{{ need }}</label>
+					</p>
+				</div>
+			</div>
+		</div>
+
+		<div class="row">
+			<h4 class="col-md-6">Fotos</h4>
+		</div>
+
+		<div class="row">
+			<div class="col-md-2" *ngFor="let urlPet of report.photos; let i = index;">
+				<div class="text-center" *ngIf="urlPet != ''">
+					<img width="150" height="150" src="{{ urlPet }}" />
 				</div>
 			</div>
 		</div>

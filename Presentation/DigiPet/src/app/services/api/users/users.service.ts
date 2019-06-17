@@ -77,8 +77,26 @@ export class UsersService {
 						});
 	}
 
+	public getWalksHistoryByPetCare(token: string) {
+		return this.http.get(Urls.baseUrl + Urls.getWalksHistoryByPetCare,
+						{
+							headers: new HttpHeaders()
+								.set('Authorization', `Bearer ${token}`)
+						});
+	}
+
 	public requestWalkService(token: string, walkService) {
 		return this.http.post(Urls.baseUrl + Urls.requestWalkService, walkService,
+						{
+							headers: new HttpHeaders()
+								.set('Authorization', `Bearer ${token}`)
+								.set('Content-Type', 'application/json'),
+							observe: 'response'
+						});
+	}
+
+	public sendReportCard(token: string, reportCard) {
+		return this.http.post(Urls.baseUrl + Urls.setPendintReportCard, reportCard,
 						{
 							headers: new HttpHeaders()
 								.set('Authorization', `Bearer ${token}`)

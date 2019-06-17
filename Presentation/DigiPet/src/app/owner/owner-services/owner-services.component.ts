@@ -11,7 +11,7 @@ import { UsersService } from './../../services/api/users/users.service';
 })
 export class OwnerServicesComponent implements OnInit {
 
-	public services;
+	public services: any = [];
 
 	constructor(private dataTransferService: DataTransferService,
 				private usersService: UsersService) {
