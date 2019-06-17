@@ -531,7 +531,9 @@ namespace WebApi.Services
 
         public List<Denuncia> GetDenuncias()
         {
-            return _dbContext.Denuncias.ToList();
+            var res= _dbContext.Denuncias.Include(d=>d.Walk)
+                .ToList();
+            return res;
         }
 
         public bool DeleteDenuncia(int id)
