@@ -21,9 +21,16 @@ export class Urls {
 	public static getPetCareProfile: string = 'api/walkers/getprofile';
 	// Report cards
 	public static getPendingReportCards: string = 'api/walkers/pendingReport';
+	// Walks with out rating
+	public static getWalksNoRating: string = 'api/owners/pendingReport';
+	public static setRating: string = 'api/owners/rate';
+	// User Reports
+	public static denyUserReport: string = 'api/admins/denuncias/';
+	public static getUserReports: string = 'api/admins/denuncias';
 	// Get services
 	public static getUpComingWalksByOwner: string = 'api/owners/upcoming';
 	public static getUpComingWalksByPetCare: string = 'api/walkers/upcoming';
+	public static getWalksHistoryByPet: string = 'api/owners/history/';
 	public static getWalksHistoryByPetCare: string = 'api/walkers/history';
 	// Request Services
 	public static requestWalkService: string = 'api/owners/requestWalk';

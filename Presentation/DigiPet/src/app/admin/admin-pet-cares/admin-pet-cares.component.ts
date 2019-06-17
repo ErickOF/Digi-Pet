@@ -68,7 +68,6 @@ export class AdminPetCaresComponent implements OnInit {
 		
 		response.subscribe(data => {
 			this.petCares = data;
-			console.log(data);
 			this.petCares.sort((a, b) => (a.id > b.id) ? 1 : ((b.id > a.id) ? -1 : 0));
 			this.loading = false;
 		}, error => {
@@ -82,7 +81,7 @@ export class AdminPetCaresComponent implements OnInit {
 			title: title,
 			text: msg,
 			type: 'error',
-			confirmButtonText: 'Cool'
+			confirmButtonText: 'Ok'
 		});
 	}
 

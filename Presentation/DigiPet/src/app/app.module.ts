@@ -50,6 +50,7 @@ import { AdminInformationComponent } from './admin/admin-information/admin-infor
 import { AdminPetCaresComponent } from './admin/admin-pet-cares/admin-pet-cares.component';
 import { AdminBusinessReportsComponent } from './admin/admin-business-reports/admin-business-reports.component';
 import { AdminUserReportsComponent } from './admin/admin-user-reports/admin-user-reports.component';
+import { OwnerNoRatingComponent } from './owner/owner-no-rating/owner-no-rating.component';
 
 
 @NgModule({
@@ -78,7 +79,8 @@ import { AdminUserReportsComponent } from './admin/admin-user-reports/admin-user
 		AdminInformationComponent,
 		AdminPetCaresComponent,
 		AdminBusinessReportsComponent,
-		AdminUserReportsComponent
+		AdminUserReportsComponent,
+		OwnerNoRatingComponent
 	],
 	imports: [
 		AngularFireModule.initializeApp(environment.firebase),

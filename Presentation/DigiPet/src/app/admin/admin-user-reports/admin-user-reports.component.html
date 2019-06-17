@@ -1,3 +1,62 @@
-<p>
-  admin-user-reports works!
-</p>
+<div class="row profile-card" *ngIf="reports.length == 0" style="margin: 2% 2% 2% 2%;">
+	<div class="col-md-12"></div>
+	<div class="col-md-12">
+		<div class="card card-user">
+			<div class="card-body">
+				<div class="author">
+					<label>No hay reportes de usuarios</label>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!-- Each User Report -->
+<div class="row profile-card" *ngFor="let report of reports; let i = index" style="margin: 2% 2% 2% 2%;">
+	<div class="col-md-12"></div>
+	<div class="col-md-12">
+		<div class="card card-user">
+			<div class="card-body">
+				<div class="author">
+					<div class="row">
+						<div class="col-md-12 text-center">
+							<h4 class="" ><b>Reporte de usuario {{ report.id }} </b></h4>
+						</div>
+					</div>
+
+					<div class="row">
+						<div class="col-md-6">
+							<p class="" ><b>ID del cuidador: </b> {{ report.walkId }} </p>
+						</div>
+					</div>
+
+					<div class="row">
+						<div class="col-md-6">
+							<p class="" ><b>Fecha de la denuncia: </b> {{ report.dateCreated.split('T')[0] }} </p>
+						</div>
+
+						<div class="col-md-6">
+							<p class="" ><b>Hora de la denuncia: </b> {{ report.dateCreated.split('T')[1] }} </p>
+						</div>
+					</div>
+
+					<div class="row">
+						<div class="col-md-12">
+							<p class="" ><b>Descripción: </b> {{ report.description }} </p>
+						</div>
+					</div>
+
+					<div class="row">
+						<div class="col-md-6 text-center">
+							<button class="btn btn-success" (click)="update(report.id)">Aceptar</button>
+						</div>
+
+						<div class="col-md-6 text-center">
+							<button class="btn btn-danger" (click)="update(report.id)">Negar</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
