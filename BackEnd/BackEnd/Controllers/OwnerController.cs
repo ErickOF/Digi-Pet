@@ -113,6 +113,17 @@ namespace WebApi.Controllers
             return Ok(allWalks);
         }
 
+        [Authorize(Roles = Role.Petowner)]
+        [HttpGet("pendingReport")]
+        public async Task<ActionResult<List<WalkInfoDto>>> GetPendingReport()
+        {
+            var username = User.Claims.Where(c => c.Type == ClaimTypes.Name).FirstOrDefault().Value;
+            var allWalks = await _repository.GetAllOwnerWalks(username);
+            allWalks.RemoveAll(w => w.Report!=null &&w.Report.Count!=0);
+            allWalks = allWalks.OrderBy(a => a.Begin).ToList();
+            return Ok(allWalks);
+        }
+
         /*[Authorize(Roles = Role.Petowner)]
         [HttpGet("pendingReport")]
         public async Task<ActionResult<List<WalkInfoDto>>> GetpendingReport()
