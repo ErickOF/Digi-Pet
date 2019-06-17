@@ -21,6 +21,8 @@ export class Urls {
 	public static getPetCareProfile: string = 'api/walkers/getprofile';
 	// Report cards
 	public static getPendingReportCards: string = 'api/walkers/pendingReport';
+	// Walks with out rating
+	public static getWalksNoRating: string = 'api/owners/pendingReport';
 	// User Reports
 	public static denyUserReport: string = 'api/admins/denuncias/';
 	public static getUserReports: string = 'api/admins/denuncias';

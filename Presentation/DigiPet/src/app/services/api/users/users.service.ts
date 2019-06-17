@@ -120,6 +120,15 @@ export class UsersService {
 						});
 	}
 
+	public getWalksNoRating(token: string) {
+		return this.http
+					.get(Urls.baseUrl + Urls.getWalksNoRating,
+						{
+							headers: new HttpHeaders()
+								.set('Authorization', `Bearer ${token}`)
+						});
+	}
+
 	public requestWalkService(token: string, walkService) {
 		return this.http
 					.post(Urls.baseUrl + Urls.requestWalkService, walkService,
