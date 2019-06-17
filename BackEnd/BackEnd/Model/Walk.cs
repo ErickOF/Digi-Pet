@@ -36,7 +36,8 @@ namespace WebApi.Model
         public string Description { get; set; }
         [Required]
         public string ExactAddress { get; set; }
-
+        [Required]
+        public decimal Total { get; set; }
         public virtual ICollection<ReportWalk> ReportWalks { get; set; }
     }
 }

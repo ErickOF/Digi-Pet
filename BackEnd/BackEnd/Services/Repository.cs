@@ -32,6 +32,8 @@ namespace WebApi.Services
         Task<Tuple<bool, string>> AddReport(ReportWalk report);
         Task<List<ScheduleDto>> GetSchedule(string username);
         Task<bool> Modify(int walkId, DateTime newDate);
+        decimal HourPrice();
+        bool PostHourPrice(decimal hourPrice);
     }
     public class Repository : IRepository
     {
@@ -45,7 +47,7 @@ namespace WebApi.Services
             _userService = userService;
             _userChoose = userChoose;
         }
-        public async Task<Tuple<Walker,string>> CreateWalker(WalkerDto walkerDto)
+        public async Task<Tuple<Walker, string>> CreateWalker(WalkerDto walkerDto)
         {
             using (var trans = await _dbContext.Database.BeginTransactionAsync())
             {
@@ -54,7 +56,7 @@ namespace WebApi.Services
 
                     var walker = new Walker
                     {
-                        User = _userService.CreateUser( new Entities.User
+                        User = _userService.CreateUser(new Entities.User
                         {
                             Username = walkerDto.SchoolId,
                             Role = Role.Walker,
@@ -72,17 +74,17 @@ namespace WebApi.Services
                         University = walkerDto.University,
                         DoesOtherProvinces = walkerDto.DoesOtherProvinces,
                         OtherProvinces = walkerDto.OtherProvinces
-                        
+
                     };
                     _dbContext.Walker.Add(walker);
                     await _dbContext.SaveChangesAsync();
                     trans.Commit();
-                    return new Tuple<Walker,string>(walker,"success");
+                    return new Tuple<Walker, string>(walker, "success");
                 }
                 catch (DbUpdateException e)
                 {
                     trans.Rollback();
-                    return new Tuple<Walker,string>(null,e.InnerException.Message);
+                    return new Tuple<Walker, string>(null, e.InnerException.Message);
                 }
             }
         }
@@ -96,7 +98,7 @@ namespace WebApi.Services
                     var pets = new List<Pet>();
                     foreach (var pet in ownerDto.Pets)
                     {
-                        pets.Add(new Pet { Name = pet.Name, Race=pet.Race,DateCreated=DateTime.UtcNow,Age=pet.Age, Size=pet.Size, Description=pet.Description,Photos=pet.Photos});
+                        pets.Add(new Pet { Name = pet.Name, Race = pet.Race, DateCreated = DateTime.UtcNow, Age = pet.Age, Size = pet.Size, Description = pet.Description, Photos = pet.Photos });
                     }
 
                     var owner = new Petowner
@@ -114,8 +116,8 @@ namespace WebApi.Services
                             Mobile = ownerDto.Mobile,
                             DateCreated = DateTime.UtcNow,
                             Description = ownerDto.Description,
-                            Photo=ownerDto.Photo
-                        },ownerDto.Password),
+                            Photo = ownerDto.Photo
+                        }, ownerDto.Password),
                         Pets = pets
 
                     };
@@ -133,13 +135,13 @@ namespace WebApi.Services
         }
         public async Task<ReturnOwner> GetOwnerByUserName(string username)
         {
-            var owner= await _dbContext.Owners
+            var owner = await _dbContext.Owners
                 .Include(o => o.User)
                 .Include(o => o.Pets)
-                .ThenInclude(p=>p.Walks)
+                .ThenInclude(p => p.Walks)
                 .FirstOrDefaultAsync(u => u.User.Username == username);
 
-            return new ReturnOwner (owner);
+            return new ReturnOwner(owner);
         }
 
         public async Task<Tuple<Pet, string>> CreatePet(PetDto petDto, int ownerId)
@@ -153,7 +155,7 @@ namespace WebApi.Services
                 Description = petDto.Description,
                 Photos = petDto.Photos,
                 PetOwnerId = ownerId,
-                DateCreated= DateTime.UtcNow
+                DateCreated = DateTime.UtcNow
             };
             try
             {
@@ -165,20 +167,20 @@ namespace WebApi.Services
             {
                 return new Tuple<Pet, string>(null, $"error: {e.InnerException.Message}");
             }
-            
+
         }
 
 
         public async Task<IEnumerable<ReturnOwner>> GetOwners()
         {
-            var owners= await _dbContext.Owners.Include(o=>o.User).Include(o=>o.Pets).ToListAsync();
+            var owners = await _dbContext.Owners.Include(o => o.User).Include(o => o.Pets).ToListAsync();
 
             return owners.Select(u => new ReturnOwner(u));
         }
 
         public async Task<ReturnOwner> GetOwner(int id)
         {
-            var owner= await _dbContext.Owners.Include(o => o.Pets).Include(o=>o.User).FirstOrDefaultAsync(u => u.Id==id);
+            var owner = await _dbContext.Owners.Include(o => o.Pets).Include(o => o.User).FirstOrDefaultAsync(u => u.Id == id);
 
             return new ReturnOwner(owner);
 
@@ -190,14 +192,14 @@ namespace WebApi.Services
         {
             return await _dbContext.Walker
                 .Include(o => o.User)
-                .Include(w=>w.Walks).ThenInclude(w=>w.ReportWalks)
+                .Include(w => w.Walks).ThenInclude(w => w.ReportWalks)
                 .FirstOrDefaultAsync(u => u.User.Username == username);
         }
-        internal int maxDuration(int[] hours,int begin)
+        internal int maxDuration(int[] hours, int begin)
         {
             int available = 0;
             hours = hours.OrderBy(i => i).ToArray();
-            for (int i =0; i < hours.Length-1; i++)
+            for (int i = 0; i < hours.Length - 1; i++)
             {
                 var hour = hours[i];
                 if (hour != begin) continue;
@@ -210,9 +212,9 @@ namespace WebApi.Services
         public async Task<Tuple<WalkInfoDto, string>> RequestWalk(WalkRequestDto walkRequestDto)
         {
 
-            if (walkRequestDto.Begin.Date != walkRequestDto.End.Date) return new Tuple<WalkInfoDto,string>(null,"no se puede ese rango de horas");
+            if (walkRequestDto.Begin.Date != walkRequestDto.End.Date) return new Tuple<WalkInfoDto, string>(null, "no se puede ese rango de horas");
 
-            var pet = await _dbContext.Pets.Include(p => p.Petowner).FirstOrDefaultAsync(p=>p.Id==walkRequestDto.PetId);
+            var pet = await _dbContext.Pets.Include(p => p.Petowner).FirstOrDefaultAsync(p => p.Id == walkRequestDto.PetId);
 
 
             var walkers = _dbContext.Walker.Include(w => w.User)
@@ -223,29 +225,29 @@ namespace WebApi.Services
                 !w.Blocked && w.WalkerSchedules.Select(we => we.Date).Contains(walkRequestDto.Begin.Date)
                 && w.WalkerSchedules.First(we => we.Date == walkRequestDto.Begin).HoursAvailable.Contains(walkRequestDto.Begin.AddMinutes(-30).Hour)
                 && w.WalkerSchedules.First(we => we.Date == walkRequestDto.Begin).HoursAvailable.Contains(walkRequestDto.End.AddMinutes(30).Hour)
-                && maxDuration(w.WalkerSchedules.First(we=>we.Date==walkRequestDto.Begin).HoursAvailable,walkRequestDto.Begin.Hour) >= walkRequestDto.Duration
+                && maxDuration(w.WalkerSchedules.First(we => we.Date == walkRequestDto.Begin).HoursAvailable, walkRequestDto.Begin.Hour) >= walkRequestDto.Duration
            ).ToList();
-           
-           
-            walkers.RemoveAll(w=>
+
+
+            walkers.RemoveAll(w =>
             {
                 //remueve aquellos cuidadores que tienen conflicto de horarios
-                var walks=w.Walks.Where(
-                    ww =>( (walkRequestDto.Begin >= ww.Begin.AddMinutes(-30) && walkRequestDto.Begin <= ww.Begin.AddMinutes(30)) ||
-                   (walkRequestDto.End >= ww.Begin.AddMinutes(-30) && walkRequestDto.End <= ww.Begin.AddMinutes(30)) )&& ww.Pet.PetOwnerId !=pet.PetOwnerId
+                var walks = w.Walks.Where(
+                    ww => ((walkRequestDto.Begin >= ww.Begin.AddMinutes(-30) && walkRequestDto.Begin <= ww.Begin.AddMinutes(30)) ||
+                   (walkRequestDto.End >= ww.Begin.AddMinutes(-30) && walkRequestDto.End <= ww.Begin.AddMinutes(30))) && ww.Pet.PetOwnerId != pet.PetOwnerId
                 );
                 return walks.Count() != 0;
             });
             //queda filtrar los paseos que son del mismo dueno pero a distintas horas
-            walkers.RemoveAll(w=> 
+            walkers.RemoveAll(w =>
             {
                 var walks = w.Walks.Where(ww => ww.Pet.PetOwnerId == pet.PetOwnerId &&
                 (walkRequestDto.Begin != ww.Begin || walkRequestDto.End != ww.End) &&
-                (walkRequestDto.Begin.Date==ww.Begin.Date)
+                (walkRequestDto.Begin.Date == ww.Begin.Date)
                 );
                 return walks.Count() != 0;
             });
-            walkers.RemoveAll(w=>
+            walkers.RemoveAll(w =>
             {
                 var walks = w.Walks.Where(ww => ww.Province != walkRequestDto.Province && ww.Canton != walkRequestDto.Canton);
                 return walks.Count() != 0;
@@ -253,7 +255,8 @@ namespace WebApi.Services
                 );
 
             // se le asignan los 10 puntos adicionales si es del canton
-            walkers.ForEach(w => {
+            walkers.ForEach(w =>
+            {
                 w.TempPoints = w.Points + ((w.User.Canton == walkRequestDto.Canton && w.User.Province == walkRequestDto.Province) ? 10 : 0);
                 if (w.Walks.Select(wa => wa.Pet.PetOwnerId).Contains(pet.PetOwnerId)) w.TempPoints = 0;//se desincentiva asignar un cuidador otra vez
             });
@@ -266,7 +269,7 @@ namespace WebApi.Services
             Walker walker;
             //rota la seleccion nuevo/viejo
             var next = _userChoose.NextWalker();
-            if (next== UserChoose.New)
+            if (next == UserChoose.New)
             {
                 walker = walkers.FirstOrDefault(w => w.Walks.Count == 0);
                 if (walker == null)
@@ -291,7 +294,8 @@ namespace WebApi.Services
                 Description = walkRequestDto.Description,
                 PetId = walkRequestDto.PetId,
                 WalkerId = walker.Id,
-                ExactAddress = walkRequestDto.ExactAddress
+                ExactAddress = walkRequestDto.ExactAddress,
+                Total=HourPrice()*walkRequestDto.Duration                
             };
             await _dbContext.Walks.AddAsync(walk);
             try
@@ -301,14 +305,14 @@ namespace WebApi.Services
             }
             catch (Exception e)
             {
-                return new Tuple<WalkInfoDto, string>(null,e.Message);
+                return new Tuple<WalkInfoDto, string>(null, e.Message);
             }
-            
+
         }
 
         public async Task<ActionResult<IEnumerable<ReturnWalker>>> GetAllWalkers()
         {
-            return await _dbContext.Walker.Include(w => w.User).Include(w=>w.Walks)
+            return await _dbContext.Walker.Include(w => w.User).Include(w => w.Walks)
                 .Select(u => new ReturnWalker(u))
                 .ToListAsync();
         }
@@ -345,10 +349,10 @@ namespace WebApi.Services
                     }).ToList();
                     var schedsCopy = scheds.ToList();
 
-                    scheds.RemoveAll(sch => sch.Id==0);
+                    scheds.RemoveAll(sch => sch.Id == 0);
                     scheds.ForEach(e => { _dbContext.Attach(e).State = EntityState.Modified; });
 
-                    schedsCopy.RemoveAll(sch => sch.Id!=0);
+                    schedsCopy.RemoveAll(sch => sch.Id != 0);
 
                     await _dbContext.WalkerSchedule.AddRangeAsync(schedsCopy);
                     await _dbContext.SaveChangesAsync();
@@ -358,7 +362,7 @@ namespace WebApi.Services
                 catch (Exception e)
                 {
                     trans.Rollback();
-                    return e.Message;                   
+                    return e.Message;
                 }
             }
         }
@@ -369,7 +373,7 @@ namespace WebApi.Services
             {
                 var entity = await _dbContext.Walks.FindAsync(id);
                 _dbContext.Walks.Remove(entity);
-             await   _dbContext.SaveChangesAsync();
+                await _dbContext.SaveChangesAsync();
                 return true;
             }
             catch
@@ -381,18 +385,18 @@ namespace WebApi.Services
         public Task<List<WalkInfoDto>> GetAllWalkerWalks(string username)
         {
             return _dbContext.Walks.Include(w => w.Walker).ThenInclude(w => w.User)
-                .Include(w=>w.ReportWalks)
-                .Include(w=>w.Pet)
+                .Include(w => w.ReportWalks)
+                .Include(w => w.Pet)
                 .Where(w => w.Walker.User.Username == username)
                 .Select(w => new WalkInfoDto(w))
                 .ToListAsync();
         }
 
-        public Task<List<WalkInfoDto>> GetAllPetWalks( int petId)
+        public Task<List<WalkInfoDto>> GetAllPetWalks(int petId)
         {
-            return _dbContext.Walks.Include(w=>w.Pet).ThenInclude(p=>p.Petowner)
+            return _dbContext.Walks.Include(w => w.Pet).ThenInclude(p => p.Petowner)
              .Include(w => w.ReportWalks)
-             .Where(w => w.PetId==petId)
+             .Where(w => w.PetId == petId)
              .Select(w => new WalkInfoDto(w))
              .ToListAsync();
         }
@@ -400,9 +404,9 @@ namespace WebApi.Services
         public Task<List<WalkInfoDto>> GetAllOwnerWalks(string username)
         {
             return _dbContext.Walks.Include(w => w.Pet)
-                .ThenInclude(p => p.Petowner).ThenInclude(po=>po.User)
+                .ThenInclude(p => p.Petowner).ThenInclude(po => po.User)
            .Include(w => w.ReportWalks)
-           .Where(w => w.Pet.Petowner.User.Username==username)
+           .Where(w => w.Pet.Petowner.User.Username == username)
            .Select(w => new WalkInfoDto(w))
            .ToListAsync();
         }
@@ -411,10 +415,10 @@ namespace WebApi.Services
         {
             return _dbContext.Reports.FirstOrDefaultAsync(r => r.WalkId == walkId);
         }
-        
+
         public async Task<Tuple<bool, string>> Rate(Rate rate)
         {
-            int walkId=rate.walkId; int stars = rate.stars;
+            int walkId = rate.walkId; int stars = rate.stars;
             if (stars < 1 || stars > 5)
             {
                 return new Tuple<bool, string>(false, "stars must be between 1-5");
@@ -430,9 +434,12 @@ namespace WebApi.Services
 
             if (rate.Denuncia != null)
             {
-                await _dbContext.Denuncias.AddAsync(new Denuncia { DateCreated=DateTime.UtcNow,
-                    Description=rate.Denuncia.Description,
-                    WalkId=walkId});
+                await _dbContext.Denuncias.AddAsync(new Denuncia
+                {
+                    DateCreated = DateTime.UtcNow,
+                    Description = rate.Denuncia.Description,
+                    WalkId = walkId
+                });
             }
             try
             {
@@ -447,13 +454,13 @@ namespace WebApi.Services
 
         }
 
-        public async Task<Tuple<bool,string>> AddReport(ReportWalk report)
+        public async Task<Tuple<bool, string>> AddReport(ReportWalk report)
         {
-            var walk = await  _dbContext.Walks
-                .Include(w=>w.ReportWalks)
-                .Where(w=>w.ReportWalks==null || w.ReportWalks.Count==0)
-                .FirstOrDefaultAsync(r=>r.Id==report.WalkId);
-            if(walk == null)
+            var walk = await _dbContext.Walks
+                .Include(w => w.ReportWalks)
+                .Where(w => w.ReportWalks == null || w.ReportWalks.Count == 0)
+                .FirstOrDefaultAsync(r => r.Id == report.WalkId);
+            if (walk == null)
             {
                 return new Tuple<bool, string>(false, "report already made or pending walk");
             }
@@ -477,13 +484,13 @@ namespace WebApi.Services
             return _dbContext.WalkerSchedule
                  .Include(sch => sch.Walker).ThenInclude(w => w.User)
                  .Where(sch => sch.Walker.User.Username == username && sch.Date.Date >= DateTime.UtcNow.Date)
-                 .Select(sch=>new ScheduleDto { Date=sch.Date, HoursAvailable=sch.HoursAvailable })
+                 .Select(sch => new ScheduleDto { Date = sch.Date, HoursAvailable = sch.HoursAvailable })
                  .AsNoTracking().ToListAsync();
         }
 
         public async Task<bool> Modify(int walkId, DateTime newDate)
         {
-            var walk= await _dbContext.Walks.FindAsync(walkId);
+            var walk = await _dbContext.Walks.FindAsync(walkId);
             if (walk == null) return false;
             walk.Begin = newDate;
             _dbContext.Attach(walk).State = EntityState.Modified;
@@ -497,5 +504,28 @@ namespace WebApi.Services
                 return false;
             }
         }
+
+        public decimal HourPrice()
+        {
+            return decimal.Parse(_dbContext.Properties.FirstOrDefault(p => p.Property == ConfigurationValues.HourPriceWalkUSD).Value);
+        }
+
+        public bool PostHourPrice(decimal hourPrice)
+        {
+            var prop = _dbContext.Properties.FirstOrDefault(p => p.Property == ConfigurationValues.HourPriceWalkUSD);
+            if (prop == null) return false;
+            prop.Value = hourPrice.ToString();
+            _dbContext.Attach(prop).State = EntityState.Modified;
+            try
+            {
+                _dbContext.SaveChanges();
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
     }
 }

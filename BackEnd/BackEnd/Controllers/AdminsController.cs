@@ -49,6 +49,19 @@ namespace WebApi.Controllers
                 return BadRequest(new { message = "error" });
             }
         }
+        [HttpGet("HourPrice")]
+        public IActionResult GetHourPrice()
+        {
+            decimal price = _repo.HourPrice();
+            return Ok(new { hourPrice = price });
+        }
+        [HttpPost("HourPrice")]
+        public IActionResult PostHourPrice([FromBody] decimal hourPrice)
+        {
+            bool result = _repo.PostHourPrice(hourPrice);
+            if(result) return Ok(new { hourPrice = hourPrice });
+            return BadRequest(new { message="error"});
+        }
         #region paraTest
         //solo para test
         [HttpDelete("deleteWalk")]
