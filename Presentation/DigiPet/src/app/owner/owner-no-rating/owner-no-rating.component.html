@@ -1,3 +1,94 @@
-<p>
-  owner-no-rating works!
-</p>
+<h4 class="text-center" style="margin-bottom: 5%; margin-top: 10%;" *ngIf="services.length != 0">
+	Pendientes de calificar
+</h4>
+
+<!-- Show each service -->
+<div class="row profile-card" *ngFor="let service of services; let i = index">
+	<div class="col-md-12"></div>
+	<div class="col-md-12">
+		<div class="card card-user">
+			<div class="card-body">
+				<div class="author">
+
+					<div class="row">
+						<div class="col-md-12 text-center">
+							<p class="" ><b>Caminata: </b> <b> {{ service.id }} </b></p>
+						</div>
+					</div>
+						
+					<div class="row">
+						<div class="col-md-6">
+							<p class="" ><b>Fecha:</b> {{ service.begin.split('T')[0] }}</p>
+						</div>
+
+						<div class="col-md-6">
+							<p class="" ><b>Hora:</b> {{ service.begin.split('T')[1] }}</p>
+						</div>
+					</div>
+
+					<div class="row">
+						<div class="col-md-6">
+							<p class="" ><b>Duración:</b> {{ service.duration }}</p>
+						</div>
+
+						<div class="col-md-6">
+							<p class="" ><b>Total:</b> ${{ service.total }}</p>
+						</div>
+					</div>
+
+					<div class="row">
+						<div class="col-md-6">
+							<p class="" ><b>Provincia:</b> {{ service.province }}</p>
+						</div>
+						
+						<div class="col-md-6">
+							<p class="" ><b>Cantón:</b> {{ service.canton }}</p>
+						</div>
+					</div>
+
+					<div class="row">
+						<div class="col-md-12">
+							<p class="" ><b>Dirección exacta:</b> {{ service.exactAddress }}</p>
+						</div>
+					</div>
+
+					<div class="row">
+						<div class="col-md-6">
+							<p class="" ><b>Nombre:</b> {{ service.pet.name }}</p>
+						</div>
+						
+						<div class="col-md-6">
+							<p class="" ><b>Raza:</b> {{ service.pet.race }}</p>
+						</div>
+					</div>
+
+					<div class="row">
+						<div class="col-md-6">
+							<p class="" ><b>Edad:</b> {{ service.pet.age }}</p>
+						</div>
+						
+						<div class="col-md-6">
+							<p class="" ><b>Tamaño:</b> {{ service.pet.size }}</p>
+						</div>
+					</div>
+
+					<div class="row">
+						<div class="col-md-12">
+							<p class="" ><b>Descripción:</b> {{ service.description }}</p>
+						</div>
+					</div>
+
+					<div class="row">
+						<div class="col-md-6 text-center">
+							<button class="btn btn-primary" (click)="setRating(service.walkerId)">Calificar</button>
+						</div>
+						
+						<div class="col-md-6 text-center">
+							<button class="btn btn-danger" (click)="makeReport(service.walkerId)">Reportar</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

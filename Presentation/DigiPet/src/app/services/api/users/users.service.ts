@@ -151,6 +151,17 @@ export class UsersService {
 						});
 	}
 
+	public setRating(token: string, rate) {
+		return this.http
+					.post(Urls.baseUrl + Urls.setRating, rate,
+						{
+							headers: new HttpHeaders()
+								.set('Authorization', `Bearer ${token}`)
+								.set('Content-Type', 'application/json'),
+							observe: 'response'
+						});
+	}
+
 	public setSchedule(token: string, schedule) {
 		return this.http
 					.post(Urls.baseUrl + Urls.setSchedule, schedule,

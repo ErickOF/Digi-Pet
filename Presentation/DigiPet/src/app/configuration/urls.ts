@@ -23,6 +23,7 @@ export class Urls {
 	public static getPendingReportCards: string = 'api/walkers/pendingReport';
 	// Walks with out rating
 	public static getWalksNoRating: string = 'api/owners/pendingReport';
+	public static setRating: string = 'api/owners/rate';
 	// User Reports
 	public static denyUserReport: string = 'api/admins/denuncias/';
 	public static getUserReports: string = 'api/admins/denuncias';
