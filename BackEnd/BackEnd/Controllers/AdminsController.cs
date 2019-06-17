@@ -49,6 +49,7 @@ namespace WebApi.Controllers
                 return BadRequest(new { message = "error" });
             }
         }
+        #region paraTest
         //solo para test
         [HttpDelete("deleteWalk")]
         public async Task<ActionResult<bool>> DeleteWalk(int id)
@@ -58,6 +59,15 @@ namespace WebApi.Controllers
             else return BadRequest(res);
         }
 
+        [HttpPost("modifyDateOfWalk/{walkId}")]
+        public async Task<IActionResult> ModifyDateWalk(int walkId,[FromBody] DateTime newDate)
+        {
+            var res=await _repo.Modify(walkId, newDate);
+            if (res) return Ok(new { message = "success" });
+            return BadRequest(new { message = "error" });
+            
+        }
+        #endregion
 
     }
 }
