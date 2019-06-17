@@ -15,12 +15,76 @@
 	</div>
 </div>
 
+<!-- Pending Report Card -->
+<div id="ReportCardModal" class="modal">
+
+	<!-- Modal content -->
+	<div class="modal-content">
+		<ngx-loading [show]="loadingService"></ngx-loading>
+		
+		<span class="close" (click)=hideWalkServiceModal()>&times;</span>
+
+		<h2 class="text-center">
+			Tarjeta de Reporte {{ idPendingReportCard }}
+		</h2>
+		
+		<form [formGroup]="registerPendingReportCard" class="register-container col-md-12">
+			<div class="row">
+				<div class="col-md-6 text-center">
+					<p [ngClass]="{ 'has-error': isSubmittedWS && pendingReportCardFormControls.distance.errors }">
+						<input type="text" class="form-control" placeholder="Distancia recorrida (km)" formControlName="distance">
+					</p>
+				</div>
+			</div>
+
+			<div class="row">
+				<div *ngIf="isSubmittedWS && (pendingReportCardFormControls.distance.errors)" class="help-block col-md-12">
+					<div class="text-error" *ngIf="pendingReportCardFormControls.distance.errors.required">La distancia recorrida es requerida</div>
+				</div>
+			</div>
+
+			<div><label></label></div>
+
+			<div class="row">
+				<p class="col-md-12" [ngClass]="{ 'has-error': isSubmittedWS && pendingReportCardFormControls.comments.errors }">
+					<textarea type="text" class="form-control col-md-12" rows="4" placeholder="Comentarios" formControlName="comments"></textarea>
+				</p>
+			</div>
+
+			<div class="row">
+				<div *ngIf="isSubmittedWS && (pendingReportCardFormControls.comments.errors)" class="help-block col-md-6">
+					<div class="text-error" *ngIf="pendingReportCardFormControls.comments.errors.required">Los comentarios son requeridos</div>
+				</div>
+			</div>
+
+			<!-- Submit -->
+			<div class="text-center">
+				<p>
+					<input type="submit" class="btn btn-success" value="Enviar" (click)="confirmWalkService()">
+				</p>
+			</div>
+		</form>
+	</div>
+</div>
+
+<!-- Each Pending Report Card -->
 <div class="row profile-card" *ngFor="let report of reports; let i = index">
 	<div class="col-md-12"></div>
 	<div class="col-md-12">
 		<div class="card card-user">
 			<div class="card-body">
 				<div class="author">
+					<div class="row">
+						<div class="col-md-12 text-center">
+							<p class="" ><b>Tarjeta de Reporte pediente: </b> <b> {{ report.id }} </b></p>
+						</div>
+					</div>
+
+					<div class="row">
+						<div class="col-md-12 text-center">
+							<button class="btn btn-primary" (click)=fillPendingReportCard(report)>Llenar reporte pendiente</button>
+						</div>
+					</div>
 				</div>
 			</div>
 		</div>
