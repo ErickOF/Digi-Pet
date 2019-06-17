@@ -102,6 +102,15 @@ export class UsersService {
 						});
 	}
 
+	public getWalksHistoryByPet(token: string, id: number) {
+		return this.http
+					.get(Urls.baseUrl + Urls.getWalksHistoryByPet + id,
+						{
+							headers: new HttpHeaders()
+								.set('Authorization', `Bearer ${token}`)
+						});
+	}
+
 	public getWalksHistoryByPetCare(token: string) {
 		return this.http
 					.get(Urls.baseUrl + Urls.getWalksHistoryByPetCare,

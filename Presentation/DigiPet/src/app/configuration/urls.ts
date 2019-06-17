@@ -27,6 +27,7 @@ export class Urls {
 	// Get services
 	public static getUpComingWalksByOwner: string = 'api/owners/upcoming';
 	public static getUpComingWalksByPetCare: string = 'api/walkers/upcoming';
+	public static getWalksHistoryByPet: string = 'api/owners/history/';
 	public static getWalksHistoryByPetCare: string = 'api/walkers/history';
 	// Request Services
 	public static requestWalkService: string = 'api/owners/requestWalk';
