@@ -27,7 +27,7 @@ namespace WebApi.Dtos
             {
                 Report = walk.ReportWalks.Select(rw => { rw.Walk = null; return rw; }).ToList();
             }
-            
+            Total = walk.Total;
             
         }
         public int Id { get; set; }
@@ -45,5 +45,6 @@ namespace WebApi.Dtos
         public string Canton { get; set; }
   
         public string Description { get; set; }
+        public decimal Total { get; set; }
     }
 }

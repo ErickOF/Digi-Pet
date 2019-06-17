@@ -359,7 +359,7 @@ namespace XUnitTestProject1
             {
                 WalkId = walkId,
                 Comments = "me atacooo",
-                Photos = "urls",
+                Photos = new string[] { "urls" },
                 Distance = 6,
                 Necesidades =new string[]{"orinooo"}
             };

@@ -17,7 +17,7 @@ namespace WebApi.Model
         [Required]
         public string Comments { get; set; }
         [Required]
-        public string Photos { get; set; }
+        public string[] Photos { get; set; }
         [Required, Column(TypeName = "decimal(4,2)"), Range(0,double.MaxValue)]
         public decimal Distance { get; set; }
 
