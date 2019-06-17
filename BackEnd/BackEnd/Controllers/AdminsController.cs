@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using WebApi.Entities;
+using WebApi.Model;
 using WebApi.Services;
 
 namespace WebApi.Controllers
@@ -61,6 +62,19 @@ namespace WebApi.Controllers
             bool result = _repo.PostHourPrice(hourPrice);
             if(result) return Ok(new { hourPrice = hourPrice });
             return BadRequest(new { message="error"});
+        }
+        [HttpGet("denuncias")]
+        public ActionResult<List<Denuncia>> GetDenuncias()
+        {
+            var res =  _repo.GetDenuncias();
+            return Ok(res);
+        }
+        [HttpDelete("denuncias/{id}")]
+        public IActionResult DeleteDenuncia(int id)
+        {
+            var res = _repo.DeleteDenuncia(id);
+            if (res) return Ok(new { message = "ok" });
+            else return BadRequest(new { message = "error" });
         }
         #region paraTest
         //solo para test

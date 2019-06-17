@@ -34,6 +34,8 @@ namespace WebApi.Services
         Task<bool> Modify(int walkId, DateTime newDate);
         decimal HourPrice();
         bool PostHourPrice(decimal hourPrice);
+        List<Denuncia> GetDenuncias();
+        bool DeleteDenuncia(int id);
     }
     public class Repository : IRepository
     {
@@ -527,5 +529,19 @@ namespace WebApi.Services
             }
         }
 
+        public List<Denuncia> GetDenuncias()
+        {
+            return _dbContext.Denuncias.ToList();
+        }
+
+        public bool DeleteDenuncia(int id)
+        {
+            var denuncia = _dbContext.Denuncias.Find(id);
+            if (denuncia == null) return false;
+
+            _dbContext.Denuncias.Remove(denuncia);
+            _dbContext.SaveChanges();
+            return true;
+        }
     }
 }
