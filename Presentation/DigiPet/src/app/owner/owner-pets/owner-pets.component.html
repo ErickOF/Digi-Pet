@@ -1,7 +1,89 @@
 <h2 class="text-center" style="margin-bottom: 5%; margin-top: 5%;">
 	Mis Mascotas
 </h2>
+<ngx-loading [show]="loadingAll"></ngx-loading>
 
+<!-- Walks History -->
+<div id="WalkHistoryModal" class="modal">
+	<!-- Modal content -->
+	<div class="modal-content">
+		<span class="close" (click)=hideWalkHistoryModal()>&times;</span>
+		<!-- No services -->
+		<div class="row profile-card" *ngIf="services.length == 0">
+			<div class="col-md-12"></div>
+			<div class="col-md-12">
+				<div class="card card-user">
+					<div class="card-body">
+						<div class="author">
+							<label>No hay caminatas</label>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- Show each service -->
+		<div class="row profile-card" *ngFor="let service of services; let i = index">
+			<div class="col-md-12"></div>
+			<div class="col-md-12">
+				<div class="card card-user">
+					<div class="card-body">
+						<div class="author">
+
+							<div class="row">
+								<div class="col-md-12 text-center">
+									<p class="" ><b>Caminata: </b> <b> {{ service.id }} </b></p>
+								</div>
+							</div>
+								
+							<div class="row">
+								<div class="col-md-6">
+									<p class="" ><b>Fecha:</b> {{ service.begin.split('T')[0] }}</p>
+								</div>
+
+								<div class="col-md-6">
+									<p class="" ><b>Hora:</b> {{ service.begin.split('T')[1] }}</p>
+								</div>
+							</div>
+
+							<div class="row">
+								<div class="col-md-6">
+									<p class="" ><b>Duración:</b> {{ service.duration }}</p>
+								</div>
+
+								<div class="col-md-6">
+									<p class="" ><b>Total:</b> ${{ service.total }}</p>
+								</div>
+							</div>
+
+							<div class="row">
+								<div class="col-md-6">
+									<p class="" ><b>Provincia:</b> {{ service.province }}</p>
+								</div>
+								
+								<div class="col-md-6">
+									<p class="" ><b>Cantón:</b> {{ service.canton }}</p>
+								</div>
+							</div>
+
+							<div class="row">
+								<div class="col-md-12">
+									<p class="" ><b>Dirección exacta:</b> {{ service.exactAddress }}</p>
+								</div>
+							</div>
+
+							<div class="row">
+								<div class="col-md-12">
+									<p class="" ><b>Descripción:</b> {{ service.description }}</p>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
 
 <!-- Request Walk Service -->
 <div id="WalkServiceModal" class="modal">

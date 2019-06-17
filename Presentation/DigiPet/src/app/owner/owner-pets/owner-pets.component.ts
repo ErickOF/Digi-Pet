@@ -14,10 +14,15 @@ import { UsersService } from './../../services/api/users/users.service';
 
 window.onclick = function(event) {
 	let addPetModal = document.getElementById("AddPetModal");
+	let walkHistoryModal = document.getElementById("WalkHistoryModal");
 	let walkServiceModal = document.getElementById("WalkServiceModal");
 	
 	if (event.target == addPetModal) {
 		addPetModal.style.display = "none";
+	}
+
+	if (event.target == walkHistoryModal) {
+		walkHistoryModal.style.display = "none";
 	}
 
 	if (event.target == walkServiceModal) {
@@ -35,11 +40,13 @@ export class OwnerPetsComponent implements OnInit {
 	public isSubmitted = false;
 	public isSubmittedWS = false;
 	public loading = false;
+	public loadingAll = false;
 	public loadingImgsPet = [false, false, false, false, false];
 	public loadingService = false;
 	public pets;
 	public registerPet: FormGroup;
 	public registerWalkService: FormGroup;
+	public services: any = [];
 	public uploadPercent: Observable<number>;
 	public urlsPet = ['', '', '', '', ''];
 
@@ -211,6 +218,10 @@ export class OwnerPetsComponent implements OnInit {
 		document.getElementById('AddPetModal').style.display='none';
 	}
 
+	public hideWalkHistoryModal() {
+		document.getElementById('WalkHistoryModal').style.display='none';
+	}
+
 	public hideWalkServiceModal() {
 		document.getElementById('WalkServiceModal').style.display='none';
 	}
@@ -263,14 +274,23 @@ export class OwnerPetsComponent implements OnInit {
 	}
 
 	public showWalksHistory(id: number) {
+		this.loadingAll = true;
 		let token = this.dataTransferService.getAccessToken().token;
 
 		let response = this.usersService.getWalksHistoryByPet(token, id);
 		response.subscribe(data => {
-			console.log(data);
+			this.services = data;
+			this.loadingAll = false;
+			this.showWalkHistoryModal();
 		}, error => {
+			this.services = [];
+			this.loadingAll = false;
 			this.showErrorMsg('¡Error!', '¡No se pudo obtener el historial. Por favor intente más tarde!');
 		});
+	}
+
+	public showWalkHistoryModal() {
+		document.getElementById('WalkHistoryModal').style.display='block';
 	}
 
 	public showWalkServiceModal() {
