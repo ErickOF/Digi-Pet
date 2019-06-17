@@ -21,7 +21,12 @@ export class PetCareHistoryComponent implements OnInit {
 
 	public history: any = [];
 	public idReport = 0;
-	public report = {};
+	public report = {
+		distance: 0,
+		comments: '',
+		necesidades: [],
+		photos: [],
+	};
 
 	constructor(private dataTransferService: DataTransferService,
 				private usersService: UsersService) {
