@@ -77,6 +77,14 @@ export class UsersService {
 						});
 	}
 
+	public getWalksHistoryByPetCare(token: string) {
+		return this.http.get(Urls.baseUrl + Urls.getWalksHistoryByPetCare,
+						{
+							headers: new HttpHeaders()
+								.set('Authorization', `Bearer ${token}`)
+						});
+	}
+
 	public requestWalkService(token: string, walkService) {
 		return this.http.post(Urls.baseUrl + Urls.requestWalkService, walkService,
 						{
