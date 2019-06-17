@@ -25,18 +25,7 @@ namespace WebApi.Dtos
             Canton = owner.User.Canton;
             Description = owner.User.Description;
             DateCreated = owner.User.DateCreated;
-            Pets = owner.Pets.Select(p => new PetDto
-            {
-                Id = p.Id,
-                Name = p.Name,
-                Race = p.Race,
-                Age = p.Age,
-                Size = p.Size,
-                Description = p.Description,
-                Photos = p.Photos,
-                DateCreated = p.DateCreated,
-                Trips=p.Walks.Count
-            }
+            Pets = owner.Pets.Select(p => new PetDto(p)
             ).ToList();
             Photo = owner.User.Photo;
         }
