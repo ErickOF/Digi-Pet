@@ -31,6 +31,7 @@ namespace WebApi.Services
         Task<Tuple<bool,string>> Rate(Rate rate);
         Task<Tuple<bool, string>> AddReport(ReportWalk report);
         Task<List<ScheduleDto>> GetSchedule(string username);
+        Task<bool> Modify(int walkId, DateTime newDate);
     }
     public class Repository : IRepository
     {
@@ -478,6 +479,23 @@ namespace WebApi.Services
                  .Where(sch => sch.Walker.User.Username == username && sch.Date.Date >= DateTime.UtcNow.Date)
                  .Select(sch=>new ScheduleDto { Date=sch.Date, HoursAvailable=sch.HoursAvailable })
                  .AsNoTracking().ToListAsync();
+        }
+
+        public async Task<bool> Modify(int walkId, DateTime newDate)
+        {
+            var walk= await _dbContext.Walks.FindAsync(walkId);
+            if (walk == null) return false;
+            walk.Begin = newDate;
+            _dbContext.Attach(walk).State = EntityState.Modified;
+            try
+            {
+                await _dbContext.SaveChangesAsync();
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
         }
     }
 }

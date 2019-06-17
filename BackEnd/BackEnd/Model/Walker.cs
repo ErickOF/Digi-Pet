@@ -28,10 +28,6 @@ namespace WebApi.Model
                     var sumStars = Walks.Select(w => w.ReportWalks).Sum(rw => rw.FirstOrDefault().Stars);
 
                     return sumStars / totalRatedTrips;
-
-                   
-                    
-
                 }
                 catch
                 {

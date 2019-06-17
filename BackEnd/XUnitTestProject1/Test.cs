@@ -21,6 +21,7 @@ using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.AspNetCore.Mvc.ViewComponents;
 using System.Net.Http.Headers;
 using System.Linq;
+using WebApi.Model;
 
 namespace XUnitTestProject1
 {
@@ -53,8 +54,8 @@ namespace XUnitTestProject1
         {
             Week = new List<ScheduleDto>()
             {
-                new ScheduleDto{Date=DateTime.Today.AddDays(2).Date, HoursAvailable= Enumerable.Range(0,23).ToArray()},
-                new ScheduleDto{Date=DateTime.Today.AddDays(3).Date, HoursAvailable= new int[]{13,14,15,16,17,18 } },
+                new ScheduleDto{Date=DateTime.Today.AddDays(3).Date, HoursAvailable= Enumerable.Range(0,23).ToArray()},
+                new ScheduleDto{Date=DateTime.Today.AddDays(4).Date, HoursAvailable= new int[]{13,14,15,16,17,18 } },
             }
         };
         private static string TempWalkerToken { get; set; }
@@ -240,12 +241,8 @@ namespace XUnitTestProject1
                 res.EnsureSuccessStatusCode();
                 var returnedWalker = JsonConvert.DeserializeObject<CreatedWalkerResponse>(await res.Content.ReadAsStringAsync());
 
-
                 Assert.Equal(TempWalker.SchoolId, returnedWalker.userName);
                 Assert.NotEqual(0, returnedWalker.id);
-
-                
-
                 if (string.IsNullOrEmpty(TempWalkerToken))//autentica nuevo usuario
                 {
                     TempWalkerToken = await Authenticate(TempWalker.SchoolId, TempWalker.Password);
@@ -267,7 +264,7 @@ namespace XUnitTestProject1
                 var walkRequest = new WalkRequestDto
                 {
                     PetId = pets[0].Id,
-                    Begin = DateTime.Today.AddDays(2).AddHours(9).ToUniversalTime(),
+                    Begin = DateTime.Today.AddDays(3).AddHours(9).ToUniversalTime(),
                     Duration = 1,
                     Province = TempWalker.Province,
                     Canton = TempWalker.Canton,
@@ -295,7 +292,7 @@ namespace XUnitTestProject1
                 await CheckWalkerWalks(pets);
 
                 //pide un paseo para el siguiente dia y debe fallar porque el cuidador no tiene hora disponible
-                walkRequest.Begin = DateTime.Today.AddDays(3).AddHours(9);
+                walkRequest.Begin = DateTime.Today.AddDays(4).AddHours(9);
                 var res5 = await PostWalkRequest(walkRequest, TestOwnerToken);
                 Assert.Equal(HttpStatusCode.BadRequest, res5.StatusCode);
 
@@ -309,10 +306,8 @@ namespace XUnitTestProject1
                 //se verifica que se haya bloqueado perfil
                 Assert.True(resWalkerProfile.Blocked);
 
-
-
                 //al pedir en el dia que tiene disponible pero al estar bloqueado, no se pueden encontrar 
-                walkRequest.Begin = DateTime.Today.AddDays(3).AddHours(15);
+                walkRequest.Begin = DateTime.Today.AddDays(4).AddHours(15);
                 var res6 = await PostWalkRequest(walkRequest, TestOwnerToken);
                 Assert.Equal(HttpStatusCode.BadRequest, res6.StatusCode);
 
@@ -335,7 +330,12 @@ namespace XUnitTestProject1
 
                 Assert.Equal(returnedWalker.id, parsedWalkRequest7.WalkerId);
 
+                //modifico fecha para que pueda hacer tarjeta de reporte
+                var resModifyDate =await ModifyDate(parsedWalkRequest.Id, DateTime.Today.AddDays(-1));
+                resModifyDate.EnsureSuccessStatusCode();
 
+                await PostReportCard(parsedWalkRequest.Id);
+                
             }
             finally
             {
@@ -344,7 +344,57 @@ namespace XUnitTestProject1
                 await DeleteUser(TempWalker.SchoolId);
             }
         }
+        internal async Task CheckNewRating()
+        {
+            var res = await GetProfile("walkers", TempWalkerToken);
+            res.EnsureSuccessStatusCode();
+            var WalkerProfile = JsonConvert.DeserializeObject<ReturnWalker>(await res.Content.ReadAsStringAsync());
+            //Assert.Equal(4, WalkerProfile.Rating);
+        }
+        internal async Task PostReportCard(int walkId)
+        {
+            var url = "/api/walkers/postReport";
+            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", TempWalkerToken);
+            var report = new
+            {
+                WalkId = walkId,
+                Comments = "me atacooo",
+                Photos = "urls",
+                Distance = 6,
+                Necesidades =new string[]{"orinooo"}
+            };
+            var serializedObj = JsonConvert.SerializeObject(report);
+            var content = new StringContent(serializedObj, Encoding.UTF8, "application/json");
+            var res = await _client.PostAsync(url,content);
+            res.EnsureSuccessStatusCode();
+            //limpiar los headers
+            _client.DefaultRequestHeaders.Clear();
+            var urlGetReport = $"/api/owners/report/{walkId}";
+            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", TestOwnerToken);
+            var resGetReport = await _client.GetAsync(urlGetReport);
+            resGetReport.EnsureSuccessStatusCode();
+            var reportReturn = JsonConvert.DeserializeObject<ReportWalk>(await resGetReport.Content.ReadAsStringAsync());
+            Assert.Equal(report.WalkId, reportReturn.WalkId);
+            Assert.Equal(report.Comments, reportReturn.Comments);
+            Assert.Equal(report.Photos, reportReturn.Photos);
+            Assert.Equal(report.Distance, reportReturn.Distance);
+            Assert.Equal(report.Necesidades, reportReturn.Necesidades);
+            _client.DefaultRequestHeaders.Clear();
 
+            await Rate(walkId);
+        }
+        internal async Task Rate(int walkId)
+        {
+            var url = "/api/owners/rate";
+            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", TestOwnerToken);
+            var rate = new {walkId,stars=4 };
+            var serializedObj = JsonConvert.SerializeObject(rate);
+            var content = new StringContent(serializedObj, Encoding.UTF8, "application/json");
+            var res = await _client.PostAsync(url,content);
+            _client.DefaultRequestHeaders.Clear();
+            res.EnsureSuccessStatusCode();
+            await CheckNewRating();
+        }
         internal async Task CompareWalkerScheduleWithOriginal()
         {
             var url = "/api/walkers/schedule";
@@ -390,6 +440,7 @@ namespace XUnitTestProject1
 
         }
 
+
         internal  Task<HttpResponseMessage> GetProfile(string route,string token)
         {
             var url = $"/api/{route}/getprofile";
@@ -409,7 +460,17 @@ namespace XUnitTestProject1
             _client.DefaultRequestHeaders.Clear();
             return res;
         }
-
+        internal Task<HttpResponseMessage> ModifyDate(int walkId,DateTime newDate)
+        {
+            var url = $"/api/admins/modifyDateOfWalk/{walkId}";
+            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", AdminToken);
+            var serializedObj = JsonConvert.SerializeObject(newDate);
+            var content = new StringContent(serializedObj, Encoding.UTF8, "application/json");
+            var res = _client.PostAsync(url,content);
+            //limpiar los headers
+            _client.DefaultRequestHeaders.Clear();
+            return res;
+        }
         #region interno
         internal async Task<HttpResponseMessage> PostWalkerSchedule(WeekScheduleDto obj)
         {
