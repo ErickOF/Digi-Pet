@@ -26,11 +26,17 @@ window.onclick = function(event) {
 	styleUrls: ['./pet-care-reports.component.css']
 })
 export class PetCareReportsComponent implements OnInit {
+	public downloadURL: Observable<string>;
 	public idPendingReportCard = 0;
+	public isSubmitted = false;
+	public loading = false;
+	public loadingImgsPet = [false, false, false, false, false];
 	public needs: any = [];
 	public registerPendingReportCard: FormGroup;
 	public registerNeeds: FormGroup;
 	public reports: any = [];
+	public uploadPercent: Observable<number>;
+	public urlsPet = ['', '', '', '', ''];
 
 	constructor(private api: ApiService,
 				private dataTransferService: DataTransferService,
@@ -53,7 +59,7 @@ export class PetCareReportsComponent implements OnInit {
 				Validators.required,
 				Validators.pattern('^[0-9]*$')
 			])],
-			comments: ['', Validators.maxLength(300)]
+			comments: ['', Validators.required]
 		});
 
 		this.needs.push(this.formBuilder.group({
@@ -84,6 +90,10 @@ export class PetCareReportsComponent implements OnInit {
 		}));
 	}
 
+	public deleteImage(i) {
+		this.urlsPet[i] = '';
+	}
+
 	public deleteNeed(i: number) {
 		const details = this.registerNeeds.get('details') as FormArray;
 		if (details.controls.length > 1) {
@@ -100,11 +110,131 @@ export class PetCareReportsComponent implements OnInit {
 		return ((this.registerNeeds.get('details') as FormArray).controls[index] as FormGroup).controls;
 	}
 
+	private getNeedsInfo(): string[] {
+		let needs = [];
+		let needsInfo = this.registerNeeds.value.details;
+
+		for (var i = 0; i < needsInfo.length; i++) {
+			needs.push(needsInfo[i].need);
+		}
+
+		return needs;
+	}
+
 	public hideReportCardModal() {
 		document.getElementById('ReportCardModal').style.display='none';
+	}
+
+	public openFileDialog(i: number) {
+		document.getElementById('selectFile' + i.toString()).click();
+	}
+
+	public sendReportCard() {
+		this.isSubmitted = true;
+
+		let reportCardInfo = this.registerPendingReportCard.value;
+		let needsInfo = this.registerNeeds.value;
+		
+		if (!this.registerPendingReportCard.valid || !this.registerNeeds.valid) {
+			return;
+		}
+
+		if (!this.validateUrlsPet()) {
+			this.showErrorMsg('¡Mascota sin foto!', 'Debe seleccionar al menos una foto por mascota');
+			return;
+		}
+
+		let reportCard = {
+			"WalkId": this.idPendingReportCard,
+			"Comments": reportCardInfo.comments,
+			"Photos": this.urlsPet,
+			"Distance": reportCardInfo.distance,
+			"Necesidades": this.getNeedsInfo()
+		}
+
+		console.log(reportCard);
+
+		let token = this.dataTransferService.getAccessToken().token;
+
+		let response = this.usersService.sendReportCard(token, reportCard);
+		response.subscribe(data => {
+			this.loading = false;
+			this.hideReportCardModal();
+			this.router.navigateByUrl('/RefrshComponent', {skipLocationChange: true})
+						.then(()=>this.router.navigate(['petcare/profile']));
+		}, error => {
+			console.log(error);
+			this.loading = false;
+			this.showErrorMsg('¡Error!', '¡La tarjeta de reporte no pudo enviarse. Por favor intente más tarde!');
+		});
+	}
+
+	private showErrorMsg(title: string, msg: string) {
+		Swal.fire({
+			title: title,
+			text: msg,
+			type: 'error',
+			confirmButtonText: 'Ok'
+		});
 	}
 
 	public showReportCardModal() {
 		document.getElementById('ReportCardModal').style.display='block';
 	}
+
+	private showSuccessMsg(title: string, msg: string) {
+		Swal.fire({
+			title: title,
+			text: msg,
+			type: 'success',
+			confirmButtonText: 'Ok'
+		});
+	}
+
+	public uploadPetImg(event, i) {
+		this.loadingImgsPet[i] = true;
+		
+		let file = event.target.files[0];
+
+		if (!file) {
+			this.loadingImgsPet[i] = true;
+			return;
+		}
+		
+		let filePath = file.name.split('.')[0];
+
+		this.uploadPercent = this.imgUploadService.uploadFile(filePath, file);
+		this.uploadPercent.subscribe(data => {
+			if (data == 100) {
+				this.downloadURL = this.imgUploadService.getImage(filePath);
+				this.downloadURL.subscribe(url => {
+					this.urlsPet[i] = url;
+					this.loadingImgsPet[i] = false;
+				}, error => {
+					if (data == 100) {
+						this.downloadURL = this.imgUploadService.getImage(filePath);
+						this.downloadURL.subscribe(url => {
+							this.urlsPet[i] = url;
+							this.loadingImgsPet[i] = false;
+						}, error => {
+							this.loadingImgsPet[i] = false;
+						});
+					}
+				});
+			}
+		}, error => {
+			this.loadingImgsPet[i] = false;
+		});
+	}
+
+	private validateUrlsPet() {
+		let valid = false;
+		for (let i in this.urlsPet) {
+			if (this.urlsPet[i] != '') {
+				valid = true;
+			}
+		}
+		return valid;
+	}
+
 }

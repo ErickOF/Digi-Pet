@@ -27,5 +27,6 @@ export class Urls {
 	// Request Services
 	public static requestWalkService: string = 'api/owners/requestWalk';
 	// Set
+	public static setPendintReportCard: string = 'api/walkers/postReport';
 	public static setSchedule: string = 'api/walkers/schedule/';
 }

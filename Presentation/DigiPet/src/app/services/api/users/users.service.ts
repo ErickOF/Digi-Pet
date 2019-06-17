@@ -87,6 +87,16 @@ export class UsersService {
 						});
 	}
 
+	public sendReportCard(token: string, reportCard) {
+		return this.http.post(Urls.baseUrl + Urls.setPendintReportCard, reportCard,
+						{
+							headers: new HttpHeaders()
+								.set('Authorization', `Bearer ${token}`)
+								.set('Content-Type', 'application/json'),
+							observe: 'response'
+						});
+	}
+
 	public setSchedule(token: string, schedule) {
 		return this.http.post(Urls.baseUrl + Urls.setSchedule, schedule,
 						{
