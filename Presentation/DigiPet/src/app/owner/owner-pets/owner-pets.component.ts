@@ -262,6 +262,17 @@ export class OwnerPetsComponent implements OnInit {
 		this.urlsPet = ['', '', '', '', ''];
 	}
 
+	public showWalksHistory(id: number) {
+		let token = this.dataTransferService.getAccessToken().token;
+
+		let response = this.usersService.getWalksHistoryByPet(token, id);
+		response.subscribe(data => {
+			console.log(data);
+		}, error => {
+			this.showErrorMsg('¡Error!', '¡No se pudo obtener el historial. Por favor intente más tarde!');
+		});
+	}
+
 	public showWalkServiceModal() {
 		document.getElementById('WalkServiceModal').style.display='block';
 	}
