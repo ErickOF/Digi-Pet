@@ -89,6 +89,69 @@
 					</div>
 				</div>
 			</div>
+
+			<!-- Submit -->
+			<div class="text-center">
+				<p>
+					<input type="submit" class="btn btn-success" value="Ver tarjeta de reporte" (click)="showReportCard(service.report[0], service.id)">
+				</p>
+			</div>
+
+		</div>
+	</div>
+</div>
+
+<!-- Show Report Card -->
+<div id="ReportCardViewModal" class="modal">
+
+	<!-- Modal content -->
+	<div class="modal-content">
+		<span class="close" (click)=hideReportCardViewModal()>&times;</span>
+
+		<h2 class="text-center">
+			Tarjeta de Reporte {{ idReport }}
+		</h2>
+		
+		<div class="row">
+			<div class="col-md-6">
+				<p>
+					<label><b>Distancia recorrida: </b>{{ report.distance }}km</label>
+				</p>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-md-12">
+				<p>
+					<label><b>Comentarios: </b>{{ report.comments }}</label>
+				</p>
+			</div>
+		</div>
+
+		<div class="row">
+			<h4 class="col-md-6">Necesidades</h4>
+		</div>
+
+		<div *ngFor="let need of report.necesidades; let i = index;">
+			<div>
+				<div class="row">
+					<p class="col-md-12">
+						<label><b>{{ i+1 }}. </b>{{ need }}</label>
+					</p>
+				</div>
+			</div>
+		</div>
+
+		<div class="row">
+			<h4 class="col-md-6">Fotos</h4>
+		</div>
+
+		<div class="row">
+			<div class="col-md-2" *ngFor="let urlPet of report.photos; let i = index;">
+				<div class="text-center" *ngIf="urlPet != ''">
+					<img width="150" height="150" src="{{ urlPet }}" />
+				</div>
+			</div>
 		</div>
 	</div>
 </div>

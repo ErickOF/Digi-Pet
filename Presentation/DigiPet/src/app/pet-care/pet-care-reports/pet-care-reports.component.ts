@@ -152,8 +152,6 @@ export class PetCareReportsComponent implements OnInit {
 			"Necesidades": this.getNeedsInfo()
 		}
 
-		console.log(reportCard);
-
 		let token = this.dataTransferService.getAccessToken().token;
 
 		let response = this.usersService.sendReportCard(token, reportCard);
