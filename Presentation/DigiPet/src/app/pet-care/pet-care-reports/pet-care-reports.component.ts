@@ -27,7 +27,9 @@ window.onclick = function(event) {
 })
 export class PetCareReportsComponent implements OnInit {
 	public idPendingReportCard = 0;
+	public needs: any = [];
 	public registerPendingReportCard: FormGroup;
+	public registerNeeds: FormGroup;
 	public reports: any = [];
 
 	constructor(private api: ApiService,
@@ -53,6 +55,14 @@ export class PetCareReportsComponent implements OnInit {
 			])],
 			comments: ['', Validators.maxLength(300)]
 		});
+
+		this.needs.push(this.formBuilder.group({
+			need: ['', Validators.required]
+		}));
+
+		this.registerNeeds = this.formBuilder.group({
+			details: this.formBuilder.array(this.needs)
+		});
 		
 	}
 
@@ -63,9 +73,31 @@ export class PetCareReportsComponent implements OnInit {
 		return this.registerPendingReportCard.controls;
 	}
 
+	get registerNeedsControls() {
+		return (this.registerNeeds.get('details') as FormArray).controls;
+	}
+
+	public addNeed() {
+		const details = this.registerNeeds.get('details') as FormArray;
+		details.push(this.formBuilder.group({
+			need: ['', Validators.required]
+		}));
+	}
+
+	public deleteNeed(i: number) {
+		const details = this.registerNeeds.get('details') as FormArray;
+		if (details.controls.length > 1) {
+			details.removeAt(i);
+		}
+	}
+
 	public fillPendingReportCard(reportCard) {
 		this.idPendingReportCard = reportCard.id;
 		this.showReportCardModal();
+	}
+
+	public getNeedFormControls(index: number) {
+		return ((this.registerNeeds.get('details') as FormArray).controls[index] as FormGroup).controls;
 	}
 
 	public hideReportCardModal() {

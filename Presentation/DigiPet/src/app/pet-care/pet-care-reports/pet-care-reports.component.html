@@ -28,6 +28,7 @@
 			Tarjeta de Reporte {{ idPendingReportCard }}
 		</h2>
 		
+		<!--  Normal Form -->
 		<form [formGroup]="registerPendingReportCard" class="register-container col-md-12">
 			<div class="row">
 				<div class="col-md-6 text-center">
@@ -56,14 +57,49 @@
 					<div class="text-error" *ngIf="pendingReportCardFormControls.comments.errors.required">Los comentarios son requeridos</div>
 				</div>
 			</div>
+		</form>
 
-			<!-- Submit -->
-			<div class="text-center">
-				<p>
-					<input type="submit" class="btn btn-success" value="Enviar" (click)="confirmWalkService()">
-				</p>
+		<!-- Needs form -->
+		<form [formGroup]="registerNeeds" class="register-container col-md-12">
+
+			<div class="row">
+				<h4 class="col-md-6">Necesidades</h4>
+				<div class="col-md-6 text-right">
+					<button class="btn btn-primary" (click)="addNeed()">Agregar necesidad</button>
+				</div>
+			</div>
+			
+			<div><label></label></div>
+
+			<div formArrayName="details" class="form-group" *ngFor="let need of registerNeedsControls; let i = index;">
+				<div [formGroupName]="i">
+
+					<div class="row">
+						<p class="col-md-12" [ngClass]="{ 'has-error': isSubmittedWS && getNeedFormControls(ind).need.errors }">
+							<textarea type="text" class="form-control col-md-12" rows="4" placeholder="Necesidad {{ i + 1 }}" formControlName="need"></textarea>
+						</p>
+
+						<div *ngIf="isSubmittedWS && (getNeedFormControls(ind).need.errors)" class="help-block col-md-6">
+							<div class="text-error" *ngIf="getNeedFormControls(ind).need.errors.required">Los comentarios son requeridos</div>
+						</div>
+
+						<div class="col-md-12 text-center">
+							<button class="btn btn-danger" (click)="deleteNeed(i)">Eliminar necesidad</button>
+						</div>
+					</div>
+
+					<hr style="border-color: '#000000'">
+
+				</div>
 			</div>
 		</form>
+
+		<!-- Submit -->
+		<div class="text-center">
+			<p>
+				<input type="submit" class="btn btn-success" value="Enviar" (click)="confirmWalkService()">
+			</p>
+		</div>
 	</div>
 </div>
 
@@ -82,7 +118,7 @@
 
 					<div class="row">
 						<div class="col-md-12 text-center">
-							<button class="btn btn-primary" (click)=fillPendingReportCard(report)>Llenar reporte pendiente</button>
+							<button class="btn btn-primary" (click)=fillPendingReportCard(report)>Llenar tarjeta de reporte pendiente</button>
 						</div>
 					</div>
 				</div>
